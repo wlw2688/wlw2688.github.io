@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Cocoapods制作创建SDK | wangliwen</title>
+  <meta name="description" content="创建项目  创建命令  1pod lib create &lt;sdk name&gt;  选择配置  1234567891011121314151617181920212223# 使用什么平台 ?What platform do you want to use?? [ iOS &#x2F; macOS ]&gt; iOS # 使用什么语言？What language do you want to use?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cocoapods制作创建SDK">
+<meta property="og:url" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Cocoapods%E5%88%B6%E4%BD%9C%E5%88%9B%E5%BB%BASDK/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="创建项目  创建命令  1pod lib create &lt;sdk name&gt;  选择配置  1234567891011121314151617181920212223# 使用什么平台 ?What platform do you want to use?? [ iOS &#x2F; macOS ]&gt; iOS # 使用什么语言？What language do you want to use?">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-26T07:22:43.000Z">
+<meta property="article:modified_time" content="2022-01-04T05:55:10.088Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Cocoapods%E5%88%B6%E4%BD%9C%E5%88%9B%E5%BB%BASDK/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-性能与架构/Cocoapods制作创建SDK" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Cocoapods制作创建SDK
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Cocoapods%E5%88%B6%E4%BD%9C%E5%88%9B%E5%BB%BASDK/" class="article-date">
+	  <time datetime="2018-10-26T07:22:43.000Z" itemprop="datePublished">2018-10-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Cocoapods%E5%88%B6%E4%BD%9C%E5%88%9B%E5%BB%BASDK/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>创建项目</h1>
+<ul>
+<li>创建命令  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod lib create &lt;sdk name&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li>选择配置  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 使用什么平台 ?</span></span><br><span class="line">What platform do you want to use?? [ iOS / macOS ]</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> iOS</span> </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用什么语言？</span></span><br><span class="line">What language do you want to use?? [ Swift / ObjC ]</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> ObjC</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 是否需要demo项目？</span></span><br><span class="line">Would you like to include a demo application with your library? [ Yes / No ]</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Yes</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用什么测试框架？</span></span><br><span class="line">Which testing frameworks will you use? [ Specta / Kiwi / None ]</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> None</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 是否需要集成基于view的测试框架？</span></span><br><span class="line">Would you like to do view based testing? [ Yes / No ]</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> No</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 使用什么文件名前缀？</span></span><br><span class="line">What is your class prefix?</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> LW</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>创建公有库</h1>
+<ul>
+<li>github 创建公有库</li>
+<li>将本地代码git添加远端<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd [.git当前目录]</span><br><span class="line"><span class="meta">#</span><span class="bash"> 先配置好github的ssh，再推送到远端</span></span><br><span class="line">git remote add origin git@github.com:wlw2688/LWGrayTheme.git</span><br><span class="line">git branch -M main</span><br><span class="line">git push -u origin main</span><br></pre></td></tr></table></figure>
+</li>
+<li>向 CocoaPods 注册账户信息<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">  #</span><span class="bash"> 邮箱为github上的登录邮箱、用户名为github上的用户名。</span></span><br><span class="line">  pod trunk register 邮箱 ‘用户名’ --description=‘描述’</span><br><span class="line">  ```   </span><br><span class="line">- 接收到邮件，打开验证链接，然后命令行验证</span><br><span class="line">  ``` shell</span><br><span class="line">  pod trunk me</span><br><span class="line">  ```   </span><br><span class="line">- 验证发布到 cocoapods上的公有仓库是否有效</span><br><span class="line">  ``` shell</span><br><span class="line">  pod spec lint LWGrayTheme.podspec --allow-warnings --verbose</span><br></pre></td></tr></table></figure>
+</li>
+<li>发布自己的库的 podspec 文件给 cocoapods<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod trunk push LWGrayTheme.podspec --allow-warnings --verbose</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>创建私有库</h1>
+  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">  pod repo push TestRepo TestKit.podspec</span><br><span class="line">  ```    </span><br><span class="line"><span class="meta">#</span><span class="bash"> podspec</span></span><br><span class="line">  ``` shell</span><br><span class="line">    s.name         = &quot;BaseFramework&quot; #工程的名字</span><br><span class="line">    </span><br><span class="line">    s.version      = &quot;0.0.1&quot;  #工程的版本</span><br><span class="line">    </span><br><span class="line">    s.summary      = &quot;Gray&#x27;s modularization BaseFramework.&quot;  #工程的摘要</span><br><span class="line">    </span><br><span class="line">    s.description  = &quot;Gray&#x27;s BaseFramework demo&quot;  #工程的描述</span><br><span class="line">    </span><br><span class="line">    s.homepage     = &quot;http://graydeng.BaseFramework&quot;  #工程的首页</span><br><span class="line">    </span><br><span class="line">    s.license      = &quot;MIT&quot;  #工程的证书</span><br><span class="line">    </span><br><span class="line">    s.author       = &#123; &quot;wlw&quot; =&gt; &quot;wlw@163.com&quot; &#125; #工程的作者</span><br><span class="line">    </span><br><span class="line">    s.ios.deployment_target = &quot;8.0&quot;  #工程的编译版本</span><br><span class="line">    </span><br><span class="line">    s.source       = &#123; :git =&gt; &quot;http://graydeng/BaseFramework.git&quot;, :tag =&gt; &quot;#&#123;s.version&#125;&quot; &#125;  #工程的git地址</span><br><span class="line">    </span><br><span class="line">    s.source_files  = &quot;Classes&quot;, &quot;Classes/**/*.&#123;h,m&#125;&quot;  #工程需要引入的文件</span><br><span class="line">    </span><br><span class="line">    s.exclude_files = &quot;Classes/Exclude&quot;  #工程不需要引入的文件</span><br><span class="line">    </span><br><span class="line">    s.public_header_files = &quot;Classes/**/*.h&quot;  #工程需要暴露出来的头文件</span><br><span class="line">    </span><br><span class="line">    s.resources = &quot;Resources/*&quot;  #工程需要引入的资源文件（图片，xib等）</span><br><span class="line">    </span><br><span class="line">    s.resource_bundles = &#123;&#x27;Resources&#x27; =&gt; &#x27;XXX.framework/Resources/XXX.bundle&#x27;&#125; #工程需要引入的bundle</span><br><span class="line">    </span><br><span class="line">    s.frameworks = &quot;ImageIO&quot;  #工程依赖的framework</span><br><span class="line">    </span><br><span class="line">    s.vendored_frameworks = [] #工程依赖的第三方framework</span><br><span class="line">    </span><br><span class="line">    s.libraries = &quot;iconv&quot;, &quot;xml2&quot;  #工程依赖的library</span><br><span class="line">    </span><br><span class="line">    s.vendored_libraries = []  #工程依赖第三方的library</span><br><span class="line">    </span><br><span class="line">    s.requires_arc = true  #工程是否用arc规则</span><br><span class="line">    </span><br><span class="line">    s.dependency &quot;AFNetworking&quot;, &quot;~&gt; 3.0&quot;  #工程依赖的第三方库</span><br><span class="line">  ```         </span><br><span class="line"><span class="meta">#</span><span class="bash"> 制作framework</span> </span><br><span class="line">  - 若没有安装 cocoapods-packager，先安装</span><br><span class="line">    ``` shell</span><br><span class="line">    sudo gem install cocoapods-packager</span><br><span class="line">    ```  </span><br><span class="line">  - 执行命令生成framework</span><br><span class="line">    ``` shell</span><br><span class="line">    pod package AFPodSpec.podspec --force --dynamic --no-mangle --spec-sources=https://github.com/CocoaPods/Specs.git</span><br><span class="line">    </span><br><span class="line">    ----------注释----------------</span><br><span class="line">    </span><br><span class="line">    # --force   # 强制覆盖之前已经生成过的二进制库 </span><br><span class="line">    </span><br><span class="line">    # --embedded   # 生成静态.framework </span><br><span class="line">    </span><br><span class="line">    # --library   # 生成静态.a </span><br><span class="line">    </span><br><span class="line">    # --dynamic   # 生成动态.framework </span><br><span class="line">    </span><br><span class="line">    # --bundle-identifier   # 动态.framework是需要签名的，所以只有生成动态库的时候需要这个BundleId </span><br><span class="line">    </span><br><span class="line">    # --exclude-deps   # 不包含依赖的符号表，生成动态库的时候不能包含这个命令，动态库一定需要包含依赖的符号表。</span><br><span class="line">    </span><br><span class="line">    # --configuration  # 表示生成的库是debug还是release，默认是release。--configuration=Debug </span><br><span class="line">    </span><br><span class="line">    # --no-mangle   # 表示不使用name mangling技术，pod package默认是使用这个技术的。我们能在用pod package生成二进制库的时候会看到终端有输出Mangling symbols和Building mangled framework。表示使用了这个技术。</span><br><span class="line">                    # 如果你的pod库没有其他依赖的话，那么不使用这个命令也不会报错。但是如果有其他依赖，不使用--no-mangle这个命令的话，那么你在工程里使用生成的二进制库的时候就会报错：Undefined symbols for architecture x86_64。</span><br><span class="line">                    </span><br><span class="line">    # --subspecs   # 如果你的pod库有subspec，那么加上这个命名表示只给某个或几个subspec生成二进制库，--subspecs=subspec1,subspec2。生成的库的名字就是你podspec的名字，如果你想生成的库的名字跟subspec的名字一样，那么就需要修改podspec的名字。</span><br><span class="line">    </span><br><span class="line">    # --spec-sources   # 一些依赖的source，如果你有依赖是来自于私有库的，那就需要加上那个私有库的source，默认是cocoapods的Specs仓库。--spec-sources=private,https://github.com/CocoaPods/Specs.git。</span><br></pre></td></tr></table></figure>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c852ab73ffa0">iOS之创建CocoaPods公有库教程</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Cocoapods%E5%88%B6%E4%BD%9C%E5%88%9B%E5%BB%BASDK/" title="Cocoapods制作创建SDK" target="_blank" rel="external">http://wangliwen.top/iOS-性能与架构/Cocoapods制作创建SDK/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/" title="ios面试题（1）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/xcconfig%E7%9A%84%E4%BD%BF%E7%94%A8/" title="xcconfig的使用"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>
