@@ -219,6 +219,31 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
   </entry>
   
   <entry>
+    <title>flutter(001)介绍及环境</title>
+    <link href="http://wangliwen.top/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/"/>
+    <id>http://wangliwen.top/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/</id>
+    <published>2019-01-05T10:44:36.000Z</published>
+    <updated>2021-12-27T07:06:59.767Z</updated>
+    
+    <content type="html"><![CDATA[<h1>Flutter特点</h1><ul><li>Flutter是一个UI SDK(Software Development Kit)</li><li>跨平台解决方案，可以进行移动端(iOS、Android)，Web端(Beta)，桌面(technical preview);</li><li>Flutter 引擎使用 C++ 编写，包括高效的 Skia 2D 渲染引擎，Dart 运行时和文本渲染库，直接通过CPU、GPU进行绘制，不需要依赖任何原生的控件。</li><li>Hot Reload (热重载)</li></ul><h1>Flutter绘制原理图</h1><ul><li>GPU将信号同步到 UI 线程</li><li>UI 线程用Dart来构建图层树</li><li>图层树在GPU 线程进行合成 p合成后的视图数据提供给Skia 引擎</li><li>Skia 引擎通过OpenGL 或者 Vulkan将显示内容提供给GPU</li></ul><h1>安装Flutter SDK</h1><ul><li>使用镜像<blockquote><p>export PUB_HOSTED_URL=https://pub.flutter-io.cn<br>export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn</p></blockquote></li><li>Flutter SDK下载地址:<br><a href="https://flutter.dev/docs/development/tools/sdk/releases">https://flutter.dev/docs/development/tools/sdk/releases</a><br>选择自己的操作系统和最新稳定的版本(Stable版本)</li><li>环境变量配置:<br>MacOS环境变量配置<blockquote><p>export FLUTTER_HOME=/Applications/flutter<br>export PATH=$PATH:$FLUTTER_HOME/bin<br>export PATH=$PATH:$FLUTTER_HOME/bin/cache/dart-sdk/bin</p></blockquote></li><li>安装<code>xcode</code>，设置iOS模拟器</li><li>安装<code>Android Studio</code>，设置Android模拟器</li><li>flutter doctor 都是绿的成功</li></ul><h1>Flutter常用命令</h1><h1>参考文章</h1><p><a href="https://flutterchina.club/setup-macos/">Flutter中文网</a><br><a href="https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&amp;__biz=Mzg5MDAzNzkwNA==&amp;scene=1&amp;album_id=1566028536430247937&amp;count=3#wechat_redirect">Flutter系列教程</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1&gt;Flutter特点&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;Flutter是一个UI SDK(Software Development Kit)&lt;/li&gt;
+&lt;li&gt;跨平台解决方案，可以进行移动端(iOS、Android)，Web端(Beta)，桌面(technical preview</summary>
+      
+    
+    
+    
+    <category term="flutter" scheme="http://wangliwen.top/categories/flutter/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>flutter(002)dart我来了</title>
     <link href="http://wangliwen.top/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/"/>
     <id>http://wangliwen.top/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/</id>
@@ -285,31 +310,6 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     <summary type="html">&lt;h1&gt;文本Widget&lt;/h1&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;Text&lt;/code&gt; &lt;figure class=&quot;highlight dart&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;b</summary>
-      
-    
-    
-    
-    <category term="flutter" scheme="http://wangliwen.top/categories/flutter/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>flutter(001)介绍及环境</title>
-    <link href="http://wangliwen.top/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/"/>
-    <id>http://wangliwen.top/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/</id>
-    <published>2019-01-05T10:44:36.000Z</published>
-    <updated>2021-12-27T07:06:59.767Z</updated>
-    
-    <content type="html"><![CDATA[<h1>Flutter特点</h1><ul><li>Flutter是一个UI SDK(Software Development Kit)</li><li>跨平台解决方案，可以进行移动端(iOS、Android)，Web端(Beta)，桌面(technical preview);</li><li>Flutter 引擎使用 C++ 编写，包括高效的 Skia 2D 渲染引擎，Dart 运行时和文本渲染库，直接通过CPU、GPU进行绘制，不需要依赖任何原生的控件。</li><li>Hot Reload (热重载)</li></ul><h1>Flutter绘制原理图</h1><ul><li>GPU将信号同步到 UI 线程</li><li>UI 线程用Dart来构建图层树</li><li>图层树在GPU 线程进行合成 p合成后的视图数据提供给Skia 引擎</li><li>Skia 引擎通过OpenGL 或者 Vulkan将显示内容提供给GPU</li></ul><h1>安装Flutter SDK</h1><ul><li>使用镜像<blockquote><p>export PUB_HOSTED_URL=https://pub.flutter-io.cn<br>export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn</p></blockquote></li><li>Flutter SDK下载地址:<br><a href="https://flutter.dev/docs/development/tools/sdk/releases">https://flutter.dev/docs/development/tools/sdk/releases</a><br>选择自己的操作系统和最新稳定的版本(Stable版本)</li><li>环境变量配置:<br>MacOS环境变量配置<blockquote><p>export FLUTTER_HOME=/Applications/flutter<br>export PATH=$PATH:$FLUTTER_HOME/bin<br>export PATH=$PATH:$FLUTTER_HOME/bin/cache/dart-sdk/bin</p></blockquote></li><li>安装<code>xcode</code>，设置iOS模拟器</li><li>安装<code>Android Studio</code>，设置Android模拟器</li><li>flutter doctor 都是绿的成功</li></ul><h1>Flutter常用命令</h1><h1>参考文章</h1><p><a href="https://flutterchina.club/setup-macos/">Flutter中文网</a><br><a href="https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&amp;__biz=Mzg5MDAzNzkwNA==&amp;scene=1&amp;album_id=1566028536430247937&amp;count=3#wechat_redirect">Flutter系列教程</a></p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h1&gt;Flutter特点&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;Flutter是一个UI SDK(Software Development Kit)&lt;/li&gt;
-&lt;li&gt;跨平台解决方案，可以进行移动端(iOS、Android)，Web端(Beta)，桌面(technical preview</summary>
       
     
     
