@@ -25,16 +25,12 @@
 <meta property="og:site_name" content="阿甘- 文">
 <meta property="og:description" content="Router设计文档 需求背景 最初，建立路由功能的需求是由于这样几个问题而产生的：  接入远程推送功能后，需要满足通过一个URL来打开端内页面的功能。 端外H5或其他APP的运营活动，存在唤起一刻，并打开对应落地页的需求。 一刻相册在完成了组件化拆分后，逐渐产生了UI层的依赖问题。两个组件仅仅是在UI层需要互相跳转，直接引用就产生了循环依赖的问题。  所以为了满足业务上的需求，并且降低组件间耦合">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Router%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1/url.png">
-<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Router%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1/router.png">
-<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Router%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1/moudle.png">
-<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Router%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1/flow.png">
 <meta property="og:image" content="http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-cc3c2140433eac3ccba865751dbe114724e12729">
 <meta property="article:published_time" content="2022-02-23T02:42:43.000Z">
-<meta property="article:modified_time" content="2022-02-23T03:02:56.852Z">
+<meta property="article:modified_time" content="2022-02-23T04:33:07.040Z">
 <meta property="article:author" content="阿甘文">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Router%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1/url.png">
+<meta name="twitter:image" content="http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-cc3c2140433eac3ccba865751dbe114724e12729">
   <!-- Canonical links -->
   <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Router%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1/index.html">
   
@@ -221,10 +217,10 @@
         <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/Router%E8%B7%AF%E7%94%B1%E8%AE%BE%E8%AE%A1/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.6k(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.7k(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
 	
 
       </div>
@@ -256,72 +252,20 @@
 iOS系统在处理系统调起时，同样是使用URI格的方式来访问。一种是URL Scheme，一种是Universal Links。<br>
 都是通过一个URI来传递信息。</p>
 <p>当系统对APP发起一个调起的请求时，会在Appdelegate中调用</p>
-<pre><code>func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -&gt; Bool
-</code></pre>
-<p>URL Scheme的URL格式为<code>youa://youa.com/path?para=xxx</code> ，Universal Links则是<code>https://photo.baidu.com/path?para-xxx</code></p>
-<p>所以router设计应当顺应这个流程，核心方向为URL的解析处理。</p>
-<p>这是一个URL的格式：<br>
-<img src="url.png" alt="图片"></p>
-<p>对于一刻的场景，host一定是相对固定的，path代表了对应的功能或页面，query中用来传参。</p>
-<h3 id="路由设计">路由设计</h3>
-<p>path对应了功能或页面，所以需要维护一个路由表，key就是path。</p>
-<p>OC的传统实现是通过runtime直接自动生成路由表，这在swift中无法实现，所以只能采用手动注册路由表的方式，但是swift的优势是，可以将路由表的path类型化，不比使用字符串硬编码，减少了维护成本。</p>
-<p>所以核心的路由表设计是<br>
-{<br>
-path1 : objc1， path2 : objc2, …<br>
-}<br>
-path是唯一的，但是value不唯一，多个path可以注册为同一个objc，这样就可以支持子路由功能，当path1，path2都注册了objc1为value，则objc1就可以处理两个不同的path。</p>
-<p>同时map结构的路由表性能较好，日后不太可能出现性能问题。</p>
-<p>在router中，应当完成如下流程：<br>
-<img src="router.png" alt="图片"></p>
-<h2 id="模块设计">模块设计</h2>
-<h3 id="模块设计图">模块设计图</h3>
-<ul>
-<li><code>UIRouter</code> 接口类，处理解析和跳转功能</li>
-<li><code>UIRouterRegister</code> 路由表维护类，负责注册路由表功能</li>
-<li><code>RoutableURLInfo</code> URL的解析产物，为Router中实际的数据格式</li>
-<li><code>URLRouterPath</code> 将path类型化，解决字符串硬编码问题</li>
-</ul>
-<p><img src="moudle.png" alt="图片"></p>
-<h3 id="流程图">流程图</h3>
-<p><img src="flow.png" alt="图片"></p>
-<h2 id="本设计优劣势">本设计优劣势</h2>
-<h3 id="优势">优势</h3>
-<ul>
-<li>纯Swift实现，较好的支持了字面量的类型化和协议化实现</li>
-<li>省去了每个routable控制器的遍历构造器方法，无需针对router做单独的初始化方法</li>
-<li>分散式注册路由表，不会出现一个path的修改造成全量编译的问题</li>
-<li>模块内跳转可以去字符串化</li>
-<li>多端统一，支持H5跳转，端外跳端内等一切URI形式的页面跳转</li>
-<li>支持子路由转发</li>
-</ul>
-<h3 id="劣势">劣势</h3>
-<ul>
-<li>路由表注册位置分散，需要单独的文档维护路由表定义</li>
-<li>无法动态注册路由表</li>
-<li>无依赖跨模块跳转依然需要字符串硬编码</li>
-<li>暂时无返回值</li>
-</ul>
-<h2 id="使用方式及注意事项">使用方式及注意事项</h2>
-<p>对于需要支持跳转的控制器，需要在合适的时间注册路由表，目前有两种常用方式：</p>
-<ol>
-<li>在对应模块的<code>Assembly</code> 中<code>assemble(container: Container)</code> 方法内通过子router类注册；</li>
-<li>在主工程<code>YouaUIRoutableProtocol</code> 文件中，在<code>AppDelegate</code> 的 extension中<code>registerUIRouter</code> 方法内注册</li>
-</ol>
-<p>推荐使用第一种，在第一种不适用的情况下再使用第二种<br>
-例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public struct YouaRecycleAssembly: Assembly &#123;</span><br><span class="line">    public init() &#123;&#125;</span><br><span class="line">    public func assemble(container: Container) &#123;</span><br><span class="line">        container.autoregister(YouaRecycleService.self, initializer: YouaRecycleBinManager.init).inObjectScope(.container)</span><br><span class="line">        YouaRecycleBinRouter.registerRouter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extension URLRouterPath &#123;</span><br><span class="line">    public static let recycleBinPath: URLRouterPath = URLRouterPath(&quot;/recycle_bin&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class YouaRecycleBinRouter: UIRoutableProtocol &#123;</span><br><span class="line"></span><br><span class="line">    fileprivate static func registerRouter() &#123;</span><br><span class="line">        UIRouterRegister.share.registerRouter(target: YouaRecycleBinRouter.self,</span><br><span class="line">                                              path: .recycleBinPath)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static func target(forUrl para: RoutableURLInfo) -&gt; UIViewController? &#123;</span><br><span class="line">        return YouaRecycleBinVC()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">application</span>(<span class="keyword">_</span> <span class="params">app</span>: <span class="type">UIApplication</span>, <span class="params">open</span> <span class="params">url</span>: <span class="type">URL</span>, <span class="params">options</span>: [<span class="type">UIApplication</span>.<span class="params">OpenURLOptionsKey</span> : <span class="keyword">Any</span>] <span class="operator">=</span> [:])</span> -&gt; <span class="type">Bool</span></span><br><span class="line">```   </span><br><span class="line"></span><br><span class="line"><span class="type">URL</span> <span class="type">Scheme的URL格式为</span>` youa:<span class="comment">//youa.com/path?para=xxx ` ，Universal Links则是`https://photo.baidu.com/path?para-xxx`</span></span><br><span class="line"></span><br><span class="line">所以router设计应当顺应这个流程，核心方向为<span class="type">URL的解析处理</span><span class="operator">。</span></span><br><span class="line"></span><br><span class="line">这是一个<span class="type">URL的格式：</span></span><br><span class="line"><span class="operator">&lt;</span>div style<span class="operator">=</span><span class="string">&quot;width:100%;margin-bottom:15px;&quot;</span><span class="operator">&gt;</span>&#123;<span class="operator">%</span> asset_img url.png <span class="operator">%</span>&#125;<span class="operator">&lt;/</span>div<span class="operator">&gt;</span> </span><br><span class="line"></span><br><span class="line">对于一刻的场景，host一定是相对固定的，path代表了对应的功能或页面，query中用来传参<span class="operator">。</span></span><br><span class="line"></span><br><span class="line">### 路由设计</span><br><span class="line">path对应了功能或页面，所以需要维护一个路由表，key就是path<span class="operator">。</span></span><br><span class="line"></span><br><span class="line"><span class="type">OC的传统实现是通过runtime直接自动生成路由表，这在swift中无法实现，所以只能采用手动注册路由表的方式，但是swift的优势是，可以将路由表的path类型化，不比使用字符串硬编码，减少了维护成本</span><span class="operator">。</span></span><br><span class="line"></span><br><span class="line">所以核心的路由表设计是</span><br><span class="line">&#123;</span><br><span class="line">          path1 : objc1， path2 : objc2, <span class="operator">...</span></span><br><span class="line">&#125;</span><br><span class="line">path是唯一的，但是value不唯一，多个path可以注册为同一个objc，这样就可以支持子路由功能，当path1，path2都注册了objc1为value，则objc1就可以处理两个不同的path<span class="operator">。</span></span><br><span class="line"></span><br><span class="line">同时map结构的路由表性能较好，日后不太可能出现性能问题<span class="operator">。</span></span><br><span class="line"></span><br><span class="line">在router中，应当完成如下流程：</span><br><span class="line"><span class="operator">&lt;</span>div style<span class="operator">=</span><span class="string">&quot;width:50%;margin-bottom:15px;&quot;</span><span class="operator">&gt;</span>&#123;<span class="operator">%</span> asset_img router.png <span class="operator">%</span>&#125;<span class="operator">&lt;/</span>div<span class="operator">&gt;</span> </span><br><span class="line">## 模块设计</span><br><span class="line">### 模块设计图</span><br><span class="line"></span><br><span class="line"> <span class="operator">-</span> `UIRouter` 接口类，处理解析和跳转功能</span><br><span class="line"> <span class="operator">-</span> `UIRouterRegister` 路由表维护类，负责注册路由表功能</span><br><span class="line"> <span class="operator">-</span> `RoutableURLInfo` <span class="type">URL的解析产物，为Router中实际的数据格式</span></span><br><span class="line"> <span class="operator">-</span> `URLRouterPath` 将path类型化，解决字符串硬编码问题</span><br><span class="line"><span class="operator">&lt;</span>div style<span class="operator">=</span><span class="string">&quot;width:50%;margin-bottom:15px;&quot;</span><span class="operator">&gt;</span>&#123;<span class="operator">%</span> asset_img moudle.png <span class="operator">%</span>&#125;<span class="operator">&lt;/</span>div<span class="operator">&gt;</span> </span><br><span class="line"></span><br><span class="line">### 流程图</span><br><span class="line"><span class="operator">&lt;</span>div style<span class="operator">=</span><span class="string">&quot;width:50%;margin-bottom:15px;&quot;</span><span class="operator">&gt;</span>&#123;<span class="operator">%</span> asset_img flow.png <span class="operator">%</span>&#125;<span class="operator">&lt;/</span>div<span class="operator">&gt;</span> </span><br><span class="line"></span><br><span class="line">## 本设计优劣势</span><br><span class="line">### 优势</span><br><span class="line"></span><br><span class="line"> <span class="operator">-</span> 纯<span class="type">Swift实现，较好的支持了字面量的类型化和协议化实现</span></span><br><span class="line"> <span class="operator">-</span> 省去了每个routable控制器的遍历构造器方法，无需针对router做单独的初始化方法</span><br><span class="line"> <span class="operator">-</span> 分散式注册路由表，不会出现一个path的修改造成全量编译的问题</span><br><span class="line"> <span class="operator">-</span> 模块内跳转可以去字符串化</span><br><span class="line"> <span class="operator">-</span> 多端统一，支持<span class="type">H5跳转，端外跳端内等一切URI形式的页面跳转</span></span><br><span class="line"> <span class="operator">-</span> 支持子路由转发</span><br><span class="line"></span><br><span class="line">### 劣势</span><br><span class="line"></span><br><span class="line"> <span class="operator">-</span> 路由表注册位置分散，需要单独的文档维护路由表定义</span><br><span class="line"> <span class="operator">-</span> 无法动态注册路由表</span><br><span class="line"> <span class="operator">-</span> 无依赖跨模块跳转依然需要字符串硬编码</span><br><span class="line"> <span class="operator">-</span> 暂时无返回值</span><br><span class="line"></span><br><span class="line">## 使用方式及注意事项</span><br><span class="line">对于需要支持跳转的控制器，需要在合适的时间注册路由表，目前有两种常用方式：</span><br><span class="line"></span><br><span class="line"> <span class="number">1</span>.  在对应模块的`Assembly` 中`assemble(container: <span class="type">Container</span>)` 方法内通过子router类注册；</span><br><span class="line"> <span class="number">2</span>. 在主工程`YouaUIRoutableProtocol` 文件中，在`AppDelegate` 的 <span class="class"><span class="keyword">extension</span>中`<span class="title">registerUIRouter</span>` 方法内注册</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">推荐使用第一种，在第一种不适用的情况下再使用第二种</span></span><br><span class="line"><span class="class">例如：</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">``` <span class="title">swift</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">struct</span> <span class="title">YouaRecycleAssembly</span>: <span class="title">Assembly</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">init</span>()</span> &#123;&#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">func</span> <span class="title">assemble</span>(<span class="params">container</span>: <span class="type">Container</span>)</span> &#123;</span><br><span class="line">        container.autoregister(<span class="type">YouaRecycleService</span>.<span class="keyword">self</span>, initializer: <span class="type">YouaRecycleBinManager</span>.<span class="keyword">init</span>).inObjectScope(.container)</span><br><span class="line">        <span class="type">YouaRecycleBinRouter</span>.registerRouter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">URLRouterPath</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">let</span> recycleBinPath: <span class="type">URLRouterPath</span> <span class="operator">=</span> <span class="type">URLRouterPath</span>(<span class="string">&quot;/recycle_bin&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">YouaRecycleBinRouter</span>: <span class="title">UIRoutableProtocol</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fileprivate</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">registerRouter</span>()</span> &#123;</span><br><span class="line">        <span class="type">UIRouterRegister</span>.share.registerRouter(target: <span class="type">YouaRecycleBinRouter</span>.<span class="keyword">self</span>,</span><br><span class="line">                                              path: .recycleBinPath)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">target</span>(<span class="params">forUrl</span> <span class="params">para</span>: <span class="type">RoutableURLInfo</span>)</span> -&gt; <span class="type">UIViewController</span>? &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">YouaRecycleBinVC</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>需要注意</p>
 <ol>
 <li>虽然path被类型化，无法引用到path声明的地方，依然可以通过string来进行跳转</li>
 <li>能引用到path的地方，尽量不要使用String来跳转，可以使用下面的方式</li>
 </ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let urlString = URLRouterPath.publishPath.routableURLString(queryMap: [&quot;from_page&quot;: fromPage, &quot;from_local&quot;: &quot;1&quot;])</span><br><span class="line">UIRouter.open(url: urlString, externParameter: nil)</span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> urlString <span class="operator">=</span> <span class="type">URLRouterPath</span>.publishPath.routableURLString(queryMap: [<span class="string">&quot;from_page&quot;</span>: fromPage, <span class="string">&quot;from_local&quot;</span>: <span class="string">&quot;1&quot;</span>])</span><br><span class="line"><span class="type">UIRouter</span>.open(url: urlString, externParameter: <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure>
 <p>这样可以尽量防止硬编码出现<br>
-3. externParameter是为了传递非String类型参数的，声明为<code>[URLRouterPath.ExternParameterKey : Any]</code>类型，但并不代表必须每次都把key声明一个，因为一般一个path只会传一种固定类型的model，所以可以使用默认提供的一个key <code>defaultKey</code>如下：<br>
-<code>UIRouter.open(url: url, externParameter: [.defaultKey: model])</code><br>
-4. OC同样可以使用UIRouter进行跳转， 有一个包装类<code>UIRouterOC</code>，提供基础的open方法<br>
-5. 建议即使是模块内，也用router进行跳转，因为router在跳转过程中有登录判断等通用逻辑</p>
+3. externParameter是为了传递非String类型参数的，声明为<code>[URLRouterPath.ExternParameterKey : Any]</code>类型，但并不代表必须每次都把key声明一个，因为一般一个path只会传一种固定类型的model，所以可以使用默认提供的一个key <code>defaultKey</code>如下：</p>
+ <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">UIRouter</span>.open(url: url, externParameter: [.defaultKey: model])</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>OC同样可以使用UIRouter进行跳转， 有一个包装类<code>UIRouterOC</code>，提供基础的open方法</li>
+<li>建议即使是模块内，也用router进行跳转，因为router在跳转过程中有登录判断等通用逻辑</li>
+</ol>
 <p><img src="http://bos.bj.bce-internal.sdns.baidu.com/agroup-bos-bj/bj-cc3c2140433eac3ccba865751dbe114724e12729" alt="图片"></p>
 
       
