@@ -3,11 +3,11 @@
   <title>阿甘- 文</title>
   
   <subtitle>简单的事做到极致</subtitle>
-  <link href="http://wangliwen.top/atom.xml" rel="self"/>
+  <link href="http://kkv2.com/atom.xml" rel="self"/>
   
-  <link href="http://wangliwen.top/"/>
+  <link href="http://kkv2.com/"/>
   <updated>2025-11-17T08:17:12.098Z</updated>
-  <id>http://wangliwen.top/</id>
+  <id>http://kkv2.com/</id>
   
   <author>
     <name>阿甘文</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>音视频(1)——FFmpeg和Qt mac环境搭建</title>
-    <link href="http://wangliwen.top/%E9%9F%B3%E8%A7%86%E9%A2%91/%E9%9F%B3%E8%A7%86%E9%A2%91(1)%E2%80%94%E2%80%94FFmpeg%E5%92%8CQt%20mac%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
-    <id>http://wangliwen.top/%E9%9F%B3%E8%A7%86%E9%A2%91/%E9%9F%B3%E8%A7%86%E9%A2%91(1)%E2%80%94%E2%80%94FFmpeg%E5%92%8CQt%20mac%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</id>
+    <link href="http://kkv2.com/%E9%9F%B3%E8%A7%86%E9%A2%91/%E9%9F%B3%E8%A7%86%E9%A2%91(1)%E2%80%94%E2%80%94FFmpeg%E5%92%8CQt%20mac%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"/>
+    <id>http://kkv2.com/%E9%9F%B3%E8%A7%86%E9%A2%91/%E9%9F%B3%E8%A7%86%E9%A2%91(1)%E2%80%94%E2%80%94FFmpeg%E5%92%8CQt%20mac%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</id>
     <published>2021-07-06T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.098Z</updated>
     
@@ -35,15 +35,15 @@
     
     
     
-    <category term="音视频" scheme="http://wangliwen.top/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
+    <category term="音视频" scheme="http://kkv2.com/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
     
   </entry>
   
   <entry>
     <title>swift中函数派发机制</title>
-    <link href="http://wangliwen.top/iOS-Swift/001_swift%E4%B8%AD%E5%87%BD%E6%95%B0%E6%B4%BE%E5%8F%91%E6%9C%BA%E5%88%B6/"/>
-    <id>http://wangliwen.top/iOS-Swift/001_swift%E4%B8%AD%E5%87%BD%E6%95%B0%E6%B4%BE%E5%8F%91%E6%9C%BA%E5%88%B6/</id>
+    <link href="http://kkv2.com/iOS-Swift/001_swift%E4%B8%AD%E5%87%BD%E6%95%B0%E6%B4%BE%E5%8F%91%E6%9C%BA%E5%88%B6/"/>
+    <id>http://kkv2.com/iOS-Swift/001_swift%E4%B8%AD%E5%87%BD%E6%95%B0%E6%B4%BE%E5%8F%91%E6%9C%BA%E5%88%B6/</id>
     <published>2019-10-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.074Z</updated>
     
@@ -65,15 +65,15 @@
     
     
     
-    <category term="iOS-Swift" scheme="http://wangliwen.top/categories/iOS-Swift/"/>
+    <category term="iOS-Swift" scheme="http://kkv2.com/categories/iOS-Swift/"/>
     
     
   </entry>
   
   <entry>
     <title>RxSwift(1)核心</title>
-    <link href="http://wangliwen.top/iOS-Swift/002_RxSwift(1)%E6%A0%B8%E5%BF%83/"/>
-    <id>http://wangliwen.top/iOS-Swift/002_RxSwift(1)%E6%A0%B8%E5%BF%83/</id>
+    <link href="http://kkv2.com/iOS-Swift/002_RxSwift(1)%E6%A0%B8%E5%BF%83/"/>
+    <id>http://kkv2.com/iOS-Swift/002_RxSwift(1)%E6%A0%B8%E5%BF%83/</id>
     <published>2019-10-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.074Z</updated>
     
@@ -88,15 +88,15 @@
     
     
     
-    <category term="iOS-Swift" scheme="http://wangliwen.top/categories/iOS-Swift/"/>
+    <category term="iOS-Swift" scheme="http://kkv2.com/categories/iOS-Swift/"/>
     
     
   </entry>
   
   <entry>
     <title>003_swift之字符串、数组、字典</title>
-    <link href="http://wangliwen.top/iOS-Swift/003_swift%E4%B9%8B%E6%95%B0%E7%BB%84%E5%AD%97%E5%85%B8%E5%AD%97%E7%AC%A6%E4%B8%B2/"/>
-    <id>http://wangliwen.top/iOS-Swift/003_swift%E4%B9%8B%E6%95%B0%E7%BB%84%E5%AD%97%E5%85%B8%E5%AD%97%E7%AC%A6%E4%B8%B2/</id>
+    <link href="http://kkv2.com/iOS-Swift/003_swift%E4%B9%8B%E6%95%B0%E7%BB%84%E5%AD%97%E5%85%B8%E5%AD%97%E7%AC%A6%E4%B8%B2/"/>
+    <id>http://kkv2.com/iOS-Swift/003_swift%E4%B9%8B%E6%95%B0%E7%BB%84%E5%AD%97%E5%85%B8%E5%AD%97%E7%AC%A6%E4%B8%B2/</id>
     <published>2019-10-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.075Z</updated>
     
@@ -111,15 +111,15 @@
     
     
     
-    <category term="iOS-Swift" scheme="http://wangliwen.top/categories/iOS-Swift/"/>
+    <category term="iOS-Swift" scheme="http://kkv2.com/categories/iOS-Swift/"/>
     
     
   </entry>
   
   <entry>
     <title>Swift算法语法使用</title>
-    <link href="http://wangliwen.top/%E7%AE%97%E6%B3%95/Swift%E7%AE%97%E6%B3%95%E8%AF%AD%E6%B3%95%E4%BD%BF%E7%94%A8/"/>
-    <id>http://wangliwen.top/%E7%AE%97%E6%B3%95/Swift%E7%AE%97%E6%B3%95%E8%AF%AD%E6%B3%95%E4%BD%BF%E7%94%A8/</id>
+    <link href="http://kkv2.com/%E7%AE%97%E6%B3%95/Swift%E7%AE%97%E6%B3%95%E8%AF%AD%E6%B3%95%E4%BD%BF%E7%94%A8/"/>
+    <id>http://kkv2.com/%E7%AE%97%E6%B3%95/Swift%E7%AE%97%E6%B3%95%E8%AF%AD%E6%B3%95%E4%BD%BF%E7%94%A8/</id>
     <published>2019-10-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.097Z</updated>
     
@@ -134,15 +134,15 @@
     
     
     
-    <category term="算法" scheme="http://wangliwen.top/categories/%E7%AE%97%E6%B3%95/"/>
+    <category term="算法" scheme="http://kkv2.com/categories/%E7%AE%97%E6%B3%95/"/>
     
     
   </entry>
   
   <entry>
     <title>iOS_后台播放控制、锁屏封面</title>
-    <link href="http://wangliwen.top/%E9%9F%B3%E8%A7%86%E9%A2%91/002_iOS%E9%9F%B3%E4%B9%90%E5%90%8E%E5%8F%B0%E6%92%AD%E6%94%BE%E6%8E%A7%E5%88%B6%E3%80%81%E9%94%81%E5%B1%8F%E5%B0%81%E9%9D%A2/"/>
-    <id>http://wangliwen.top/%E9%9F%B3%E8%A7%86%E9%A2%91/002_iOS%E9%9F%B3%E4%B9%90%E5%90%8E%E5%8F%B0%E6%92%AD%E6%94%BE%E6%8E%A7%E5%88%B6%E3%80%81%E9%94%81%E5%B1%8F%E5%B0%81%E9%9D%A2/</id>
+    <link href="http://kkv2.com/%E9%9F%B3%E8%A7%86%E9%A2%91/002_iOS%E9%9F%B3%E4%B9%90%E5%90%8E%E5%8F%B0%E6%92%AD%E6%94%BE%E6%8E%A7%E5%88%B6%E3%80%81%E9%94%81%E5%B1%8F%E5%B0%81%E9%9D%A2/"/>
+    <id>http://kkv2.com/%E9%9F%B3%E8%A7%86%E9%A2%91/002_iOS%E9%9F%B3%E4%B9%90%E5%90%8E%E5%8F%B0%E6%92%AD%E6%94%BE%E6%8E%A7%E5%88%B6%E3%80%81%E9%94%81%E5%B1%8F%E5%B0%81%E9%9D%A2/</id>
     <published>2019-01-06T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.098Z</updated>
     
@@ -160,15 +160,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="音视频" scheme="http://wangliwen.top/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
+    <category term="音视频" scheme="http://kkv2.com/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
     
   </entry>
   
   <entry>
     <title>flutter(001)介绍及环境</title>
-    <link href="http://wangliwen.top/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/"/>
-    <id>http://wangliwen.top/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/</id>
+    <link href="http://kkv2.com/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/"/>
+    <id>http://kkv2.com/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/</id>
     <published>2019-01-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.050Z</updated>
     
@@ -185,15 +185,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="flutter" scheme="http://wangliwen.top/categories/flutter/"/>
+    <category term="flutter" scheme="http://kkv2.com/categories/flutter/"/>
     
     
   </entry>
   
   <entry>
     <title>flutter(002)dart我来了</title>
-    <link href="http://wangliwen.top/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/"/>
-    <id>http://wangliwen.top/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/</id>
+    <link href="http://kkv2.com/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/"/>
+    <id>http://kkv2.com/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/</id>
     <published>2019-01-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.050Z</updated>
     
@@ -212,15 +212,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="flutter" scheme="http://wangliwen.top/categories/flutter/"/>
+    <category term="flutter" scheme="http://kkv2.com/categories/flutter/"/>
     
     
   </entry>
   
   <entry>
     <title>flutter(003)有状态的StatefulWidget</title>
-    <link href="http://wangliwen.top/flutter/flutter(003)%E6%9C%89%E7%8A%B6%E6%80%81%E7%9A%84StatefulWidget/"/>
-    <id>http://wangliwen.top/flutter/flutter(003)%E6%9C%89%E7%8A%B6%E6%80%81%E7%9A%84StatefulWidget/</id>
+    <link href="http://kkv2.com/flutter/flutter(003)%E6%9C%89%E7%8A%B6%E6%80%81%E7%9A%84StatefulWidget/"/>
+    <id>http://kkv2.com/flutter/flutter(003)%E6%9C%89%E7%8A%B6%E6%80%81%E7%9A%84StatefulWidget/</id>
     <published>2019-01-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.050Z</updated>
     
@@ -237,15 +237,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="flutter" scheme="http://wangliwen.top/categories/flutter/"/>
+    <category term="flutter" scheme="http://kkv2.com/categories/flutter/"/>
     
     
   </entry>
   
   <entry>
     <title>flutter(004)常用Widget</title>
-    <link href="http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/"/>
-    <id>http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/</id>
+    <link href="http://kkv2.com/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/"/>
+    <id>http://kkv2.com/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/</id>
     <published>2019-01-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.051Z</updated>
     
@@ -261,15 +261,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="flutter" scheme="http://wangliwen.top/categories/flutter/"/>
+    <category term="flutter" scheme="http://kkv2.com/categories/flutter/"/>
     
     
   </entry>
   
   <entry>
     <title>iOS_AVAudioSession详解</title>
-    <link href="http://wangliwen.top/%E9%9F%B3%E8%A7%86%E9%A2%91/001_iOS_AVAudioSession%E8%AF%A6%E8%A7%A3/"/>
-    <id>http://wangliwen.top/%E9%9F%B3%E8%A7%86%E9%A2%91/001_iOS_AVAudioSession%E8%AF%A6%E8%A7%A3/</id>
+    <link href="http://kkv2.com/%E9%9F%B3%E8%A7%86%E9%A2%91/001_iOS_AVAudioSession%E8%AF%A6%E8%A7%A3/"/>
+    <id>http://kkv2.com/%E9%9F%B3%E8%A7%86%E9%A2%91/001_iOS_AVAudioSession%E8%AF%A6%E8%A7%A3/</id>
     <published>2019-01-05T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.098Z</updated>
     
@@ -287,15 +287,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="音视频" scheme="http://wangliwen.top/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
+    <category term="音视频" scheme="http://kkv2.com/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（8）Swift问题</title>
-    <link href="http://wangliwen.top/iOS-OC/0022_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(8)Swift%E9%97%AE%E9%A2%98/"/>
-    <id>http://wangliwen.top/iOS-OC/0022_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(8)Swift%E9%97%AE%E9%A2%98/</id>
+    <link href="http://kkv2.com/iOS-OC/0022_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(8)Swift%E9%97%AE%E9%A2%98/"/>
+    <id>http://kkv2.com/iOS-OC/0022_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(8)Swift%E9%97%AE%E9%A2%98/</id>
     <published>2018-10-29T10:50:36.000Z</published>
     <updated>2025-11-17T08:17:12.071Z</updated>
     
@@ -310,15 +310,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（7）网络相关</title>
-    <link href="http://wangliwen.top/iOS-OC/0021_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(7)%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3/"/>
-    <id>http://wangliwen.top/iOS-OC/0021_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(7)%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3/</id>
+    <link href="http://kkv2.com/iOS-OC/0021_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(7)%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3/"/>
+    <id>http://kkv2.com/iOS-OC/0021_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(7)%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3/</id>
     <published>2018-10-29T10:49:36.000Z</published>
     <updated>2025-11-17T08:17:12.070Z</updated>
     
@@ -333,15 +333,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（5）内存问题</title>
-    <link href="http://wangliwen.top/iOS-OC/0019_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(5)%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98/"/>
-    <id>http://wangliwen.top/iOS-OC/0019_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(5)%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98/</id>
+    <link href="http://kkv2.com/iOS-OC/0019_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(5)%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98/"/>
+    <id>http://kkv2.com/iOS-OC/0019_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(5)%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98/</id>
     <published>2018-10-29T10:48:36.000Z</published>
     <updated>2025-11-17T08:17:12.068Z</updated>
     
@@ -357,15 +357,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（6）多线程</title>
-    <link href="http://wangliwen.top/iOS-OC/0020_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(6)%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
-    <id>http://wangliwen.top/iOS-OC/0020_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(6)%E5%A4%9A%E7%BA%BF%E7%A8%8B/</id>
+    <link href="http://kkv2.com/iOS-OC/0020_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(6)%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+    <id>http://kkv2.com/iOS-OC/0020_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(6)%E5%A4%9A%E7%BA%BF%E7%A8%8B/</id>
     <published>2018-10-29T10:48:36.000Z</published>
     <updated>2025-11-17T08:17:12.069Z</updated>
     
@@ -382,15 +382,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（4）UI相关</title>
-    <link href="http://wangliwen.top/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/"/>
-    <id>http://wangliwen.top/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/</id>
+    <link href="http://kkv2.com/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/"/>
+    <id>http://kkv2.com/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/</id>
     <published>2018-10-29T10:47:36.000Z</published>
     <updated>2025-11-17T08:17:12.068Z</updated>
     
@@ -406,15 +406,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（3）</title>
-    <link href="http://wangliwen.top/iOS-OC/0017_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(3)/"/>
-    <id>http://wangliwen.top/iOS-OC/0017_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(3)/</id>
+    <link href="http://kkv2.com/iOS-OC/0017_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(3)/"/>
+    <id>http://kkv2.com/iOS-OC/0017_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(3)/</id>
     <published>2018-10-29T10:46:36.000Z</published>
     <updated>2025-11-17T08:17:12.067Z</updated>
     
@@ -431,15 +431,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（2）</title>
-    <link href="http://wangliwen.top/iOS-OC/0016_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(2)/"/>
-    <id>http://wangliwen.top/iOS-OC/0016_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(2)/</id>
+    <link href="http://kkv2.com/iOS-OC/0016_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(2)/"/>
+    <id>http://kkv2.com/iOS-OC/0016_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(2)/</id>
     <published>2018-10-26T10:45:36.000Z</published>
     <updated>2025-11-17T08:17:12.066Z</updated>
     
@@ -457,15 +457,15 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>ios面试题（1）</title>
-    <link href="http://wangliwen.top/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/"/>
-    <id>http://wangliwen.top/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/</id>
+    <link href="http://kkv2.com/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/"/>
+    <id>http://kkv2.com/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/</id>
     <published>2018-10-26T10:44:36.000Z</published>
     <updated>2025-11-17T08:17:12.066Z</updated>
     
@@ -481,22 +481,22 @@ myApp-Info.plist中添加UIBackgroundModes键值，添加子键值为audio。&lt
     
     
     
-    <category term="iOS-OC" scheme="http://wangliwen.top/categories/iOS-OC/"/>
+    <category term="iOS-OC" scheme="http://kkv2.com/categories/iOS-OC/"/>
     
     
   </entry>
   
   <entry>
     <title>xcconfig的使用</title>
-    <link href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/xcconfig%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
-    <id>http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/xcconfig%E7%9A%84%E4%BD%BF%E7%94%A8/</id>
+    <link href="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/xcconfig%E7%9A%84%E4%BD%BF%E7%94%A8/"/>
+    <id>http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/xcconfig%E7%9A%84%E4%BD%BF%E7%94%A8/</id>
     <published>2018-10-26T07:22:43.000Z</published>
     <updated>2025-11-17T08:17:12.090Z</updated>
     
     
     
     
-    <category term="iOS-性能与架构" scheme="http://wangliwen.top/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/"/>
+    <category term="iOS-性能与架构" scheme="http://kkv2.com/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/"/>
     
     
   </entry>

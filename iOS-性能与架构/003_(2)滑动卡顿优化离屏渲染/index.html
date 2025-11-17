@@ -21,20 +21,20 @@
   <meta name="description" content="离屏渲染产生的原因？  非离屏渲染流程：  离屏渲染流程：  如果触发了离屏渲染，那么在显示这个页面的每一帧都会去做离屏渲染的处理，比如切圆角，显示阴影等，如果每一帧都要重新去处理，那么对于CPU以及GPU都带来很大的负担。所以引入了离屏缓冲区，将处理好的图层直接丢到离屏缓冲区，下次渲染的时候直接拿出来显示到屏幕上 离屏缓存区也是有限制的，  时间限制：缓存的内容超过100ms没有被使用，内容将会">
 <meta property="og:type" content="article">
 <meta property="og:title" content="iOS性能---滑动卡顿优化(2)离屏渲染">
-<meta property="og:url" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/index.html">
+<meta property="og:url" content="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/index.html">
 <meta property="og:site_name" content="阿甘- 文">
 <meta property="og:description" content="离屏渲染产生的原因？  非离屏渲染流程：  离屏渲染流程：  如果触发了离屏渲染，那么在显示这个页面的每一帧都会去做离屏渲染的处理，比如切圆角，显示阴影等，如果每一帧都要重新去处理，那么对于CPU以及GPU都带来很大的负担。所以引入了离屏缓冲区，将处理好的图层直接丢到离屏缓冲区，下次渲染的时候直接拿出来显示到屏幕上 离屏缓存区也是有限制的，  时间限制：缓存的内容超过100ms没有被使用，内容将会">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen1.jpg">
-<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen2.jpg">
-<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen3.jpg">
+<meta property="og:image" content="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen1.jpg">
+<meta property="og:image" content="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen2.jpg">
+<meta property="og:image" content="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen3.jpg">
 <meta property="article:published_time" content="2018-10-21T11:22:43.000Z">
 <meta property="article:modified_time" content="2025-11-17T08:17:12.080Z">
 <meta property="article:author" content="阿甘文">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen1.jpg">
+<meta name="twitter:image" content="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen1.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/index.html">
+  <link rel="canonical" href="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/index.html">
   
     <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
   
@@ -297,7 +297,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/" title="iOS性能---滑动卡顿优化(2)离屏渲染" target="_blank" rel="external">http://wangliwen.top/iOS-性能与架构/003_(2)滑动卡顿优化离屏渲染/</a>
+      <a href="http://kkv2.com/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/" title="iOS性能---滑动卡顿优化(2)离屏渲染" target="_blank" rel="external">http://kkv2.com/iOS-性能与架构/003_(2)滑动卡顿优化离屏渲染/</a>
     </li>
     
     <li class="post-copyright-license">
