@@ -21,18 +21,18 @@
   <meta name="description" content="weak原理 runtime维护sidetables哈希表，sidetables里含有64个sidetable，每个sidetable管理若干个对象，通过对象地址找到对应的weak表，weak表中存储着若干个weak指针，若一个对象被weak，如果没有对应的表则创建，若有了则追加到后面 sidetable  sidetable主要管理weak指针和辅助引用计数，原理图   dealloc底层实现">
 <meta property="og:type" content="article">
 <meta property="og:title" content="dealloc和weak原理">
-<meta property="og:url" content="http://kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:url" content="http://www.kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="阿甘- 文">
 <meta property="og:description" content="weak原理 runtime维护sidetables哈希表，sidetables里含有64个sidetable，每个sidetable管理若干个对象，通过对象地址找到对应的weak表，weak表中存储着若干个weak指针，若一个对象被weak，如果没有对应的表则创建，若有了则追加到后面 sidetable  sidetable主要管理weak指针和辅助引用计数，原理图   dealloc底层实现">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/sidetable.jpg">
+<meta property="og:image" content="http://www.kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/sidetable.jpg">
 <meta property="article:published_time" content="2018-10-25T10:44:36.000Z">
 <meta property="article:modified_time" content="2025-11-17T08:17:12.065Z">
 <meta property="article:author" content="阿甘文">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/sidetable.jpg">
+<meta name="twitter:image" content="http://www.kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/sidetable.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/index.html">
+  <link rel="canonical" href="http://www.kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/index.html">
   
     <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
   
@@ -274,7 +274,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/" title="dealloc和weak原理" target="_blank" rel="external">http://kkv2.com/iOS-OC/0014_dealloc和weak原理/</a>
+      <a href="http://www.kkv2.com/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/" title="dealloc和weak原理" target="_blank" rel="external">http://www.kkv2.com/iOS-OC/0014_dealloc和weak原理/</a>
     </li>
     
     <li class="post-copyright-license">
