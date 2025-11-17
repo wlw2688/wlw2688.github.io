@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>flutter(002)dart我来了 | wangliwen</title>
+  <meta name="description" content="定义变量  var 、dynamic 、Object 区分  var：声明变量，可以赋值任意对象 。Dart中var变量一旦赋值，类型便会确定，则不能再改变其类型. dynamic泛型：声明变量，可以赋值任意对象。声明的变量可以在后期改变赋值类型。 Object 是Dart所有对象的根基类，也就是说所有类型都是Object的子类(包括Function和Null)，所以任何类型的数据都可以赋值给Ob">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flutter(002)dart我来了">
+<meta property="og:url" content="http://wangliwen.top/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="定义变量  var 、dynamic 、Object 区分  var：声明变量，可以赋值任意对象 。Dart中var变量一旦赋值，类型便会确定，则不能再改变其类型. dynamic泛型：声明变量，可以赋值任意对象。声明的变量可以在后期改变赋值类型。 Object 是Dart所有对象的根基类，也就是说所有类型都是Object的子类(包括Function和Null)，所以任何类型的数据都可以赋值给Ob">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-01-05T10:44:36.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.050Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-flutter/flutter(002)dart我来了" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      flutter(002)dart我来了
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/" class="article-date">
+	  <time datetime="2019-01-05T10:44:36.000Z" itemprop="datePublished">2019-01-05</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/flutter/">flutter</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 17(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>定义变量</h1>
+<ul>
+<li>var 、dynamic 、Object 区分
+<ul>
+<li><code>var</code>：声明变量，可以赋值任意对象 。Dart中var变量一旦赋值，类型便会确定，则不能再改变其类型.</li>
+<li><code>dynamic</code>泛型：声明变量，可以赋值任意对象。声明的变量可以在后期改变赋值类型。</li>
+<li><code>Object</code> 是Dart所有对象的根基类，也就是说所有类型都是Object的子类(包括Function和Null)，所以任何类型的数据都可以赋值给Object声明的对象。</li>
+</ul>
+</li>
+<li>final、const、static
+<ul>
+<li>final、const相同点：<br>
+两者都是声明不可更改变量，变量只能设置一次；<br>
+变量类型可以省略；</li>
+<li>final、const不同点：
+<ul>
+<li>final:<br>
+声明文件中的变量：必须在声明时赋值；<br>
+声明类的成员变量：可以在声明时赋值，也可以通过构造函数赋值语法糖ClassName({this.variable})，或者初始化列表的方式赋值；</li>
+<li>const:<br>
+编译时常量，必须定义的时候初始化；<br>
+const 变量是类级别的，需要标记为 static const;<br>
+const修饰类的构造函数时，它要求该类的所有成员都必须是final的。<br>
+作为修饰值的时候，对象的整个深度状态可以在编译时完全确定，并且对象将被冻结并且完全不可变,eg:const Point(0, 0)；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>明确声明 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> name = <span class="string">&#x27;coderwhy&#x27;</span>;</span><br><span class="line"><span class="built_in">int</span> age = <span class="number">18</span>;</span><br><span class="line"><span class="built_in">double</span> height = <span class="number">1.88</span>;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;name&#125;</span>, <span class="subst">$&#123;age&#125;</span>, <span class="subst">$&#123;height&#125;</span>&#x27;</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li>类型推导<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span>/<span class="built_in">dynamic</span>/<span class="keyword">const</span>/<span class="keyword">final</span> 变量名称 = 赋值;</span><br></pre></td></tr></table></figure>
+</li>
+<li><code>var</code> 变量<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name = <span class="string">&#x27;coderwhy&#x27;</span>;</span><br><span class="line">name = <span class="string">&#x27;kobe&#x27;</span>;</span><br><span class="line"><span class="built_in">print</span>(name.runtimeType); <span class="comment">// String</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><code>dynamic</code>
+<ul>
+<li>如果确实希望这样做,可以使用<code>dynamic</code>来声明变量:</li>
+<li>但是在开发中, 通常情况下不使用dynamic, 因为类型的变量会带来潜在的危险</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">dynamic</span> name = <span class="string">&#x27;coderwhy&#x27;</span>;</span><br><span class="line"><span class="built_in">print</span>(name.runtimeType); <span class="comment">// String</span></span><br><span class="line">name = <span class="number">18</span>;</span><br><span class="line"><span class="built_in">print</span>(name.runtimeType); <span class="comment">// int</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><code>final</code>和<code>const</code>
+<ul>
+<li><code>final</code>和<code>const</code>都是用于定义常量的, 也就是定义之后值都不可以修改</li>
+<li><code>const</code>在赋值时, 赋值的内容必须是在<code>编译期间就确定</code>下来的</li>
+<li><code>final</code>在赋值时, <code>可以动态获取</code>, 比如赋值一个函数</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">String</span> getName() &#123;</span><br><span class="line"> <span class="keyword">return</span> <span class="string">&#x27;coderwhy&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line"> <span class="keyword">const</span> name = getName(); <span class="comment">// 错误的做法, 因为要执行函数才能获取到值</span></span><br><span class="line"> <span class="keyword">final</span> name = getName(); <span class="comment">// 正确的做法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>const
+<ul>
+<li>const放在赋值语句的右边，可以共享对象，提高性能:</li>
+</ul>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> Person();</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line">  <span class="keyword">final</span> a = <span class="keyword">const</span> Person();</span><br><span class="line">  <span class="keyword">final</span> b = <span class="keyword">const</span> Person();</span><br><span class="line">  <span class="built_in">print</span>(identical(a, b)); <span class="comment">// true</span></span><br><span class="line">  <span class="keyword">final</span> m = Person();</span><br><span class="line">  <span class="keyword">final</span> n = Person();</span><br><span class="line">  <span class="comment">//判断是不是同一个对象</span></span><br><span class="line">  <span class="built_in">print</span>(identical(m, n)); <span class="comment">// false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>数字和字符串转换</h1>
+<ul>
+<li>字符串和数字之间的转化:   <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.字符串转数字</span></span><br><span class="line"><span class="keyword">var</span> one = <span class="built_in">int</span>.parse(<span class="string">&#x27;111&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> two = <span class="built_in">double</span>.parse(<span class="string">&#x27;12.22&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.数字转字符串</span></span><br><span class="line"><span class="keyword">var</span> num1 = <span class="number">123</span>;</span><br><span class="line"><span class="keyword">var</span> num2 = <span class="number">123.456</span>;</span><br><span class="line"><span class="keyword">var</span> num1Str = num1.toString();</span><br><span class="line"><span class="keyword">var</span> num2Str = num2.toString();</span><br><span class="line"><span class="keyword">var</span> num2StrD = num2.toStringAsFixed(<span class="number">2</span>); <span class="comment">// 保留两位小数</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>集合类型</h1>
+<ul>
+<li>List (数组) <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> letters = [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>]; <span class="comment">// 1.使用类型推导定义   </span></span><br><span class="line"><span class="built_in">List</span>&lt;<span class="built_in">int</span>&gt; numbers = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>];   <span class="comment">// 2.明确指定类型</span></span><br><span class="line"><span class="built_in">int</span> count = letters.length; <span class="comment">//获取长度</span></span><br><span class="line">numbers.add(<span class="number">5</span>); <span class="comment">// 添加</span></span><br><span class="line">numbers.remove(<span class="number">1</span>); <span class="comment">//删除</span></span><br><span class="line"><span class="built_in">bool</span> isCon = numbers.contains(<span class="number">2</span>); <span class="comment">//包含元素</span></span><br><span class="line">numbers.removeAt(<span class="number">3</span>); <span class="comment">//根据index删除元素 </span></span><br></pre></td></tr></table></figure>
+</li>
+<li>set (无序数组，并且元素是不重复的) <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> lettersSet = &#123;<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>&#125;;  <span class="comment">// 1.使用类型推导定义</span></span><br><span class="line"><span class="built_in">Set</span>&lt;<span class="built_in">int</span>&gt; numbersSet = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;; <span class="comment">// 2.明确指定类型</span></span><br><span class="line"><span class="built_in">int</span> count = lettersSet.length <span class="comment">//获取长度</span></span><br><span class="line">numbersSet.add(<span class="number">5</span>);<span class="comment">//添加</span></span><br><span class="line">numbersSet.remove(<span class="number">1</span>);<span class="comment">//删除</span></span><br><span class="line"><span class="built_in">bool</span> isCon =numbersSet.contains(<span class="number">2</span>); <span class="comment">//包含元素</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>Map(字典) <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> infoMap1 = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">18</span>&#125;;<span class="comment">// 1.使用类型推导定义   </span></span><br><span class="line"><span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="built_in">Object</span>&gt; infoMap2 = &#123;<span class="string">&#x27;height&#x27;</span>: <span class="number">1.88</span>, <span class="string">&#x27;address&#x27;</span>: <span class="string">&#x27;北京市&#x27;</span>&#125;; <span class="comment">// 2.明确指定类型</span></span><br><span class="line"><span class="built_in">int</span> count = infoMap1.length; <span class="comment">//获取长度</span></span><br><span class="line"><span class="comment">// 1.根据key获取value</span></span><br><span class="line"><span class="built_in">String</span> name = infoMap1[<span class="string">&#x27;name&#x27;</span>];<span class="comment">//根据key获取value</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.获取所有的entries</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;infoMap1.entries&#125;</span> <span class="subst">$&#123;infoMap1.entries.runtimeType&#125;</span>&#x27;</span>); <span class="comment">// (MapEntry(name: why), MapEntry(age: 18)) MappedIterable&lt;String, MapEntry&lt;String, Object&gt;&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 3.获取所有的keys</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;infoMap1.keys&#125;</span> <span class="subst">$&#123;infoMap1.keys.runtimeType&#125;</span>&#x27;</span>); <span class="comment">// (name, age) _CompactIterable&lt;String&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 4.获取所有的values</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;infoMap1.values&#125;</span> <span class="subst">$&#123;infoMap1.values.runtimeType&#125;</span>&#x27;</span>); <span class="comment">// (why, 18) _CompactIterable&lt;Object&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 5.判断是否包含某个key或者value</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;infoMap1.containsKey(<span class="string">&#x27;age&#x27;</span>)&#125;</span> <span class="subst">$&#123;infoMap1.containsValue(<span class="number">18</span>)&#125;</span>&#x27;</span>); <span class="comment">// true true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 6.根据key删除元素</span></span><br><span class="line">infoMap1.remove(<span class="string">&#x27;age&#x27;</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;infoMap1&#125;</span>&#x27;</span>); <span class="comment">// &#123;name: why&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>函数</h1>
+<ul>
+<li>基本定义<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回值可以省略</span></span><br><span class="line"><span class="built_in">int</span> sum(<span class="built_in">num</span> num1, <span class="built_in">num</span> num2) &#123;</span><br><span class="line">   <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//只有一个表达式, 可以使用箭头函数</span></span><br><span class="line">sum(num1, num2) =&gt; num1 + num2;</span><br></pre></td></tr></table></figure>
+</li>
+<li>可选参数<br>
+命名可选参数: <code>&#123;param1, param2, ...&#125;</code><br>
+位置可选参数: <code>[param1, param2, ...]</code><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 命名可选参数</span></span><br><span class="line">printInfo1(<span class="built_in">String</span> name, &#123;<span class="built_in">int</span> age, <span class="built_in">double</span> height&#125;) &#123;</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&#x27;name=<span class="subst">$name</span> age=<span class="subst">$age</span> height=<span class="subst">$height</span>&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line">printInfo1(<span class="string">&#x27;why&#x27;</span>, height: <span class="number">1.88</span>); </span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义位置可选参数 height = 18.0 </span></span><br><span class="line">printInfo2(<span class="built_in">String</span> name, [<span class="built_in">int</span> age, <span class="built_in">double</span> height]) &#123;</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&#x27;name=<span class="subst">$name</span> age=<span class="subst">$age</span> height=<span class="subst">$height</span>&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line">printInfo2(<span class="string">&#x27;why&#x27;</span>, <span class="number">18</span>); </span><br></pre></td></tr></table></figure>
+</li>
+<li>参数默认值<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">printInfo4(<span class="built_in">String</span> name, &#123;<span class="built_in">int</span> age = <span class="number">18</span>, <span class="built_in">double</span> height=<span class="number">1.88</span>&#125;) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;name=<span class="subst">$name</span> age=<span class="subst">$age</span> height=<span class="subst">$height</span>&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>函数是一等公民<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line">  <span class="comment">// 1.将函数赋值给一个变量</span></span><br><span class="line">  <span class="keyword">var</span> bar = foo;</span><br><span class="line">  <span class="built_in">print</span>(bar);</span><br><span class="line">  <span class="comment">// 2.将函数作为另一个函数的参数</span></span><br><span class="line">  test(foo);</span><br><span class="line">  <span class="comment">// 3.将函数作为另一个函数的返回值</span></span><br><span class="line">  <span class="keyword">var</span> func =getFunc();</span><br><span class="line">  func(<span class="string">&#x27;kobe&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 1.定义一个函数</span></span><br><span class="line">foo(<span class="built_in">String</span> name) &#123;</span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&#x27;传入的name:<span class="subst">$name</span>&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">// 2.将函数作为另外一个函数的参数</span></span><br><span class="line">test(<span class="built_in">Function</span> func) &#123;</span><br><span class="line">  func(<span class="string">&#x27;coderwhy&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="comment">// 3.将函数作为另一个函数的返回值</span></span><br><span class="line">getFunc() &#123;</span><br><span class="line">  <span class="keyword">return</span> foo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>匿名函数的使用<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line"> <span class="comment">// 1.定义数组</span></span><br><span class="line"> <span class="keyword">var</span> movies = [<span class="string">&#x27;盗梦空间&#x27;</span>, <span class="string">&#x27;星际穿越&#x27;</span>, <span class="string">&#x27;少年派&#x27;</span>, <span class="string">&#x27;大话西游&#x27;</span>];</span><br><span class="line">    </span><br><span class="line"> <span class="comment">// 2.使用forEach遍历: 有名字的函数</span></span><br><span class="line"> printElement(item) &#123;</span><br><span class="line">   <span class="built_in">print</span>(item);</span><br><span class="line"> &#125;</span><br><span class="line"> movies.forEach(printElement);</span><br><span class="line">    </span><br><span class="line"> <span class="comment">// 3.使用forEach遍历: 匿名函数</span></span><br><span class="line"> movies.forEach((item) &#123;</span><br><span class="line">   <span class="built_in">print</span>(item);</span><br><span class="line"> &#125;);</span><br><span class="line"> movies.forEach((item) =&gt; <span class="built_in">print</span>(item));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>运算符</h1>
+<ul>
+<li>除法、整除、取模运算<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="built_in">num</span> = <span class="number">7</span>;</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">num</span> / <span class="number">3</span>); <span class="comment">// 除法操作, 结果2.3333..</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">num</span> ~/ <span class="number">3</span>); <span class="comment">// 整除操作, 结果2;</span></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">num</span> % <span class="number">3</span>); <span class="comment">// 取模操作, 结果1;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><code>??=</code>赋值操作<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//当变量为null时，使用后面的内容进行赋值。</span></span><br><span class="line"><span class="comment">//当变量有值时，使用自己原来的值。</span></span><br><span class="line">main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line"> <span class="keyword">var</span> name1 = <span class="string">&#x27;coderwhy&#x27;</span>;</span><br><span class="line"> <span class="built_in">print</span>(name1);</span><br><span class="line"> <span class="comment">// var name2 = &#x27;kobe&#x27;;</span></span><br><span class="line"> <span class="keyword">var</span> name2 = <span class="keyword">null</span>;</span><br><span class="line"> name2 ??= <span class="string">&#x27;james&#x27;</span>; </span><br><span class="line"> <span class="built_in">print</span>(name2); <span class="comment">// 当name2初始化为kobe时，结果为kobe，当初始化为null时，赋值了james</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>条件运算符：<code>??</code><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> temp = <span class="string">&#x27;why&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> temp = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">var</span> name = temp ?? <span class="string">&#x27;kobe&#x27;</span>;</span><br><span class="line"><span class="built_in">print</span>(name);</span><br></pre></td></tr></table></figure>
+</li>
+<li>级联语法：<code>..</code> <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> p2 = Person()</span><br><span class="line">           ..name = <span class="string">&quot;why&quot;</span></span><br><span class="line">           ..run()</span><br><span class="line">           ..eat()</span><br><span class="line">           ..swim();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>流程控制</h1>
+<ul>
+<li>if和else<br>
+和swift一样，不支持非空即真或者非0即真</li>
+<li>for 循环<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; i++) &#123;</span><br><span class="line">   <span class="built_in">print</span>(i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> names = [<span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;kobe&#x27;</span>, <span class="string">&#x27;curry&#x27;</span>];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> name <span class="keyword">in</span> names) &#123;</span><br><span class="line">  <span class="built_in">print</span>(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>switch-case<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//默认情况下必须以一个break结尾</span></span><br><span class="line"><span class="keyword">switch</span> (direction) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;east&#x27;</span>:</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;东面&#x27;</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;south&#x27;</span>:</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;南面&#x27;</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="built_in">print</span>(<span class="string">&#x27;其他方向&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>类和对象</h1>
+<ul>
+<li>类的定义<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="built_in">String</span> name;</span><br><span class="line">  eat() &#123;</span><br><span class="line">     <span class="comment">//Dart的开发风格中，在方法中通常使用属性时，会省略this，但是有命名冲突时，this不能省略 </span></span><br><span class="line">     <span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$&#123;name&#125;</span>在吃东西&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//从Dart2开始，new关键字可以省略</span></span><br><span class="line"><span class="keyword">var</span> p = <span class="keyword">new</span> Person(); <span class="comment">// 直接使用Person()也可以创建</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>构造方法<br>
+类中没有明确指定构造方法时，将默认拥有一个无参的构造方法<br>
+当有了自己的构造方法时，默认的构造方法将会失效<br>
+Dart本身不支持函数的重载<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="built_in">String</span> name;</span><br><span class="line">    <span class="built_in">int</span> age;</span><br><span class="line">    <span class="comment">//当</span></span><br><span class="line">    <span class="comment">//1. 普通构造方法</span></span><br><span class="line">    Person(<span class="built_in">String</span> name, <span class="built_in">int</span> age) &#123;</span><br><span class="line">      <span class="keyword">this</span>.name = name;</span><br><span class="line">      <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 等同于</span></span><br><span class="line">    Person(<span class="keyword">this</span>.name, <span class="keyword">this</span>.age);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//2. 命名构造方法</span></span><br><span class="line">    Person.withArgments(<span class="built_in">String</span> name, <span class="built_in">int</span> age) &#123;</span><br><span class="line">      <span class="keyword">this</span>.name = name;</span><br><span class="line">      <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//3. 重定向构造方法</span></span><br><span class="line">    Person.fromName(<span class="built_in">String</span> name) : <span class="keyword">this</span>(name, <span class="number">0</span>);</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">//4. 常量构造方法</span></span><br><span class="line">   <span class="comment">//-- 所有的成员变量必须是final修饰的</span></span><br><span class="line">   <span class="comment">//-- 创建出相同的对象，不再使用 new关键字，而是使用const关键字</span></span><br><span class="line"> <span class="keyword">var</span> p1 = <span class="keyword">const</span> Person(<span class="string">&#x27;why&#x27;</span>);</span><br><span class="line"> <span class="keyword">var</span> p2 = <span class="keyword">const</span> Person(<span class="string">&#x27;why&#x27;</span>);</span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="built_in">String</span> name;</span><br><span class="line">    <span class="keyword">const</span> Person(<span class="keyword">this</span>.name);</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">//5. 工厂构造方法 factory</span></span><br><span class="line">   <span class="comment">//-- 必须返回对象</span></span><br><span class="line">  <span class="keyword">var</span> p1 = Person(<span class="string">&#x27;why&#x27;</span>);</span><br><span class="line">  <span class="keyword">var</span> p2 = Person(<span class="string">&#x27;why&#x27;</span>);</span><br><span class="line">  <span class="built_in">print</span>(identical(p1, p2)); <span class="comment">// true</span></span><br><span class="line"> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="built_in">String</span> name;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">final</span> <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, Person&gt; _cache = &lt;<span class="built_in">String</span>, Person&gt;&#123;&#125;;</span><br><span class="line">  <span class="keyword">factory</span> Person(<span class="built_in">String</span> name) &#123;</span><br><span class="line">    <span class="keyword">if</span> (_cache.containsKey(name)) &#123;</span><br><span class="line">      <span class="keyword">return</span> _cache[name];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">final</span> p = Person._internal(name);</span><br><span class="line">      _cache[name] = p;</span><br><span class="line">      <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  Person._internal(<span class="keyword">this</span>.name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>初始化列表 <code>:</code><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">   <span class="keyword">final</span> <span class="built_in">num</span> x;</span><br><span class="line">   <span class="keyword">final</span> <span class="built_in">num</span> y;</span><br><span class="line">   <span class="keyword">final</span> <span class="built_in">num</span> distance;</span><br><span class="line">   <span class="comment">// 错误写法</span></span><br><span class="line">   <span class="comment">// Point(this.x, this.y) &#123;</span></span><br><span class="line">   <span class="comment">//   distance = sqrt(x * x + y * y);</span></span><br><span class="line">   <span class="comment">// &#125;</span></span><br><span class="line">   <span class="comment">// 正确的写法  初始化列表可以进行函数等操作</span></span><br><span class="line">   Point(<span class="keyword">this</span>.x, <span class="keyword">this</span>.y) : distance = sqrt(x * x + y * y);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><code>setter</code>和<code>getter</code><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line">  <span class="keyword">final</span> d = Dog(<span class="string">&quot;黄色&quot;</span>);</span><br><span class="line">  d.setColor = <span class="string">&quot;黑色&quot;</span>;</span><br><span class="line">  <span class="built_in">print</span>(d.getColor);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> </span>&#123;</span><br><span class="line">  <span class="built_in">String</span> color;</span><br><span class="line">  <span class="built_in">String</span> <span class="keyword">get</span> getColor &#123;</span><br><span class="line">    <span class="keyword">return</span> color;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">set</span> setColor(<span class="built_in">String</span> color) &#123;</span><br><span class="line">    <span class="keyword">this</span>.color = color;</span><br><span class="line">  &#125;</span><br><span class="line">  Dog(<span class="keyword">this</span>.color);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>类的继承 <code>extends</code><br>
+父类中的所有成员变量和方法都会被继承,，但是构造方法除外。<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="built_in">int</span> age;</span><br><span class="line">  Animal(<span class="keyword">this</span>.age);</span><br><span class="line">  run() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;在奔跑ing&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> <span class="keyword">extends</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">  <span class="built_in">String</span> name;</span><br><span class="line">   <span class="comment">//如果父类没有无参默认构造方法，</span></span><br><span class="line">   <span class="comment">//则子类的构造方法必须在初始化列表中通过super显式调用父类的某个构造方法。</span></span><br><span class="line">   Person(<span class="built_in">String</span> name, <span class="built_in">int</span> age) : name=name, <span class="keyword">super</span>(age);</span><br><span class="line">   <span class="comment">//重写父类方法 </span></span><br><span class="line">   <span class="meta">@override</span></span><br><span class="line">   run() &#123;</span><br><span class="line">     <span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$name</span>在奔跑ing&#x27;</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>抽象类 <code>abstract</code><br>
+**抽象类<code>不能实例化</code>.<br>
+**抽象类中的抽象方法必须被子类实现, 抽象类中的已经被实现方法, 可以不被子类重写.<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">  getArea();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Reactangle</span> <span class="keyword">extends</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">  <span class="built_in">double</span> w;</span><br><span class="line">  <span class="built_in">double</span> h;</span><br><span class="line"></span><br><span class="line">  Reactangle(<span class="keyword">this</span>.w, <span class="keyword">this</span>.h);</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  getArea() &#123;</span><br><span class="line">    <span class="keyword">return</span> w * h;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><code>隐式接口</code>和<code>implements</code><br>
+Dart中的接口比较特殊, 没有一个专门的关键字来声明接口.<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Runner</span> </span>&#123;</span><br><span class="line">  run();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Flyer</span> </span>&#123;</span><br><span class="line">  fly();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//类中所有的方法都必须被重新实现(无论这个类原来是否已经实现过该方法)。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperMan</span> <span class="keyword">implements</span> <span class="title">Runner</span>, <span class="title">Flyer</span> </span>&#123;</span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  run() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;超人在奔跑&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@override</span></span><br><span class="line">  fly() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;超人在飞&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><code>Mixin</code>混入 <code>with</code>
+<blockquote>
+<p>在通过implements实现某个类时，类中所有的方法都必须被重新实现(无论这个类原来是否已经实现过该方法)。<br>
+但是某些情况下，一个类可能希望直接复用之前类的原有实现方案，怎么做呢?<br>
+使用继承吗？但是Dart只支持单继承，那么意味着你只能复用一个类的实现。<br>
+Dart提供了另外一种方案: Mixin混入的方式<br>
+除了可以通过class定义类之外，也可以通过mixin关键字来定义一个类<br>
+只是通过mixin定义的类用于被其他类混入使用，通过with关键字来进行混入</p>
+</blockquote>
+ <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line">  <span class="keyword">var</span> superMan = SuperMain();</span><br><span class="line">  superMan.run();</span><br><span class="line">  superMan.fly();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">mixin</span> Runner &#123;</span><br><span class="line">  run() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;在奔跑&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">mixin</span> Flyer &#123;</span><br><span class="line">  fly() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;在飞翔&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// implements的方式要求必须对其中的方法进行重新实现</span></span><br><span class="line"><span class="comment">// class SuperMan implements Runner, Flyer &#123;&#125;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperMain</span> <span class="title">with</span> <span class="title">Runner</span>, <span class="title">Flyer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>类成员和方法<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">  <span class="built_in">String</span> name;</span><br><span class="line">  <span class="built_in">int</span> sno;</span><br><span class="line">  <span class="comment">//类成员变量</span></span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">String</span> time;</span><br><span class="line">  <span class="comment">//对象方法</span></span><br><span class="line">  study() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;<span class="subst">$name</span>在学习&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">   <span class="comment">// 类方法</span></span><br><span class="line">  <span class="keyword">static</span> attendClass() &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;去上课&#x27;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><code>external</code>和<code>@patch</code><br>
+external声明的方法，通过@patch注解实现<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Object</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="built_in">Object</span>();</span><br><span class="line">  <span class="keyword">external</span> <span class="built_in">bool</span> <span class="keyword">operator</span> ==(other);</span><br><span class="line">  <span class="keyword">external</span> <span class="built_in">int</span> <span class="keyword">get</span> hashCode;</span><br><span class="line">  <span class="keyword">external</span> <span class="built_in">String</span> toString();</span><br><span class="line">  <span class="meta">@pragma</span>(<span class="string">&quot;vm:entry-point&quot;</span>)</span><br><span class="line">  <span class="keyword">external</span> <span class="built_in">dynamic</span> noSuchMethod(Invocation invocation);</span><br><span class="line">  <span class="keyword">external</span> <span class="built_in">Type</span> <span class="keyword">get</span> runtimeType;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@patch</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Object</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="meta">@patch</span></span><br><span class="line">  <span class="built_in">bool</span> <span class="keyword">operator</span> ==(<span class="built_in">Object</span> other) native <span class="string">&quot;Object_equals&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">final</span> _hashCodeRnd = <span class="keyword">new</span> Random();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">int</span> _objectHashCode(obj) &#123;</span><br><span class="line">    <span class="keyword">var</span> result = _getHash(obj);</span><br><span class="line">    <span class="keyword">if</span> (result == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">// We want the hash to be a Smi value greater than 0.</span></span><br><span class="line">      result = _hashCodeRnd.nextInt(<span class="number">0x40000000</span>);</span><br><span class="line">      <span class="keyword">do</span> &#123;</span><br><span class="line">        result = _hashCodeRnd.nextInt(<span class="number">0x40000000</span>);</span><br><span class="line">      &#125; <span class="keyword">while</span> (result == <span class="number">0</span>);</span><br><span class="line">      _setHash(obj, result);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@patch</span></span><br><span class="line">  <span class="built_in">int</span> <span class="keyword">get</span> hashCode =&gt; _objectHashCode(<span class="keyword">this</span>);</span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">  <span class="meta">@patch</span></span><br><span class="line">  <span class="built_in">String</span> toString() native <span class="string">&quot;Object_toString&quot;</span>;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@patch</span></span><br><span class="line">  <span class="meta">@pragma</span>(<span class="string">&quot;vm:exact-result-type&quot;</span>, <span class="string">&quot;dart:core#_Type&quot;</span>)</span><br><span class="line">  <span class="built_in">Type</span> <span class="keyword">get</span> runtimeType native <span class="string">&quot;Object_runtimeType&quot;</span>;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>枚举</h1>
+<ul>
+<li>定义 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> Colors &#123;</span><br><span class="line">  red,</span><br><span class="line">  green,</span><br><span class="line">  blue</span><br><span class="line">&#125; </span><br><span class="line">main(<span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; args) &#123;</span><br><span class="line">  <span class="comment">// index: 用于表示每个枚举常量的索引, 从0开始.</span></span><br><span class="line">  <span class="built_in">print</span>(Colors.red.index);</span><br><span class="line">  <span class="built_in">print</span>(Colors.green.index);</span><br><span class="line">  <span class="built_in">print</span>(Colors.blue.index);</span><br><span class="line">  <span class="comment">// values: 包含每个枚举值的List.</span></span><br><span class="line">  <span class="built_in">print</span>(Colors.values);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>泛型</h1>
+<ul>
+<li>list和map的泛型<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建List的方式</span></span><br><span class="line"> <span class="keyword">var</span> names1 = [<span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;kobe&#x27;</span>, <span class="string">&#x27;james&#x27;</span>, <span class="number">111</span>];</span><br><span class="line"> <span class="built_in">print</span>(names1.runtimeType); <span class="comment">// List&lt;Object&gt;</span></span><br><span class="line">    </span><br><span class="line"> <span class="comment">// 限制类型</span></span><br><span class="line"> <span class="keyword">var</span> names2 = &lt;<span class="built_in">String</span>&gt;[<span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;kobe&#x27;</span>, <span class="string">&#x27;james&#x27;</span>, <span class="number">111</span>]; <span class="comment">// 最后一个报错</span></span><br><span class="line"> <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; names3 = [<span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;kobe&#x27;</span>, <span class="string">&#x27;james&#x27;</span>, <span class="number">111</span>]; <span class="comment">// 最后一个报错</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">// 创建Map的方式</span></span><br><span class="line"> <span class="keyword">var</span> infos1 = &#123;<span class="number">1</span>: <span class="string">&#x27;one&#x27;</span>, <span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">18</span>&#125;; </span><br><span class="line"> <span class="built_in">print</span>(infos1.runtimeType); <span class="comment">// _InternalLinkedHashMap&lt;Object, Object&gt;</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">// 对类型进行显示</span></span><br><span class="line"> <span class="built_in">Map</span>&lt;<span class="built_in">String</span>, <span class="built_in">String</span>&gt; infos2 = &#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">18</span>&#125;; <span class="comment">// 18不能放在value中</span></span><br><span class="line"> <span class="keyword">var</span> infos3 = &lt;<span class="built_in">String</span>, <span class="built_in">String</span>&gt;&#123;<span class="string">&#x27;name&#x27;</span>: <span class="string">&#x27;why&#x27;</span>, <span class="string">&#x27;age&#x27;</span>: <span class="number">18</span>&#125;; <span class="comment">// 18不能放在value中</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li>自定义泛型<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Location</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  T x;</span><br><span class="line">  T y;</span><br><span class="line">  Location(<span class="keyword">this</span>.x, <span class="keyword">this</span>.y);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line">Location l2 = Location&lt;<span class="built_in">int</span>&gt;(<span class="number">10</span>, <span class="number">20</span>);</span><br><span class="line"><span class="built_in">print</span>(l2.x.runtimeType); <span class="comment">// int </span></span><br><span class="line"></span><br><span class="line">Location l3 = Location&lt;<span class="built_in">String</span>&gt;(<span class="string">&#x27;aaa&#x27;</span>, <span class="string">&#x27;bbb&#x27;</span>);</span><br><span class="line"><span class="built_in">print</span>(l3.x.runtimeType); <span class="comment">// String</span></span><br><span class="line"> <span class="comment">//------------------------------------------------------</span></span><br><span class="line"><span class="comment">//如果我们希望类型只能是num类型, 怎么做呢?</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Location</span>&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">num</span>&gt; </span>&#123;</span><br><span class="line">   T x;</span><br><span class="line">   T y;</span><br><span class="line">   Location(<span class="keyword">this</span>.x, <span class="keyword">this</span>.y);</span><br><span class="line"> &#125;</span><br><span class="line"> <span class="comment">// 正确写法, 类型必须继承自num</span></span><br><span class="line">Location l2 = Location&lt;<span class="built_in">int</span>&gt;(<span class="number">10</span>, <span class="number">20</span>);</span><br><span class="line"><span class="built_in">print</span>(l2.x.runtimeType);</span><br><span class="line">    	</span><br><span class="line"><span class="comment">// 错误的写法, 类型必须继承自num</span></span><br><span class="line">Location l3 = Location&lt;<span class="built_in">String</span>&gt;(<span class="string">&#x27;aaa&#x27;</span>, <span class="string">&#x27;bbb&#x27;</span>);</span><br><span class="line"><span class="built_in">print</span>(l3.x.runtimeType);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>库的使用</h1>
+<ul>
+<li>导入 <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//来自dart标准版</span></span><br><span class="line"><span class="comment">//dart:前缀表示Dart的标准库，如dart:io、dart:html、dart:math</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;dart:io&#x27;</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">//当然，你也可以用相对路径或绝对路径的dart文件来引用</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;lib/student/student.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Pub包管理系统中有很多功能强大、实用的库，可以使用前缀 package:</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;package:flutter/material.dart&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//**show关键字：**可以显示某个成员（屏蔽其他）</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;lib/student/student.dart&#x27;</span> <span class="keyword">show</span> Student, Person;</span><br><span class="line"></span><br><span class="line"><span class="comment">//**hide关键字：**可以隐藏某个成员（显示其他）</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;lib/student/student.dart&#x27;</span> <span class="keyword">hide</span> Person;</span><br><span class="line"></span><br><span class="line"><span class="comment">//当各个库有命名冲突的时候，可以使用as关键字来使用命名空间</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;lib/student/student.dart&#x27;</span> <span class="keyword">as</span> Stu;</span><br></pre></td></tr></table></figure>
+</li>
+<li>库的定义<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//library关键字</span></span><br><span class="line"><span class="comment">//通常在定义库时，我们可以使用library关键字给库起一个名字。</span></span><br><span class="line"><span class="keyword">library</span> math;</span><br><span class="line"></span><br><span class="line"><span class="comment">//part关键字 不过官方已经不建议使用这种方式了</span></span><br><span class="line"><span class="comment">//----</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//export关键字,可以把多个dart文件集中到一起，引入utils就可以</span></span><br><span class="line"><span class="keyword">library</span> utils;</span><br><span class="line"><span class="keyword">export</span> <span class="string">&quot;mathUtils.dart&quot;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="string">&quot;dateUtils.dart&quot;</span>;  </span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://flutterchina.club/setup-macos/">Flutter中文网</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&amp;__biz=Mzg5MDAzNzkwNA==&amp;scene=1&amp;album_id=1566028536430247937&amp;count=3#wechat_redirect">Flutter系列教程</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/flutter/flutter(002)dart%E6%88%91%E6%9D%A5%E4%BA%86/" title="flutter(002)dart我来了" target="_blank" rel="external">http://wangliwen.top/flutter/flutter(002)dart我来了/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/flutter/flutter(001)%E4%BB%8B%E7%BB%8D%E5%8F%8A%E7%8E%AF%E5%A2%83/" title="flutter(001)介绍及环境"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/flutter/flutter(003)%E6%9C%89%E7%8A%B6%E6%80%81%E7%9A%84StatefulWidget/" title="flutter(003)有状态的StatefulWidget"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

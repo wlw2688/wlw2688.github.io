@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>iOS性能---安装包瘦身 | wangliwen</title>
+  <meta name="description" content="为什么要进行包大小优化？  虽然苹果官方一直在提高最大的可执行文件大小，在 iOS 13 还取消了强制的 OTA 限制，但是超过200MB会默认请求用户下载许可（可在 设置 - iTunes Store与App Store - App下载 中配置），并且iOS13以下的超过200MB无法使用OTA，影响了整体更新率。 如果App还要适配iOS8之前的版本，苹果还规定了主二进制__TEXT段的大小不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS性能---安装包瘦身">
+<meta property="og:url" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/004_%E8%A3%85%E5%8C%85%E7%98%A6%E8%BA%AB/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="为什么要进行包大小优化？  虽然苹果官方一直在提高最大的可执行文件大小，在 iOS 13 还取消了强制的 OTA 限制，但是超过200MB会默认请求用户下载许可（可在 设置 - iTunes Store与App Store - App下载 中配置），并且iOS13以下的超过200MB无法使用OTA，影响了整体更新率。 如果App还要适配iOS8之前的版本，苹果还规定了主二进制__TEXT段的大小不">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-22T07:22:43.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.082Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/004_%E8%A3%85%E5%8C%85%E7%98%A6%E8%BA%AB/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-性能与架构/004_装包瘦身" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS性能---安装包瘦身
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/004_%E8%A3%85%E5%8C%85%E7%98%A6%E8%BA%AB/" class="article-date">
+	  <time datetime="2018-10-22T07:22:43.000Z" itemprop="datePublished">2018-10-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/004_%E8%A3%85%E5%8C%85%E7%98%A6%E8%BA%AB/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.3k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>为什么要进行包大小优化？</h1>
+<blockquote>
+<p>虽然苹果官方一直在提高最大的可执行文件大小，在 iOS 13 还取消了强制的 OTA 限制，但是超过200MB会默认请求用户下载许可（可在 设置 - iTunes Store与App Store - App下载 中配置），并且<code>iOS13以下的超过200MB无法使用OTA</code>，影响了整体更新率。<br>
+如果App还要适配iOS8之前的版本，苹果还规定了主二进制__TEXT段的大小不能超过60MB，否则上传构建时会被打回。</p>
+</blockquote>
+<h1>资源瘦身优化</h1>
+<ol>
+<li>
+<p>压缩资源</p>
+<ul>
+<li>无损压缩，利用<a target="_blank" rel="noopener" href="https://tinypng.com">tinypng</a>进行图片压缩</li>
+<li>格式png，jpg，gif可以替换成webp</li>
+<li>动画可以用<a target="_blank" rel="noopener" href="https://github.com/airbnb/lottie-ios">lottie-ios</a></li>
+<li>小图或表情图可替换为iconFont，可以用<a target="_blank" rel="noopener" href="https://github.com/JohnWong/IconFont">iconfont</a>（iconfont图标是一种.ttf格式的字体)</li>
+<li>大图可替换为svg，用<a target="_blank" rel="noopener" href="https://github.com/SVGKit/SVGKit">SVGKit</a>SVGKLayeredImageView进行显示，（SVG是一种基于XML语法的图像格式，全称是可缩放矢量图)</li>
+</ul>
+</li>
+<li>
+<p>删除无用资源，使用<a target="_blank" rel="noopener" href="https://github.com/tinymind/LSUnusedResources">LSUnusedResources</a></p>
+<p>LSUnusedResources是一款可以检测Xcode工程中没有使用的切图的Mac端工具</p>
+</li>
+<li>
+<p>删除重复资源并修改引用，使用<a href="">fdupes</a></p>
+<ul>
+<li>原理：fdupes是 Linux 平台的一个开源工具，由C语言编写 ，文件比较顺序是<code>大小对比</code> &gt; <code>部分MD5签名对比</code> &gt; <code>完整MD5签名对比</code> &gt; <code>逐字节对比</code>。</li>
+<li>使用：  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通过 Homebrew 安装 fdupes：</span></span><br><span class="line">brew install fdupes</span><br><span class="line">          </span><br><span class="line"><span class="comment">//查看目标文件夹下的重复文件：</span></span><br><span class="line">fdupes -Sr 文件夹   <span class="comment">// 查看文件夹下所有子目录中的重复文件及大小</span></span><br><span class="line">fdupes -Sr 文件夹 &gt; 输出地址.txt  <span class="comment">// 将信息输出到txt文件中</span></span><br><span class="line">          </span><br><span class="line"><span class="comment">//根据输出内容，一般情况下，相同文件仅保留一份，修改对应的引用即可。</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li>
+<p>图片资源放入.xcassets</p>
+<ul>
+<li>
+<p>尽量将图片资源放入 Images.xcassets 中，包括 pod 库的图片。 Images.xcassets 中的图片加载后会有缓存，提升加载速度，并且在最终打包时会自动进行压缩（Compress PNG Files），再根据最终运行设备进行 2x 和 3x 分发。</p>
+</li>
+<li>
+<p>对于内部 Pod 库中的资源文件，我们可以在 Pod 库里面的 Resources 目录下新建 Asset Catalog 文件，命名为 Images.xcassets，移入所有图片文件，接着手动修改该 SDK 的 podspec 文件指定使用该 Images.xcassets。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>动态下载资源</p>
+<ul>
+<li>有些非必要的文件资源可以放在服务器，结合本地缓存策略，比如主题、皮肤、音乐这样的资源</li>
+</ul>
+</li>
+</ol>
+<h1>代码优化</h1>
+<ol>
+<li>
+<p>扫描未使用代码</p>
+<ul>
+<li>
+<p>基于源码扫描 <a target="_blank" rel="noopener" href="https://github.com/dblock/fui">fui</a><br>
+基本思路是对源码文件进行字符串匹配。例如将 A *a、[A xxx]、NSStringFromClass(“A”)、objc_getClass(“A”) 等归类为使用的类，@interface A : B 归类为定义的类，然后计算差集。</p>
+</li>
+<li>
+<p>通过 AppCode 查找无用代码 <a target="_blank" rel="noopener" href="https://www.jetbrains.com/objc/">AppCode</a><br>
+查找出 AppCode 中无用的类、无用的方法甚至是无用的import，但是无法扫描通过字符串拼接方式来创建的类和调用的方法。</p>
+</li>
+<li>
+<p><code>LinkMap</code>结合<code>Mach-O</code><br>
+<code>LinkMap</code>的<code>Symbols</code>中会列出所有方法、类、block及它们的大小，通过获取 <code>LinkMap</code>即可以获得方法和类的全集；再通过<code>MachOView</code>获得使用过的方法和类，两者的差值就是我们要找寻的未使用代码。参考<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAwNDY1ODY2OQ==&amp;mid=207986417&amp;idx=1&amp;sn=77ea7d8e4f8ab7b59111e78c86ccfe66&amp;3rd=MzA3MDU4NTYzMw==&amp;scene=6#rd">iOS微信安装包瘦身</a></p>
+<ul>
+<li>
+<p>获取 LinkMap<br>
+将 <code>Build Setting</code> - <code>Write Link Map File</code> 设置为 Yes，接着设置 <code>Path to Link Map File</code> 指定文件存放位置，即可在每次编译后获取对应的 <code>LinkMap</code> 文件。</p>
+</li>
+<li>
+<p>MachOView<br>
+MachOView是一款开源软件，可以查看 <code>Mach-O</code> 文件的内容。OC 的方法都会通过<code>objc_msgSend</code>来调用。可以通过 <code>Mach-O</code> 查看 <code>__objc_selrefs</code> 这个section来获取selector参数的，另外<code>__objc_classrefs</code> 和 <code>__objc_superrefs</code> 这两个section可以获取调用过的类和父类。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>扫描重复代码并优化，可以使用<a target="_blank" rel="noopener" href="https://pmd.github.io/">PMD</a><br>
+通过 brew 命令安装</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//PMD 是一个代码静态扫描工具，直接通过 brew 命令安装。</span></span><br><span class="line">$ brew install pmd</span><br><span class="line"><span class="comment">//安装完成后，通过 PMD-CPD 即可得到重复代码信息，格式如下：</span></span><br><span class="line"><span class="comment">//其中，--files 用于指定文件目录，--minimum-tokens 用于设置最小重复代码阈值，--format 用于指定输出文件格式，支持 xml/csv/txt 等格式，这里建议使用 xml，方便查看 。</span></span><br><span class="line">$ pmd cpd --files 扫描文件目录 --minimum-tokens <span class="number">70</span> --language objectivec --encoding UTF<span class="number">-8</span> --format xml &gt; repeat.xml</span><br><span class="line"><span class="comment">//根据生成的XML文件，根据file标签信息就能定位到重复代码位置。</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>进行framework瘦身(未支持bitcode)，<br>
+使用lipo命令拆分库，保留需要的指令集，发布版本中删除 i386、x86_64 是模拟器的指令集，只保留 armv7 和 arm64<br>
+静态库指令集信息查看：</p>
+<blockquote>
+<p>lipo -info libname.a(或者libname.framework/libname)</p>
+</blockquote>
+<p>静态库拆分：</p>
+<blockquote>
+<p>lipo 静态库文件路径 -thin CPU架构 -output 拆分后的静态库文件路径</p>
+</blockquote>
+<p>静态库合并：</p>
+<blockquote>
+<p>lipo -create 静态库1文件路径 静态库2文件路径… 静态库n文件路径 -output 合并后的静态库文件径</p>
+</blockquote>
+</li>
+</ol>
+<h1>编译选项配置优化</h1>
+<ul>
+<li>Strip Linked Product、Make Strings Read-Only、Symbols Hidden by Default设置为YES，目前Xcode已经默认打开的，老项目注意检查；</li>
+<li>去掉异常支持，Enable C++ Exceptions、Enable Objective-C Exceptions设置为NO，Other C Flags添加-fno-exceptions；</li>
+<li>Strip Debug Symbols During Copy设置为YES，这个是将那些拷贝进项目包的三方库、资源或者 Extension 的  Debug Symbol 去除掉。这个选项没有前置条件，只需在Release模式下开启，否则就不能对三方库进行断点调试和符号化了；</li>
+<li>Build Settings -&gt; Optimization Level有几个编译优化选项，release版应该选择Fastest, Smalllest，这个选项会开启那些不增加代码大小的全部优化，并让可执行文件尽可能小；</li>
+<li>Enable BitCode设置为YES；</li>
+</ul>
+<h1>App Thinning</h1>
+<ul>
+<li>
+<p>App Thinning包括: <code>App Slicing</code>, <code>Bitcode</code>, <code>On Demand Resources</code></p>
+<p>App Slicing工作原理：</p>
+<blockquote>
+<p>把App安装包上传到App Store后，Apple分析处理服务会自动对安装包切割为不同的应用变体，用户下载安装包时，系统会根据设备型号下载对应的应用变体。也就是根据目标设备加载asset catalog 中的特定的图片资源(注：只有Assets.xcassets内的图片文件有效，在bundle的中图片是无效的)。（例：iPhone7 plus只加载3x图）。根据目标设备分配所需的加载可执行体系结构。（例： iPhone5（真机32位处理器）加载armv7s架构）。</p>
+</blockquote>
+<p>Bitcode工作原理：</p>
+<blockquote>
+<p>是Xcode编译打包的一种中间码，在包含Bitcode配置的程序被上传到App Store之后，App Store也可以对其进行编译和链接。同时，Bitcode允许苹果后期重新优化程序的二进制执行文件。苹果会根据下载应用的用户手机指令集类型生成该指令集的二进制文件，进行下发下载。<br>
+开启Bitcode之后，用户在App Store下载的包体积可以小一些。需要注意的是：开启Bitcode之后，集成的其他第三方库也需要全部支持Bitcode。</p>
+</blockquote>
+<p>On Demand Resources工作原理：</p>
+<blockquote>
+<p>App不是包含整个资源库，可以根据需要下载或删除其中的一部分。通过将代码段标记为ODR，开发人员将能够指定在什么时候需要什么代码。这些部分在需要时会自动从App Store下载，而在不再需要时会删除。<br>
+产生的用户体验：<br>
+应用程序尺寸较小，因此应用程序下载速度更快，从而改善了首次启动体验。<br>
+用户浏览您的应用程序时，可根据需要在后台下载按需资源。<br>
+当不再需要按需资源并且磁盘空间不足时，操作系统将清除它们。</p>
+</blockquote>
+</li>
+</ul>
+<h1>安装包组成</h1>
+<ul>
+<li>_CodeSignature（签名文件）：存放文件的hash列表，它的作用是用来判断一个应用程序是否完好无损，能够防止不小心修改或损坏资源文件</li>
+<li>一些.bundle文件：bundle是一种标准化的层次结构，保存了可执行代码以及代码所需要的资源。bundle文件可以理解为一个资源包，用于存储图片、音频、文本、nib文件等，方便在其他项目中引用包内的资源。bundle包是静态的，不参与编译，也就意味着，bundle 包中不能包含可执行的文件。它仅仅是作为资源，被解析成为特定的二进制数据。从.app的包里可以看到，.bundle文件基本上都是一些SDK制作的</li>
+<li>Assets.car：把放在Assets.xcassets中的图片（除了AppIcon和LaunchImage，这两种图片是直接放在包中的）打包后统一压缩成一个Assets.car的文件，减小包的大小。</li>
+<li>一些.nib文件：使用xib创建的文件。</li>
+<li>.plist：一些属性列表文件。</li>
+<li>Frameworks：Framework 是一种打包方式，将库的二进制文件，头文件和有关的资源文件打包到一起，方便管理和分发。</li>
+<li>一些.png、.jpg、.mp3、.mp4等形式的图片和音视频资源。</li>
+</ul>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904169938092045">深入探索 iOS 包体积优化</a><br>
+<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/db3c020d7ab4">iOS性能优化安装包瘦身</a><br>
+<a target="_blank" rel="noopener" href="https://sg.jianshu.io/p/cef2f6becbe6">iOS瘦身——移除无用资源的LSUnusedResources源码分析与优化</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/004_%E8%A3%85%E5%8C%85%E7%98%A6%E8%BA%AB/" title="iOS性能---安装包瘦身" target="_blank" rel="external">http://wangliwen.top/iOS-性能与架构/004_装包瘦身/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0011_%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9B%B8%E5%85%B3(NStimer%E3%80%81CADisplayLink%E3%80%81dispatch_source_t)/" title="定时器相关(NStimer、CADisplayLink、dispatch_source_t)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/" title="iOS性能---滑动卡顿优化(2)离屏渲染"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

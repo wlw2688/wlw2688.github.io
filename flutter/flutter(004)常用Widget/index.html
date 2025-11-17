@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>flutter(004)常用Widget | wangliwen</title>
+  <meta name="description" content="文本Widget  Text 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556Text(    &quot;Text组件的使用&quot;,    style: TextStyle(        &#x2F;&#x2F; 文字颜色        color:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flutter(004)常用Widget">
+<meta property="og:url" content="http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="文本Widget  Text 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556Text(    &quot;Text组件的使用&quot;,    style: TextStyle(        &#x2F;&#x2F; 文字颜色        color:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/all.webp">
+<meta property="og:image" content="http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/images.webp">
+<meta property="article:published_time" content="2019-01-05T10:44:36.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.051Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/all.webp">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-flutter/flutter(004)常用Widget" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      flutter(004)常用Widget
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/" class="article-date">
+	  <time datetime="2019-01-05T10:44:36.000Z" itemprop="datePublished">2019-01-05</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/flutter/">flutter</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>文本Widget</h1>
+<ul>
+<li><code>Text</code> <figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">Text(</span><br><span class="line">    <span class="string">&quot;Text组件的使用&quot;</span>,</span><br><span class="line">    style: TextStyle(</span><br><span class="line">        <span class="comment">// 文字颜色</span></span><br><span class="line">        color: Color(<span class="number">0xfff0000</span>),</span><br><span class="line">        <span class="comment">// none 不显示装饰线条，underline 字体下方，overline 字体上方，lineThrough穿过文字</span></span><br><span class="line">        decoration: TextDecoration.none,</span><br><span class="line">        <span class="comment">// solid 直线，double 双下划线，dotted 虚线，dashed 点下划线，wavy 波浪线</span></span><br><span class="line">        decorationStyle: TextDecorationStyle.solid,</span><br><span class="line">        <span class="comment">// 装饰线的颜色</span></span><br><span class="line">        decorationColor: Colors.red,</span><br><span class="line">        <span class="comment">// 文字大小</span></span><br><span class="line">        fontSize: <span class="number">15.0</span>,</span><br><span class="line">        <span class="comment">// normal 正常，italic 斜体</span></span><br><span class="line">        fontStyle: FontStyle.normal,</span><br><span class="line">        <span class="comment">// 字体的粗细</span></span><br><span class="line">        fontWeight: FontWeight.bold,</span><br><span class="line">        <span class="comment">// 文字间的宽度</span></span><br><span class="line">        letterSpacing: <span class="number">1.0</span>,</span><br><span class="line">        <span class="comment">// 文本行与行的高度，作为字体大小的倍数（取值1~2，如1.2）</span></span><br><span class="line">        height: <span class="number">1</span>,</span><br><span class="line">        <span class="comment">//对齐文本的水平线:</span></span><br><span class="line">        <span class="comment">//TextBaseline.alphabetic：文本基线是标准的字母基线</span></span><br><span class="line">        <span class="comment">//TextBaseline.ideographic：文字基线是表意字基线；</span></span><br><span class="line">        <span class="comment">//如果字符本身超出了alphabetic 基线，那么ideograhpic基线位置在字符本身的底部。</span></span><br><span class="line">        textBaseline: TextBaseline.alphabetic),</span><br><span class="line">    <span class="comment">// 段落的间距样式</span></span><br><span class="line">    strutStyle: StrutStyle(</span><br><span class="line">      fontFamily: <span class="string">&#x27;serif&#x27;</span>,</span><br><span class="line">      fontFamilyFallback: [<span class="string">&#x27;monospace&#x27;</span>, <span class="string">&#x27;serif&#x27;</span>],</span><br><span class="line">      fontSize: <span class="number">20</span>,</span><br><span class="line">      height: <span class="number">2</span>,</span><br><span class="line">      leading: <span class="number">2.0</span>,</span><br><span class="line">      fontWeight: FontWeight.w300,</span><br><span class="line">      fontStyle: FontStyle.normal,</span><br><span class="line">      forceStrutHeight: <span class="keyword">true</span>,</span><br><span class="line">      debugLabel: <span class="string">&#x27;text demo&#x27;</span>,</span><br><span class="line">    ),</span><br><span class="line">    <span class="comment">// 文字对齐方式</span></span><br><span class="line">    textAlign: TextAlign.center,</span><br><span class="line">    <span class="comment">// 文字排列方向 ltr 左到右，rtl右到左</span></span><br><span class="line">    textDirection: TextDirection.ltr,</span><br><span class="line">    <span class="comment">// 用于选择区域特定字形的语言环境</span></span><br><span class="line">    locale: Locale(<span class="string">&#x27;zh_CN&#x27;</span>),</span><br><span class="line">    <span class="comment">// 软包裹 ，文字是否应该在软断行出断行</span></span><br><span class="line">    softWrap: <span class="keyword">false</span>,</span><br><span class="line">    <span class="comment">// 如何处理视觉溢出:clip 剪切溢出的文本以修复其容器。ellipsis 使用省略号表示文本已溢出。fade 将溢出的文本淡化为透明。</span></span><br><span class="line">    overflow: TextOverflow.clip,</span><br><span class="line">    <span class="comment">// 文字的缩放比例</span></span><br><span class="line">    textScaleFactor: <span class="number">1.0</span>,</span><br><span class="line">    <span class="comment">// 文本要跨越的可选最大行数,</span></span><br><span class="line">    maxLines: <span class="number">2</span>,</span><br><span class="line">    <span class="comment">// 图像的语义描述，用于向Andoid上的TalkBack和iOS上的VoiceOver提供图像描述</span></span><br><span class="line">    semanticsLabel: <span class="string">&#x27;text demo&#x27;</span>,</span><br><span class="line">    textWidthBasis: TextWidthBasis.longestLine,</span><br><span class="line">  )</span><br></pre></td></tr></table></figure>
+</li>
+<li><code>RichText</code>和<code>Text.rich</code><figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">RichText(</span><br><span class="line">  text: TextSpan(</span><br><span class="line">    text: <span class="string">&#x27;登陆即同意&#x27;</span>,</span><br><span class="line">    style: TextStyle(fontSize: <span class="number">14</span>, color: Colors.black),</span><br><span class="line">    children: [</span><br><span class="line">      TextSpan(</span><br><span class="line">        text: <span class="string">&#x27;&quot;服务条款&quot;&#x27;</span>,</span><br><span class="line">        style: TextStyle(fontSize: <span class="number">14</span>, color: Colors.blue),</span><br><span class="line">        recognizer: TapGestureRecognizer()</span><br><span class="line">          ..onTap = () &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;点击了服务条款&#x27;</span>);</span><br><span class="line">          &#125;,</span><br><span class="line">      ),</span><br><span class="line">      TextSpan(</span><br><span class="line">        text: <span class="string">&#x27;和&#x27;</span>,</span><br><span class="line">        style: TextStyle(fontSize: <span class="number">14</span>, color: Colors.black),</span><br><span class="line">      ),</span><br><span class="line">      TextSpan(</span><br><span class="line">        text: <span class="string">&#x27;&quot;隐私政策&quot;&#x27;</span>,</span><br><span class="line">        style: TextStyle(fontSize: <span class="number">14</span>, color: Colors.blue),</span><br><span class="line">        recognizer: TapGestureRecognizer()</span><br><span class="line">          ..onTap = () &#123;</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;点击了隐私政策&#x27;</span>);</span><br><span class="line">          &#125;,</span><br><span class="line">      ),</span><br><span class="line">      WidgetSpan(</span><br><span class="line">        alignment: PlaceholderAlignment.middle,</span><br><span class="line">        child: Image.asset(</span><br><span class="line">          <span class="string">&#x27;assets/noavatar.png&#x27;</span>,</span><br><span class="line">          width: <span class="number">20</span>,</span><br><span class="line">          height: <span class="number">20</span>,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">    ],</span><br><span class="line">  ),</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>按钮Widget</h1>
+<ul>
+<li>
+<p>Flutter 1.22版本之前主要用<code>FlatButton</code>、<code>RaisedButton</code>、<code>OutlineButton</code>，目前不推荐使用，要给按钮设置一个背景色,你得套一层Container,利用Container的颜色来实现，很不方便</p>
+</li>
+<li>
+<p>Flutter 1.22版本新增了3个按钮，<code>TextButton</code>、<code>OutlinedButton</code>、<code>ElevatedButton</code>，虽然以前的Button没有被废弃，但flutter团队以后也不更新它们,只会停留在现阶段.强烈建议使用新的Button。</p>
+<table>
+<thead>
+<tr>
+<th>1.22版本前的按钮</th>
+<th style="text-align:left">主题</th>
+<th>1.22版本后的按钮</th>
+<th>主题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FlatButton</td>
+<td style="text-align:left">ButtonTheme</td>
+<td>TextButton(扁平)</td>
+<td>TextButtonTheme</td>
+</tr>
+<tr>
+<td>OutlineButton</td>
+<td style="text-align:left">ButtonTheme</td>
+<td>OutlinedButton(边框)</td>
+<td>OutlinedButtonTheme</td>
+</tr>
+<tr>
+<td>RaisedButton</td>
+<td style="text-align:left">ButtonTheme</td>
+<td>ElevatedButton(凸起)</td>
+<td>ElevatedButtonTheme</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐使用 TextButton OutlinedButton ElevatedButton</span></span><br><span class="line">TextButton(</span><br><span class="line">  onPressed: () &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;-----&quot;</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  child: Text(<span class="string">&quot;登录&quot;</span>),</span><br><span class="line">  style: ButtonStyle(</span><br><span class="line">     minimumSize: MaterialStateProperty.all(Size(<span class="number">100</span>, <span class="number">30</span>)),</span><br><span class="line">     padding: MaterialStateProperty.all(EdgeInsets.zero),</span><br><span class="line">     backgroundColor: MaterialStateProperty.all(Colors.grey),</span><br><span class="line">  ),</span><br><span class="line">),</span><br><span class="line"><span class="keyword">const</span> ButtonStyle(&#123;</span><br><span class="line">  <span class="keyword">this</span>.textStyle, <span class="comment">//字体</span></span><br><span class="line">  <span class="keyword">this</span>.backgroundColor, <span class="comment">//背景色</span></span><br><span class="line">  <span class="keyword">this</span>.foregroundColor, <span class="comment">//前景色</span></span><br><span class="line">  <span class="keyword">this</span>.overlayColor, <span class="comment">// 高亮色，按钮处于focused, hovered, or pressed时的颜色</span></span><br><span class="line">  <span class="keyword">this</span>.shadowColor, <span class="comment">// 阴影颜色</span></span><br><span class="line">  <span class="keyword">this</span>.elevation, <span class="comment">// 阴影值</span></span><br><span class="line">  <span class="keyword">this</span>.padding, <span class="comment">// padding</span></span><br><span class="line">  <span class="keyword">this</span>.minimumSize, <span class="comment">//最小尺寸</span></span><br><span class="line">  <span class="keyword">this</span>.side, <span class="comment">//边框</span></span><br><span class="line">  <span class="keyword">this</span>.shape, <span class="comment">//形状</span></span><br><span class="line">  <span class="keyword">this</span>.mouseCursor, <span class="comment">//鼠标指针的光标进入或悬停在此按钮的[InkWell]上时。</span></span><br><span class="line">  <span class="keyword">this</span>.visualDensity, <span class="comment">// 按钮布局的紧凑程度</span></span><br><span class="line">  <span class="keyword">this</span>.tapTargetSize, <span class="comment">// 响应触摸的区域</span></span><br><span class="line">  <span class="keyword">this</span>.animationDuration, <span class="comment">//[shape]和[elevation]的动画更改的持续时间。</span></span><br><span class="line">  <span class="keyword">this</span>.enableFeedback, <span class="comment">// 检测到的手势是否应提供声音和/或触觉反馈。例如，在Android上，点击会产生咔哒声，启用反馈后，长按会产生短暂的振动。通常，组件默认值为true。</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>图片Widget</h1>
+<ul>
+<li>Image结构 <div style="width:50%;margin-bottom:15px;"><img src="/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/all.webp" class=""></div>
+</li>
+<li><code>Image.asset</code>
+<ul>
+<li>把图片放到目录中<div style="width:50%;margin-bottom:15px;"><img src="/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/images.webp" class=""></div>
+</li>
+<li>在 pubspec.yaml 中的 flutter 部分添加配置<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">assets:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">images/avatar.png</span>   <span class="comment"># 某张图片加载</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">images/</span>            <span class="comment"># 整个文件夹配置</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>代码使用<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Image.asset(<span class="string">&#x27;images/avatar.png&#x27;</span>,width: <span class="number">300</span>,height: <span class="number">200</span>,);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li>网络图片<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//直接携带URL参数即可</span></span><br><span class="line">Image.network(<span class="string">&#x27;http://www.baidu.com/sports/img//ddd.jpg&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//加载出错时显示某张特定的图片</span></span><br><span class="line"><span class="keyword">new</span> FadeInImage.assetNetwork(</span><br><span class="line">    placeholder: <span class="string">&#x27;images/logo.png&#x27;</span>,</span><br><span class="line">    image: imageUrl,</span><br><span class="line">    width: <span class="number">120</span>,</span><br><span class="line">    fit: BoxFit.fitWidth,</span><br><span class="line">)</span><br><span class="line"><span class="keyword">new</span> FadeInImage.memoryNetwork(</span><br><span class="line">    placeholder: kTransparentImage,</span><br><span class="line">    image: imageUrl,</span><br><span class="line">    width: <span class="number">120</span>,</span><br><span class="line">    fit: BoxFit.fitWidth,</span><br><span class="line">)</span><br><span class="line"><span class="comment">//CachedNetworkImage 组件中的占位图是一个 Widget</span></span><br><span class="line"><span class="keyword">new</span> CachedNetworkImage(</span><br><span class="line">    width: <span class="number">120</span>,</span><br><span class="line">    fit: BoxFit.fitWidth,</span><br><span class="line">    placeholder: <span class="keyword">new</span> CircularProgressIndicator(),</span><br><span class="line">    imageUrl: imageUrl,</span><br><span class="line">    errorWidget: <span class="keyword">new</span> Icon(Icons.error),</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li>icon<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Icon(</span><br><span class="line">    Icons.favorite,</span><br><span class="line">    color: Colors.blue,</span><br><span class="line">    size: <span class="number">24</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>参考</h1>
+<p><a target="_blank" rel="noopener" href="https://flutterchina.club/setup-macos/">Flutter中文网</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&amp;__biz=Mzg5MDAzNzkwNA==&amp;scene=1&amp;album_id=1566028536430247937&amp;count=3#wechat_redirect">Flutter系列教程</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/flutter/flutter(004)%E5%B8%B8%E7%94%A8Widget/" title="flutter(004)常用Widget" target="_blank" rel="external">http://wangliwen.top/flutter/flutter(004)常用Widget/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/flutter/flutter(003)%E6%9C%89%E7%8A%B6%E6%80%81%E7%9A%84StatefulWidget/" title="flutter(003)有状态的StatefulWidget"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/%E9%9F%B3%E8%A7%86%E9%A2%91/001_iOS_AVAudioSession%E8%AF%A6%E8%A7%A3/" title="iOS_AVAudioSession详解"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

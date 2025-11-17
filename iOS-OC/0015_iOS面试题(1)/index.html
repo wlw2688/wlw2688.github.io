@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ios面试题（1） | wangliwen</title>
+  <meta name="description" content="1. #include、#import、@class的区别?  在C 语言中, 我们使用 #include 来引入头文件,如果需要防止重复导入需要使用#ifndef...#define...#endif 在OC语言中, 我们使用#import来引入头文件,可以防止重复引入头文件,可以避免出现头文件递归引入的现象。 @class仅用来告诉编译器，有这样一个类，编译代码时，不报错,不会拷贝头文件.如果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ios面试题（1）">
+<meta property="og:url" content="http://wangliwen.top/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="1. #include、#import、@class的区别?  在C 语言中, 我们使用 #include 来引入头文件,如果需要防止重复导入需要使用#ifndef...#define...#endif 在OC语言中, 我们使用#import来引入头文件,可以防止重复引入头文件,可以避免出现头文件递归引入的现象。 @class仅用来告诉编译器，有这样一个类，编译代码时，不报错,不会拷贝头文件.如果">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-26T10:44:36.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.066Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-OC/0015_iOS面试题(1)" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ios面试题（1）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/" class="article-date">
+	  <time datetime="2018-10-26T10:44:36.000Z" itemprop="datePublished">2018-10-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-OC/">iOS-OC</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 26(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h4 id="1-include、-import、-class的区别">1. #include、#import、@class的区别?</h4>
+<ul>
+<li>在C 语言中, 我们使用 <code>#include</code> 来引入头文件,如果需要防止重复导入需要使用<code>#ifndef...#define...#endif</code></li>
+<li>在OC语言中, 我们使用<code>#import</code>来引入头文件,可以防止重复引入头文件,可以避免出现头文件递归引入的现象。</li>
+<li><code>@class</code>仅用来告诉编译器，有这样一个类，编译代码时，不报错,不会拷贝头文件.如果需要使用该类或者内部方法需要使用 <code>#import</code>导入</li>
+</ul>
+<h4 id="2-id-和-instancetype的区别">2. id 和 instancetype的区别?</h4>
+<ul>
+<li><code>id</code>可以作为方法的返回以及参数类型 也可以用来定义变量</li>
+<li><code>instancetype</code> 只能作为函数或者方法的返回值</li>
+<li>instancetype对比id的好处就是: 能精确的限制返回值的具体类型</li>
+</ul>
+<h4 id="3-New-作用是什么">3. New 作用是什么?</h4>
+<ol>
+<li>向计算机(堆区)申请内存空间;</li>
+<li>给实例变量初始化;</li>
+<li>返回所申请空间的首地址;</li>
+</ol>
+<h4 id="4-OC实例变量的修饰符-及作用范围">4.OC实例变量的修饰符? 及作用范围?</h4>
+<p>@puplic</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>可以在其他类中访问被<span class="keyword">@public</span>修饰的成员变量</span><br><span class="line"><span class="number">2.</span>也可以在本类中访问被<span class="keyword">@public</span>修饰的成员变量</span><br><span class="line"><span class="number">3.</span>可以在子类中访问父类中被<span class="keyword">@public</span>修饰的成员变量</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>@private</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>不可可以在其他类中访问被<span class="keyword">@private</span>修饰的成员变量</span><br><span class="line"><span class="number">2.</span>也可以在本类中访问被<span class="keyword">@private</span>修饰的成员变量</span><br><span class="line"><span class="number">3.</span>不可以在子类中访问父类中被<span class="keyword">@private</span>修饰的成员变量</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>@protected (默认情况下所有的实例变量都是protected)</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>不可可以在其他类中访问被<span class="keyword">@protected</span>修饰的成员变量</span><br><span class="line"><span class="number">2.</span>也可以在本类中访问被<span class="keyword">@protected</span>修饰的成员变量</span><br><span class="line"><span class="number">3.</span>可以在子类中访问父类中被<span class="keyword">@protected</span>修饰的成员变量</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>@package</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">介于public和private之间的,如果是在其他包中访问就是private,在当前代码中访问就是public.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="5-proprety的作用">5. @proprety的作用</h4>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> = ivar + <span class="keyword">getter</span> + <span class="keyword">setter</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol>
+<li>在.h文件中帮我们自动生成<code>get</code>和<code>set</code>方法声明</li>
+<li>在.m文件中帮我们生成私有的实例变量(前提是没有在.h文件中没有手动生成)</li>
+<li>在.m文件中帮我们是实现<code>get和set</code>方法的实现</li>
+</ol>
+<ul>
+<li>注意:<br>
+在使用@property情况下,可以重写getter和setter方法.需要注意的是, 当把setter和getter方法都实现了之后,实例变量也需要手动添加.</li>
+</ul>
+<h4 id="6-proprety-参数说明">6. @proprety 参数说明?</h4>
+<ul>
+<li>原子性—<code>atomic/nonatomic</code> 如果不写默认情况为 <code>atomic</code>(系统会自动加上同步锁，影响性能),在 iOS 开发中尽量指定为 <code>nonatomic</code>，这样有助于提高程序的性能</li>
+<li>读/写权限—<code>readwrite(读写)、readooly (只读)</code></li>
+<li>内存管理语义—<code>retain、assign、strong、 weak、unsafe_unretained、copy</code></li>
+<li>方法名—<code>getter=、setter=</code></li>
+</ul>
+<h4 id="7-NSObject和id的区别">7 NSObject和id的区别?</h4>
+<ul>
+<li>NSObject和id都可以指向任何对象</li>
+<li>NSObject对象会在编译时进行检查,需要强制类型转换</li>
+<li>id类型不需要编译时检查,不需要强制类型转换</li>
+</ul>
+<h4 id="8-id类型-nil-Nil-NULL和NSNULL的区别">8. id类型, nil , Nil ,NULL和NSNULL的区别?</h4>
+<ul>
+<li>id类型: 是一个独特的数据类型，可以转换为任何数据类型，id类型的变量可以存放任何数据类型的对象，在内部处理上，这种类型被定义为指向对象的指针，实际上是一个指向这种对象的实例变量的指针; id 声明的对象具有运行时特性，既可以指向任意类型的对象</li>
+<li>nil 是一个实例对象值;如果我们要把一个对象设置为空的时候,就用nil</li>
+<li>Nil 是一个类对象的值,如果我们要把一个class的对象设置为空的时候,就用Nil</li>
+<li>NULL 指向基本数据类型的空指针(C语言的变量的指针为空)</li>
+<li>NSNull 是一个对象,它用在不能使用nil的场合</li>
+</ul>
+<h4 id="9-atomic和nonatomic区别-以及作用">9. atomic和nonatomic区别,以及作用?</h4>
+<p><code>atomic</code>与<code>nonatom</code>的主要区别就是系统自动生成的<code>getter/setter</code>方法不一样</p>
+<ul>
+<li>atomic系统自动生成的getter/setter方法会进行加锁操作</li>
+<li>nonatomic系统自动生成的getter/setter方法不会进行加锁操作</li>
+</ul>
+<p><strong>atomic不是线程安全的</strong></p>
+<ul>
+<li>系统生成的getter/setter方法会进行加锁操作,注意:这个锁仅仅保证了getter和setter存取方法的线程安全.</li>
+<li>因为getter/setter方法有加锁的缘故,故在别的线程来读写这个属性之前,会先执行完当前操作.</li>
+<li>atomic 可以保证多线程访问时候,对象是未被其他线程销毁的(比如:如果当一个线程正在get或set时,又有另一个线程同时在进行release操作,可能会直接crash)</li>
+</ul>
+<h4 id="10-什么情况使用-weak-关键字，相比-assign-有-什么不同">10. 什么情况使用 weak 关键字，相比 assign 有 什么不同?</h4>
+<ul>
+<li>在 ARC 中,在有可能出现循环引用的时候,往往要通过让其中一端使用 <code>weak</code> 来解决, 比如:<code>delegate</code> 代理属性， 自身已经对它进行一次强引用,没有必要再强引用一次,此时也会使用 <code>weak</code>,自定义 <code>IBOutlet</code> 控件属性一般也使用 <code>weak</code>;当然，也可以使用 <code>strong</code>，但是建议使用 <code>weak</code></li>
+</ul>
+<p><strong>weak 和 assign 的不同点</strong></p>
+<ul>
+<li><code>weak</code> 策略在属性所指的对象遭到摧毁时，系统会将 <code>weak</code> 修饰的属性对象的指针指 向 <code>nil</code>，在 <code>OC</code> 给 <code>nil</code> 发消息是不会有什么问题的; 如果使用 <code>assign</code> 策略在属性所指 的对象遭到摧毁时，属性对象指针还指向原来的对象，由于对象已经被销毁，这时候就产生了野指针，如果这时候在给此对象发送消息，很容造成程序奔溃 <code>assigin</code> 可以用于修饰非 <code>OC</code> 对象,而 <code>weak</code> 必须用于 <code>OC</code> 对象</li>
+</ul>
+<h4 id="11-代理使用-weak-还是-assign">11. 代理使用 weak 还是 assign</h4>
+<ul>
+<li>建议使用 <code>weak</code>, 对于weak: 指明该对象并不负责保持delegate这个对象，delegate这个对象的销毁由外部控制。</li>
+<li>可以使用 <code>assign</code>,也有weak的功效, 对于使用 assign 修饰delegate, 在对象释放前,需要将 delegate 指针设置为 nil,不然会产生野指针</li>
+</ul>
+<h4 id="12-ARC-下，不显式指定任何属性关键字时，默认-的关键字都有哪些">12. ARC 下，不显式指定任何属性关键字时，默认 的关键字都有哪些?</h4>
+<ul>
+<li>基本数据类型: <code>atomic,readwrite,assign</code></li>
+<li>普通的 OC 对象: <code>atomic,readwrite,strong</code></li>
+</ul>
+<h4 id="13-怎么用-copy-关键字">13. 怎么用 copy 关键字?</h4>
+<ul>
+<li><code>NSString、NSArray、NSDictionary 等等经常使用 copy</code> 关键字，是因为他们有对应 的可变类型:<code>NSMutableString、NSMutableArray、NSMutableDictionary</code>，为确保 对象中的属性值不会无意间变动，应该在设置新属性值时拷贝一份，保护其封装性</li>
+<li><code>block</code> 也经常使用 <code>copy</code> 关键字,方法内部的 <code>block</code> 默认是 在栈区的,使用 <code>copy</code> 可以把它放到堆区.</li>
+<li>对于 <code>block</code> 使用 <code>copy</code> 还是 <code>strong</code> 效果是一样的，但是 建议写上 <code>copy</code>，因为这样显示告知调用者“编译器会自动对 <code>block</code> 进行了 <code>copy</code> 操 作</li>
+</ul>
+<h4 id="14-如何让自定义类可以用-copy-修饰符-如何重写带-copy-关键字的-setter">14. 如何让自定义类可以用 copy 修饰符?如何重写带 copy 关键字的 setter?</h4>
+<p>若想令自己所写的对象具有拷贝功能，则需实现 <code>NSCopying</code> 协议。如果自定义的对象分为可变版本与不可变版本，那么就要同时实现 <code>NSCopyiog 与 NSMutableCopying 协议</code></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现不可变版本拷贝</span></span><br><span class="line">- (<span class="keyword">id</span>)copyWithZone:(<span class="built_in">NSZone</span> *)zone; </span><br><span class="line"><span class="comment">// 实现可变版本拷贝</span></span><br><span class="line">- (<span class="keyword">id</span>)mutableCopyWithZone:(<span class="built_in">NSZone</span> *)zone;</span><br><span class="line"><span class="comment">// 重写带 copy 关键字的 setter</span></span><br><span class="line">- (<span class="keyword">void</span>)setName:(<span class="built_in">NSString</span> *)name &#123;</span><br><span class="line">    _name = [name <span class="keyword">copy</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="15-weak-属性需要在-dealloc-中置-nil-么">15. weak 属性需要在 dealloc 中置 nil 么</h4>
+<ul>
+<li>在 ARC 环境无论是强指针还是弱指针都无需在 dealloc 设置为 nil ， ARC 会自动帮我们处理</li>
+<li>即便是编译器不帮我们做这些，weak 也不需要在 dealloc 中置 nil 在属性所指的对象遭到摧毁时，属性值也会清空</li>
+</ul>
+<h4 id="16-说一下OC的反射机制">16.说一下OC的反射机制;</h4>
+<ul>
+<li>OC的反射机制主要是基于OC的动态语言特性;</li>
+<li>系统Foundation框架为我们提供了一些方法反射的API;</li>
+<li>我们可以通过这些API执行将字符串转为SEL等操作;</li>
+<li>由于OC语言的动态性，这些操作都是发生在运行时的。</li>
+</ul>
+<h4 id="17-手写单例">17.手写单例</h4>
+<p>方式一: 不是线程安全的,如果多线程需要加锁</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> ClassName *_instance;</span><br><span class="line">+ (<span class="keyword">instancetype</span>)sharedInstance&#123;</span><br><span class="line">   <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">       <span class="keyword">if</span>(!_instance)   &#123;</span><br><span class="line">           _instance = [<span class="keyword">self</span> alloc]init];</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _instance;</span><br><span class="line">&#125; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>方式二: 注意多线程问题 GCDdispatch_once 默认是线程安全的</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> ClassName *_instance;</span><br><span class="line">  + (<span class="keyword">instancetype</span>)sharedInstance&#123;</span><br><span class="line">      <span class="keyword">static</span> dispatch_one_t oneToken;</span><br><span class="line">      <span class="built_in">dispatch_once</span>(&amp;onetoken,^&#123;</span><br><span class="line">         _instance = [<span class="keyword">self</span> alloc]init];</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="keyword">return</span> _instance;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  + (<span class="keyword">instancetype</span>)allocWithZone:(<span class="built_in">NSZone</span> *) zone&#123;</span><br><span class="line">    <span class="keyword">static</span> dispatch_t onetoken;</span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;oncetoken ^&#123;</span><br><span class="line">       _instance = [<span class="keyword">super</span> allocwithzone:zone];</span><br><span class="line">    &#125;)</span><br><span class="line">    retun _instance</span><br><span class="line">  &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="18-什么是僵尸对象">18. 什么是僵尸对象?</h4>
+<ul>
+<li>已经被销毁的对象(不能再使用的对象),内存已经被回收的对象。</li>
+</ul>
+<h4 id="19-野指针">19.野指针</h4>
+<ul>
+<li>指向僵尸对象(不可用内存/已经释放的内存地址)的指针</li>
+</ul>
+<p>比如:</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSObject</span> *obj = [<span class="built_in">NSObject</span> new];</span><br><span class="line">[obj release]; <span class="comment">// obj 指向的内存地址已经释放了,</span></span><br><span class="line">obj 如果再去访问的话就是野指针错误了.</span><br><span class="line">野指针错误形式在Xcode中通常表现为：Thread <span class="number">1</span>：EXC_BAD_ACCESS，因为你访问了一块已经不属于你的内存。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="20-什么是内存泄露">20. 什么是内存泄露?</h4>
+<ul>
+<li>内存泄露 :一个对象不再使用,但是这个对象却没有被销毁,空间没有释放,则这个就叫做内存泄露.</li>
+<li>ARC导致的循环引用 block,delegate,NSTimer等.</li>
+</ul>
+<h4 id="21-数组copy后里面的元素会复制一份新的吗">21.数组copy后里面的元素会复制一份新的吗</h4>
+<ul>
+<li>不会,数组里面存的是之前对象的地址,不会改变,可以自己测试一下</li>
+</ul>
+<h4 id="22-如下代码-会有什么问题吗">22. 如下代码,会有什么问题吗?</h4>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">copy</span>, <span class="keyword">nonatomic</span>) <span class="built_in">NSMutableArray</span> * array</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>使用 copy 修饰,会生成不可变数组,在添加删除数组元素时候会崩溃</p>
+<h4 id="23-OC中的NSInteger-和int-有什么区别">23. OC中的NSInteger 和int 有什么区别</h4>
+<ul>
+<li>在32位操作系统时候, NSInteger 等价于 int,即32位</li>
+<li>在64位操作系统时候, NSInteger 等价于 long,即64位</li>
+</ul>
+<h4 id="24-synthesize-和-dynamic-分别有什么作用">24. @synthesize 和 @dynamic 分别有什么作用</h4>
+<ul>
+<li>@property 有两个对应的词，一个是<code>@synthesize</code>，一个是<code>@dynamic</code>。</li>
+<li>如果 <code>@synthesize 和@dynamic</code>都没写，那么默认的就是<code>@syntheszie var = _var</code>;</li>
+<li><code>@synthesize</code> 的语义是如果你没有手动实现 <code>setter</code> 方法和 <code>getter</code> 方法，那么编译器 会自动为你加上这两个方法</li>
+<li><code>@dynamic</code> 告诉编译器:属性的 <code>setter 与 getter</code>方法由用户自己实现，不自动生成(当然对于 readonly 的属性只需提供 getter 即可)</li>
+</ul>
+<h4 id="25-NSMutableDictionary-中使用setValueForKey-和-setObjectForKey有什么区别">25.NSMutableDictionary 中使用setValueForKey 和 setObjectForKey有什么区别?</h4>
+<ul>
+<li>根据官方文档说明: 一般情况下,如果给NSMutableDictionary 发送<code>setValue</code> 仍然是调用了 <code>setObject</code>方法, 如果参数 value 为 nil,则会调用<code>removeObject</code> 移除这个键值对;</li>
+<li><code>setObjectForKey</code> 是 NSMutableDictionary特有的, value 不能为 nil,否则会崩溃</li>
+<li><code>setValueForKey</code> 是KVC的,key 必须是字符串类型, setObject 的 key 可以是任意类型</li>
+</ul>
+<h4 id="26-列举出延迟调用的几种方法">26.列举出延迟调用的几种方法?</h4>
+<ul>
+<li>performSelector方法</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(Delay) withObject:<span class="literal">nil</span> afterDelay:<span class="number">3.0</span>f];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>NSTimer定时器</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="number">3.0</span>f target:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(Delay) userInfo:<span class="literal">nil</span> repeats:<span class="literal">NO</span>];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>sleepForTimeInterval</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="built_in">NSThread</span> sleepForTimeInterval:<span class="number">3.0</span>f];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>GCD方式</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(<span class="number">3</span> * <span class="built_in">NSEC_PER_SEC</span>));</span><br><span class="line">    dispatch_after(popTime, dispatch_get_main_queue(), ^(<span class="keyword">void</span>)&#123;</span><br><span class="line">        [<span class="keyword">self</span> Delay];</span><br><span class="line">    &#125;);</span><br><span class="line">- (<span class="keyword">void</span>)Delay &#123;</span><br><span class="line"> <span class="built_in">NSLog</span>(<span class="string">@&quot;执行&quot;</span>); </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="27-NSCache-和NSDictionary-区别">27. NSCache 和NSDictionary 区别?</h4>
+<ol>
+<li>NSCache可以提供自动删减缓存功能，而且保证线程安全，与字典不同，不会拷贝键。</li>
+<li>NSCache可以设置缓存上限，限制对象个数和总缓存开销。定义了删除缓存对象的时机。这个机制只对NSCache起到指导作用，不会一定执行。</li>
+<li>NSPurgeableData搭配NSCache使用，可以自动清除数据。</li>
+<li>只有那种“重新计算很费劲”的数据才值得放入缓存。</li>
+</ol>
+<h4 id="28-NSArray-和-NSSet区别">28.NSArray 和 NSSet区别</h4>
+<ul>
+<li>NSSet和NSArray功能性质一样，用于存储对象，属于集合。</li>
+<li>NSSet属于 “无序集合”，在内存中存储方式是不连续</li>
+<li>NSArray是 “有序集合” 它内存中存储位置是连续的。</li>
+<li>NSSet，NSArray都是类，只能添加对象，如果需要加入基本数据类型（int，float，BOOL，double等），需要将数据封装成NSNumber类型。</li>
+<li>由于NSSet是用hash实现的所以就造就了它查询速度比较快，但是我们不能把某某对象存在第几个元素后面之类的有关下标的操作。</li>
+</ul>
+<h4 id="29-声明一个函数-传入值是一个输入输出参数都是-int的-block-函数">29.声明一个函数,传入值是一个输入输出参数都是 int的 block 函数</h4>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)test_Function:(<span class="keyword">int</span>(^)(<span class="keyword">int</span> num)) block&#123;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="30-面向对象和面向过程的区别">30.面向对象和面向过程的区别?</h4>
+<ul>
+<li>面向过程:注重的是解决问题的步骤,比如C语言</li>
+<li>面向对象:关注的是解决问题的去要那些对象,OC语言就是面向对象</li>
+</ul>
+<h4 id="31-对象方法和类方法的区别">31.对象方法和类方法的区别?</h4>
+<ul>
+<li>对象方法:以减号开头,只可以被对象调用,可以访问成员变量</li>
+<li>类方法:以加号开头只能用类名调用,对象不可以调用,类方法不能访问成员变量</li>
+</ul>
+<h4 id="32-什么是面向过程-POP–Procedure-Oriented-Programming">32. 什么是面向过程?(POP–Procedure Oriented Programming)</h4>
+<ul>
+<li>“面向过程”<code>(Procedure Oriented)</code>是一种以过程为中心的编程思想。就是分析出解决问题所需要的步骤，然后用函数把这些步骤一步一步实现，使用的时候一个一个依次调用就可以了。注重的是实现过程!</li>
+</ul>
+<h4 id="33-什么是面向对象-OOP–Object-Oriented-Programming">33. 什么是面向对象?(OOP–Object Oriented Programming)</h4>
+<ul>
+<li>
+<p>“面向对象”是一种以对象为中心的编程思想。</p>
+</li>
+<li>
+<p>面向对象的三大特性：</p>
+</li>
+</ul>
+<ol>
+<li>封装<br>
+隐藏对象的属性和实现细节，仅对外提供公共访问方式，将变化隔离，便于使用，提高复用性和安全性。</li>
+<li>继承<br>
+提高代码复用性；建立了类之间的关系；子类可以拥有父类的所有成员变量的方法；继承是多态的前提。</li>
+<li>多态<br>
+父类或接口定义的引用变量可以指向子类或具体实现类的实例对象。提高了程序的拓展性。</li>
+</ol>
+<ul>
+<li>正因为面向对象编程有着着三种特性，<code>继承、封装、多态</code>，从而使得面向对象编程更具有容易让人接受，更贴近与人们的生活，比面向对象编程更加方便与快捷，一定程度上降低了程序员的工作量，使程序的可读性也得到了提高，代码的效率也得到了提高。</li>
+</ul>
+<h4 id="34-什么是多态">34. 什么是多态?</h4>
+<ul>
+<li>多态在面向对象语言中指同一个接口有多种不同的实现方式,在OC中,多态则是不同对象对同一消息的不同响应方式;子类通过重写父类的方法来改变同一方法的实现.体现多态性</li>
+<li>通俗来讲: 多态就父类类型的指针指向子类的对象,在函数（方法）调用的时候可以调用到正确版本的函数（方法）。</li>
+<li>多态就是某一类事物的多种形态.继承是多态的前提;</li>
+</ul>
+<h4 id="35-什么是分类">35. 什么是分类?</h4>
+<ul>
+<li>分类: 在不修改原有类代码的情况下,可以给类添加方法<br>
+Categroy 给类扩展方法,或者关联属性, Categroy底层结构也是一个结构体:内部存储这结构体的名字,那个类的分类,以及对象和类方法列表,协议,属性信息</li>
+<li>通过Runtime加载某个类的所有Category数据</li>
+<li>把所有Category的方法、属性、协议数据，合并到一个大数组中后面参与编译的Category数据，会在数组的前面</li>
+<li>将合并后的分类数据（方法、属性、协议），插入到类原来数据的前面</li>
+</ul>
+<h4 id="36-什么是协议">36.什么是协议?</h4>
+<ul>
+<li>协议：协议是一套标准，这个标准中声明了很多方法，但是不关心具体这些方法是怎么实现的，具体实现是由遵循这个协议的类去完成的。</li>
+<li>在OC中，一个类可以实现多个协议，通过协议可以弥补单继承的缺陷但是协议跟继承不一样，协议只是一个方法列表，方法的实现得靠遵循这个协议的类去实现。</li>
+</ul>
+<h4 id="37-正式协议-非正式协议">37.正式协议&amp;非正式协议?</h4>
+<ul>
+<li>非正式协议:凡是在NSObject或其子类 Foundation 框架中的类增加类别(分类),都是非正式协议</li>
+<li>正式协议: @protocol</li>
+</ul>
+<h4 id="38-如何实现多继承">38.如何实现多继承?</h4>
+<ol>
+<li>类别</li>
+<li>协议</li>
+<li>消息转发 (后面会详细讲述)</li>
+</ol>
+<h4 id="39-为什么说OC是一门动态语言？">39.为什么说OC是一门动态语言？</h4>
+<ul>
+<li>动态语言:是指程序在运行时可以改变其结构，新的函数可以被引进,已有的函数可以被删除等在结构上的变化</li>
+<li>动态类型语言: 就是类型的检查是在运行时做的。</li>
+</ul>
+<p>OC的动态特性可从三方面:</p>
+<ul>
+<li>动态类型（Dynamic typing）:最终判定该类的实例类型是在运行期间</li>
+<li>动态绑定（Dynamic binding）：在运行时确定调用的方法</li>
+<li>动态加载（Dynamic loading）：在运行期间加载需要的资源或可执行代码</li>
+</ul>
+<h4 id="40-动态绑定">40.动态绑定?</h4>
+<ul>
+<li>动态绑定 将调用方法的确定也推迟到运行时。OC可以先跳过编译，到运行的时候才动态地添加函数调用，在运行时才决定要调用什么方法，需要传什么参数进去，这就是动态绑定。</li>
+<li>在编译时，方法的 调用并不和代码绑定在一起，只有在消实发送出来之后，才确定被调用的代码。通过动态类型和动态绑定技术，</li>
+</ul>
+<h4 id="41-cocoa-和-cocoa-touch是什么-区别">41. cocoa 和 cocoa touch是什么?区别?</h4>
+<ul>
+<li>Cocoa包含Foundation和AppKit框架，可用于开发Mac OS X系统的应用程序。</li>
+<li>Cocoa Touch包含Foundation和UIKit框架，可用于开发iPhone OS系统的应用程序。</li>
+<li>Cocoa是 Mac OS X 的开发环境，Cocoa Touch是 iPhone OS的开发环境。</li>
+</ul>
+<h4 id="42-cocoa-touch底层技术架构">42. cocoa touch底层技术架构?</h4>
+<p>cocoa touch底层技术架构 主要分为4层:</p>
+<ul>
+<li>可触摸层 Cocoa Touch : UI组件,触摸事件和事件驱动,系统接口</li>
+<li>媒体层 Media: 音视频播放,动画,2D和3D图形</li>
+<li>Core Server: 核心服务层,底层特性,文件,网络,位置服务区等</li>
+<li>Core OS: 内存管理,底层网络,硬盘管理</li>
+</ul>
+<h4 id="43-什么是谓词">43. 什么是谓词?</h4>
+<p>谓词(<code>NSPredicate</code>)是OC针对数据集合的一种逻辑帅选条件,类似一个过滤器,简单实实用代码如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Person * p1 = [Person personWithName:@&quot;alex&quot; Age:20];</span><br><span class="line">Person * p2 = [Person personWithName:@&quot;alex1&quot; Age:30];</span><br><span class="line">Person * p3 = [Person personWithName:@&quot;alex2&quot; Age:10];</span><br><span class="line">Person * p4 = [Person personWithName:@&quot;alex3&quot; Age:40];</span><br><span class="line">Person * p5 = [Person personWithName:@&quot;alex4&quot; Age:80];</span><br><span class="line"></span><br><span class="line">NSArray * persons = @[p1, p2, p3, p4, p5];</span><br><span class="line">//定义谓词对象,谓词对象中包含了过滤条件</span><br><span class="line">NSPredicate *predicate = [NSPredicate predicateWithFormat:@&quot;age &lt; 30&quot;];</span><br><span class="line">//使用谓词条件过滤数组中的元素,过滤之后返回查询的结果</span><br><span class="line">NSArray *array = [persons filteredArrayUsingPredicate:predicate];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="44-什么是类工厂方法">44. 什么是类工厂方法?</h4>
+<p>类工厂方法就是用来快速创建对象的类方法, 他可以直接返回一个初始化好的对象,具备以下特征:</p>
+<ol>
+<li>一定是类方法</li>
+<li>返回值需要是 id/instancetype 类型</li>
+<li>规范的方法名说说明类工厂方法返回的是一个什么对象,一般以类名首字母小写开始;</li>
+</ol>
+<p>比如系统 UIButton 的buttonWithType 就是一个类工厂方法:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 类工厂方法</span><br><span class="line">+ (instancetype)buttonWithType:(UIButtonType)buttonType;</span><br><span class="line">// 使用</span><br><span class="line">+ UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="45-什么是糖衣语法">45. 什么是糖衣语法?</h4>
+<p>糖衣语法又叫做<code>语法糖</code>或<code>语法盐</code>,是指在计算机语言中添加某种语法,这种语法对语言的功能没有影响,但更方便程序员使用,增加程序的可读性,减少代码出错机会</p>
+<p>OC中的字面量,其实就是语法糖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">NSNumber * number = @1;</span><br><span class="line">NSArray * array = @[@1, @2, @3];</span><br><span class="line">NSDictionary * dict = @&#123;@&quot;key&quot;:@&quot;value&quot;&#125;;</span><br><span class="line">NSNumber * num1 = array[0];</span><br><span class="line">NSString * value = dict[@&quot;key&quot;];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="46-Svn-和-Git-区别">46.Svn 和 Git 区别</h4>
+<ul>
+<li>
+<p>svn 和 git 都是用来对项目进行版本控制以及代码管理的.可以监测代码及资源的更改变化.有利于实现高效的团队合作;</p>
+</li>
+<li>
+<p>svn 是集中式的,集中式是指只有一个远程版本库,git 是分布式的,分布式有本地和远程版本库,本地仓库都保留了整个项目的完整备份;<br>
+如果存储远程版本库的服务器挂了，所有人的代码都无法提交，甚至丢失版本库, git则因为有本地版本库而不会有这个问题。</p>
+</li>
+<li>
+<p>由于两者的架构不同,git 和 svn 的分支也是不同的, svn 的分支是一个完整的目录,包含所有的实际文件,和中心仓库是保持同步的,如果某个团队成员创建新的分支,那么会同步到所有的版本成员中,所有人都会收到影响. 而 git下创建的分支合并前是不会影响到任何人的.创建分支可以在本地脱机进行任何操作.测试无误后在合并到主分支,然后其他成员才可以看得到.</p>
+</li>
+</ul>
+<h4 id="47-OC中有二维数组吗-如何实现">47.OC中有二维数组吗? 如何实现?</h4>
+<p>OC中没有二维数组, 可以通过一维数组嵌套来实现二维数组;</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 字面量定义</span></span><br><span class="line"><span class="built_in">NSArray</span> * array = @[</span><br><span class="line">                    @[@<span class="number">1</span>,@<span class="number">2</span>,@<span class="number">3</span>,@<span class="number">4</span>,@<span class="number">5</span>],</span><br><span class="line">                    @[@<span class="number">11</span>,@<span class="number">12</span>,@<span class="number">13</span>,@<span class="number">14</span>,@<span class="number">15</span>],</span><br><span class="line">                    @[@<span class="number">21</span>,@<span class="number">22</span>,@<span class="number">23</span>,@<span class="number">24</span>,@<span class="number">25</span>],</span><br><span class="line">                    @[@<span class="number">31</span>,@<span class="number">32</span>,@<span class="number">33</span>,@<span class="number">34</span>,@<span class="number">35</span>],</span><br><span class="line">                    @[@<span class="number">41</span>,@<span class="number">42</span>,@<span class="number">43</span>,@<span class="number">44</span>,@<span class="number">45</span>],</span><br><span class="line">                    ];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 访问</span></span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>,array[<span class="number">1</span>][<span class="number">1</span>]);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="48-CocoaPods理解">48.CocoaPods理解</h4>
+<p>CocoaPods 是一个 objc 的依赖管理工具，而其本身是利用 ruby 的依赖管理 gem 进行构建的</p>
+<ul>
+<li>想深入了解这个命令执行的详细内容，可以在这个命令后面加上 --verbose。现在运行这个命令 pod install --verbose</li>
+<li>CocoaPod三方库,会优先编译</li>
+</ul>
+<h4 id="49-verbose-和-no-repo-update有什么用">49. --verbose 和 --no-repo-update有什么用?</h4>
+<ul>
+<li>verbose意思为 冗长的、啰嗦的，一般在程序中表示详细信息。此参数可以显示命令执行过程中都发生了什么。</li>
+<li>pod install或pod update可能会卡在Analyzing dependencies步骤，因为这两个命令会升级 CocoaPods 的 spec 仓库，追加该参数可以省略此步骤，命令执行速度会提升。</li>
+</ul>
+<h4 id="50-KVC中的集合运算符">50. KVC中的集合运算符</h4>
+<ol>
+<li>简单集合运算符：@avg、@sum、@max、@min、@count (只能用在集合对象中，对象属性必须为数字类型)</li>
+<li>对象操作符：<br>
+@unionOfObjects：返回指定属性的值的数组，不去重<br>
+@distinctUnionOfObjects：返回指定属性去重后的值的数组</li>
+<li>数组 / 集体操作符：跟对象操作符很相似，只不过是在NSArray和NSSet所组成的集合中工作的。@unionOfArrays：返回一个数组，值由各个子数组的元素组成，不去重 @distinctUnionOfArrays：返回一个数组，值由各个子数组的元素组成，去重 @distinctUnionOfSets：和@distinctUnionOfArrays差不多, 只是它期望的是一个包含着NSSet对象的NSSet，并且会返回一个NSSet对象。因为集合不能有重复的值，所以只有distinct操作。</li>
+</ol>
+<h4 id="51-简要说明const-宏-static-extern区分以及使用">51.简要说明const,宏,static,extern区分以及使用?</h4>
+<p><strong>const</strong></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span>常量修饰符,经常使用的字符串常量，一般是抽成宏，但是苹果不推荐我们抽成宏，推荐我们使用<span class="keyword">const</span>常量。</span><br><span class="line"></span><br><span class="line">- <span class="keyword">const</span> 作用：限制类型</span><br><span class="line">- 使用<span class="keyword">const</span>修饰基本变量, 两种写法效果一致 , b都是只读变量</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> b = <span class="number">5</span>; </span><br><span class="line">  <span class="keyword">int</span> <span class="keyword">const</span> b = <span class="number">5</span>;   </span><br><span class="line">- 使用<span class="keyword">const</span>修饰指针变量的变量 </span><br><span class="line">  第一种: <span class="keyword">const</span> <span class="keyword">int</span> *p = &amp;a 和 <span class="keyword">int</span> <span class="keyword">const</span> *q = &amp;a; 效果一致,*p 的值不能改,p 的指向可以改; </span><br><span class="line">  第二种: <span class="keyword">int</span> * <span class="keyword">const</span> p = &amp;a;  表示 p 的指向不能改,*p 的值可以改</span><br><span class="line">  第三种: </span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> * <span class="keyword">const</span> p = &amp;a; *p 值和 p 的指向都不能改</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> 在*左边, 指向可变, 值不可变</span><br><span class="line">  <span class="keyword">const</span> 在*的右边, 指向不可变, 值可变</span><br><span class="line">  <span class="keyword">const</span> 在*的两边, 都不可变</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>宏</strong></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">* 基本概念：宏是一种批量处理的称谓。一般说来，宏是一种规则或模式，或称语法替换 ，用于说明某一特定输入（通常是字符串）如何根据预定义的规则转换成对应的输出（通常也是字符串)。这种替换在预编译时进行，称作宏展开。编译器会在编译前扫描代码，如果遇到我们已经定义好的宏那么就会进行代码替换，宏只会在内存中<span class="keyword">copy</span>一份，然后全局替换，宏一般分为对象宏和函数宏。 宏的弊端：如果代码中大量的使用宏会使预编译时间变长。</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span>与宏的区别？</span><br><span class="line"></span><br><span class="line">* 编译检查 宏没有编译检查，<span class="keyword">const</span>有编译检查；</span><br><span class="line">* 宏的好处 定义函数，方法 <span class="keyword">const</span>不可以；</span><br><span class="line">* 宏的坏处 大量使用宏，会导致预编译时间过长</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>static</strong></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* 修饰局部变量: 被<span class="keyword">static</span>修饰局部变量，延长生命周期，跟整个应用程序有关，程序结束才会销毁,被 <span class="keyword">static</span> 修饰局部变量，只会分配一次内存</span><br><span class="line">* 修饰全局变量: 被<span class="keyword">static</span>修饰全局变量，作用域会修改，也就是只能在当前文件下使用</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>extern</strong></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">声明外部全局变量(只能用于声明，不能用于定义)</span><br><span class="line"></span><br><span class="line">常用用法（.h结合<span class="keyword">extern</span>联合使用）</span><br><span class="line">如果在.h文件中声明了<span class="keyword">extern</span>全局变量，那么在同一个类中的.m文件对全局变量的赋值必须是：数据类型+变量名（与声明一致）=XXXX结构。并且在调用的时候，必须导入.h文件。代码如下：</span><br><span class="line"></span><br><span class="line">.h</span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ExternModel</span> : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">extern</span> <span class="built_in">NSString</span> *lhString;</span><br><span class="line"><span class="keyword">@end</span> </span><br><span class="line">.m     </span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ExternModel</span></span></span><br><span class="line"><span class="built_in">NSString</span> *lhString=<span class="string">@&quot;hello&quot;</span>;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line">调用的时候：例如：在viewController.m中调用，则可以引入：ExternModel.h，否则无法识别全局变量。当然也可以通过不导入头文件的方式进行调用（通过<span class="keyword">extern</span>调用）。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="52-编译型和解释型的区别">52.编译型和解释型的区别?</h4>
+<ul>
+<li>编译型语言: 首先是将源代码编译生成机器指令，再由机器运行机器码 (二进制)。</li>
+<li>解释型语言: 源代码不是直接翻译成机器指令，而是先翻译成中间代码，再由解释器对中间代码进行解释运行。</li>
+</ul>
+<h4 id="53-动态语言和静态语言">53.动态语言和静态语言?</h4>
+<ul>
+<li>动态类型语言: 是指数据类型的检查是在运行时做的。用动态类型语言编程时，不用给变量指定数据类型，该语言会在你第一次赋值给变量时，在内部记录数据类型。</li>
+<li>静态类型语言: 是指数据类型的检查是在运行前（如编译阶段）做的。</li>
+</ul>
+<h4 id="54-什么是指针常量和常量指针？">54.什么是指针常量和常量指针？</h4>
+<ul>
+<li>
+<p>常量指针本质是指针，常量修饰它，表示这个指针乃是一个指向常量的指针（变量）。<br>
+指针指向的对象是常量，那么这个对象不能被更改。</p>
+</li>
+<li>
+<p>指针常量的本质是一个常量，而用指针修饰它，那么说明这个常量的值应该是一个指针。<br>
+指针常量的值是指针，这个值因为是常量，所以不能被赋值</p>
+</li>
+</ul>
+<h4 id="55-指针函数和函数指针">55. 指针函数和函数指针</h4>
+<p>指针函数</p>
+<ul>
+<li>指针函数： 顾名思义，它的本质是一个函数，不过它的返回值是一个指针。</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指针函数</span></span><br><span class="line"><span class="keyword">int</span> *sum(<span class="keyword">int</span> a, <span class="keyword">int</span> b)&#123;</span><br><span class="line">    <span class="keyword">int</span> result = a + b;</span><br><span class="line">    <span class="keyword">int</span> *c = &amp;result;</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> *p = sum(<span class="number">10</span>, <span class="number">20</span>);</span><br><span class="line">printf(<span class="string">&quot;sum:%d\n&quot;</span>, *p);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>函数指针</p>
+<ul>
+<li>与指针函数不同，函数指针 的本质是一个指针，该指针的地址指向了一个函数，所以它是指向函数的指针。</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数指针</span></span><br><span class="line"><span class="keyword">int</span> max(<span class="keyword">int</span> a, <span class="keyword">int</span> b)&#123;</span><br><span class="line">    <span class="keyword">return</span> (a &gt; b)?a:b;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> (*p)(<span class="keyword">int</span>, <span class="keyword">int</span>) = max;</span><br><span class="line"><span class="keyword">int</span> result = p(<span class="number">10</span>, <span class="number">20</span>);</span><br><span class="line">printf(<span class="string">&quot;result:%d\n&quot;</span>, result);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="56-写一个标准的宏MAX-这个宏输入2个参数-返回最大一个">56.写一个标准的宏MAX,这个宏输入2个参数,返回最大一个</h4>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Max(a,b) a&gt;b?a:b</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="57-自定义宏-define-MIN-A-B-A-B-A-B-代码运行结果">57.自定义宏 #define MIN(A,B) A&lt;B?A:B 代码运行结果?</h4>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">float</span> b = MIN(a++,<span class="number">1.5</span>);</span><br><span class="line">问 a= ? b = ?</span><br><span class="line">答案: a = <span class="number">3</span>; b = <span class="number">2</span></span><br><span class="line">a++ 会后执行, a++在表达式出现了<span class="number">2</span>次,得<span class="number">3</span>,  a++&lt;<span class="number">1.5</span>,返回a++,得<span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 扩展</span></span><br><span class="line"><span class="keyword">float</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">float</span> b = [<span class="keyword">self</span> getMax:a++ b:<span class="number">1.5</span>];</span><br><span class="line">- (<span class="built_in">CGFloat</span>)getMax:(<span class="built_in">CGFloat</span> ) a b:(<span class="built_in">CGFloat</span>)b&#123;</span><br><span class="line">   <span class="keyword">return</span> a&gt;b?a:b;</span><br><span class="line">&#125;</span><br><span class="line">运行 a = <span class="number">2</span>; b =<span class="number">1.5</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-OC/0015_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(1)/" title="ios面试题（1）" target="_blank" rel="external">http://wangliwen.top/iOS-OC/0015_iOS面试题(1)/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0016_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(2)/" title="ios面试题（2）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/xcconfig%E7%9A%84%E4%BD%BF%E7%94%A8/" title="xcconfig的使用"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>iOS性能---滑动卡顿优化(1)汇总篇 | wangliwen</title>
+  <meta name="description" content="概念  FPS：表示每秒渲染的帧数，通过用于衡量画面的流畅度，数值越高则表示画面越流畅。 CPU：负责对象的创建和销毁、对象属性的调整、布局计算、文本的计算和排版、图片的格式转换和解码、图像的绘制（Core Graphics）。 GPU: 负责纹理的渲染(将数据渲染到屏幕)。 垂直同步技术: 让CPU和GPU在收到vSync信号后再开始准备数据，防止撕裂感和跳帧，通俗来讲就是保证每秒输出的帧数不高">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS性能---滑动卡顿优化(1)汇总篇">
+<meta property="og:url" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(1)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E7%AF%87/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="概念  FPS：表示每秒渲染的帧数，通过用于衡量画面的流畅度，数值越高则表示画面越流畅。 CPU：负责对象的创建和销毁、对象属性的调整、布局计算、文本的计算和排版、图片的格式转换和解码、图像的绘制（Core Graphics）。 GPU: 负责纹理的渲染(将数据渲染到屏幕)。 垂直同步技术: 让CPU和GPU在收到vSync信号后再开始准备数据，防止撕裂感和跳帧，通俗来讲就是保证每秒输出的帧数不高">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-21T07:22:43.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.079Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(1)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E7%AF%87/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-性能与架构/003_(1)滑动卡顿优化汇总篇" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS性能---滑动卡顿优化(1)汇总篇
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(1)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E7%AF%87/" class="article-date">
+	  <time datetime="2018-10-21T07:22:43.000Z" itemprop="datePublished">2018-10-21</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(1)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E7%AF%87/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.4k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>概念</h1>
+<ul>
+<li><code>FPS</code>：表示每秒渲染的帧数，通过用于衡量画面的流畅度，数值越高则表示画面越流畅。</li>
+<li><code>CPU</code>：负责对象的创建和销毁、对象属性的调整、布局计算、文本的计算和排版、图片的格式转换和解码、图像的绘制（Core Graphics）。</li>
+<li><code>GPU</code>: 负责纹理的渲染(将数据渲染到屏幕)。</li>
+<li><code>垂直同步技术</code>: 让CPU和GPU在收到vSync信号后再开始准备数据，防止撕裂感和跳帧，通俗来讲就是保证每秒输出的帧数不高于屏幕显示的帧数。</li>
+<li><code>双缓冲技术</code>：<code>iOS是双缓冲机制</code>，前帧缓存和后帧缓存,cpu计算完GPU渲染后放入缓冲区中,当gpu下一帧已经渲染完放入缓冲区，且视频控制器已经读完前帧，GPU会等待vSync(垂直同步信号)信号发出后,瞬间切换前后帧缓存，并让cpu开始准备下一帧数据。</li>
+</ul>
+<h1>滑动卡顿的原因</h1>
+<ul>
+<li>在 VSync 信号到来后，系统图形服务会通过 CADisplayLink 等机制通知 App，App 主线程开始在 CPU 中计算显示内容，比如视图的创建、布局计算、图片解码、文本绘制等。随后 CPU 会将计算好的内容提交到 GPU 去，由 GPU 进行变换、合成、渲染。随后 GPU 会把渲染结果提交到帧缓冲区去，等待下一次 VSync 信号到来时显示到屏幕上。由于垂直同步的机制，如果在一个 VSync 时间内，CPU 或者 GPU 没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再显示，而这时显示屏会保留之前的内容不变。这就是界面卡顿的原因。</li>
+</ul>
+<h1>卡顿监测</h1>
+<ol>
+<li>
+<p>监测fps，具体见<a target="_blank" rel="noopener" href="https://github.com/ibireme/YYKit">YYFpsLabel</a>，利用<code>CADisplayLink</code>统计<code>delta</code>（&gt;=1）秒内的执行次数<code>count</code>，然后用<code>count/delta</code>得到fps，局部代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//代码在 YYKitDemo -&gt; other -&gt; YYFpsLabel</span></span><br><span class="line"> <span class="comment">//记录CADisplayLink的方法调用</span></span><br><span class="line"> - (<span class="keyword">void</span>)tick:(<span class="built_in">CADisplayLink</span> *)link &#123;</span><br><span class="line">   _count++; <span class="comment">//统计次数</span></span><br><span class="line">   <span class="built_in">NSTimeInterval</span> delta = link.timestamp - _lastTime; <span class="comment">//距离上次统计的时间差</span></span><br><span class="line">  <span class="keyword">if</span> (delta &lt; <span class="number">1</span>) <span class="keyword">return</span>;       <span class="comment">//时间差不到一秒不能计算</span></span><br><span class="line">  <span class="keyword">float</span> fps = _count / delta;  <span class="comment">//计算出fps</span></span><br><span class="line">   _lastTime = link.timestamp; <span class="comment">//最后时间重置</span></span><br><span class="line">   _count = <span class="number">0</span>;                 <span class="comment">//次数归零</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>基于runloop，具体使用微信团队的<a target="_blank" rel="noopener" href="https://github.com/Tencent/matrix">matrix</a><br>
+原理：</p>
+<blockquote>
+<p>Matrix卡顿监控在 Runloop 的起始最开始和结束最末尾位置添加 Observer，从而获得主线程的<code>开始</code>和<code>结束</code>状态。卡顿监控起一个<code>子线程</code>定时检查主线程的状态，当主线程的状态运行超过一定阈值则认为主线程卡顿，从而标记为一个卡顿。同时，我们也认为 CPU 过高也可能导致应用出现卡顿，所以在子线程检查主线程状态的同时，如果检测到 CPU 占用过高，会捕获当前的线程快照保存到文件中。目前微信应用中认为，单核 CPU 的占用超过了 80%，此时的 CPU 占用就过高了。</p>
+</blockquote>
+</li>
+<li>
+<p>基于runloop，使用<a target="_blank" rel="noopener" href="https://github.com/UIControl/LXDAppFluecyMonitor">LXDAppFluecyMonitor项目</a></p>
+</li>
+<li>
+<p>Instruments Time Profiler -&gt; Call Tree Options :</p>
+<ul>
+<li>Separete By Thread :按线程划分</li>
+<li>Invert Call Tree ：逆向调用树，方便查看调用顺序</li>
+<li>Hide System Libraries：隐藏系统库</li>
+</ul>
+</li>
+</ol>
+<h1>滑动卡顿优化方案</h1>
+<ul>
+<li>
+<p>CPU 资源消耗原因和解决方案</p>
+<ol>
+<li>尽量不要动态创建销毁对象，最好复用对象，因为对象创建分配内存比较消耗CPU资源。</li>
+<li>不要频繁地调用UIView的相关属性，比如frame、bounds、transform等属</li>
+<li>如果需要手写代码布局，不用Autolayout</li>
+<li>尽量把耗时的操作放到子线程,文本处理（尺寸计算、绘制),图片处理（异步解码、异步绘制）<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)display &#123;</span><br><span class="line">     <span class="built_in">dispatch_async</span>(backgroundQueue, ^&#123;</span><br><span class="line">         <span class="built_in">CGContextRef</span> ctx = <span class="built_in">CGBitmapContextCreate</span>(...);</span><br><span class="line">         <span class="comment">// draw in context...</span></span><br><span class="line">         <span class="built_in">CGImageRef</span> img = <span class="built_in">CGBitmapContextCreateImage</span>(ctx);</span><br><span class="line">         <span class="built_in">CFRelease</span>(ctx);</span><br><span class="line">         <span class="built_in">dispatch_async</span>(mainQueue, ^&#123;</span><br><span class="line">             layer.contents = img;</span><br><span class="line">         &#125;);</span><br><span class="line">     &#125;);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><strong>预排版</strong>，尽量手动布局，在子线程，将<code>model</code>用一个<code>对象layout</code>包装，根据<code>model</code>计算出布局信息（如组件frame、cell高度、富文本信息等）存入<code>对象layout</code>，然后主线程刷新传给<code>cell</code>。</li>
+</ol>
+</li>
+<li>
+<p>GPU 资源消耗原因和解决方案</p>
+<ol>
+<li>视图的混合，尽量避免短时间内大量图片的显示，尽可能将多张图片合成一张进行显示</li>
+<li>GPU能处理的最大纹理尺寸是4096x4096，一旦超过这个尺寸，就会占用CPU资源进行处理，所以纹理尽量不要超过这个尺寸</li>
+<li>尽量减少视图数量和层次</li>
+<li>减少透明的视图（alpha&lt;1），不透明的就设置opaque为YES</li>
+<li>尽量避免出现离屏渲染，具体参考</li>
+</ol>
+</li>
+</ul>
+<h1>AsyncDisplayKit</h1>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/facebookarchive/AsyncDisplayKit">AsyncDisplayKit源码</a></li>
+<li>AsyncDisplayKit 是 Facebook 开源的一个用于保持 iOS 界面流畅的库，</li>
+<li>SDK 认为，阻塞主线程的任务，主要分为上面这三大类。文本和布局的计算、渲染、解码、绘制都可以通过各种方式异步执行，但 UIKit 和 Core Animation 相关操作必需在主线程进行。ASDK 的目标，就是尽量把这些任务从主线程挪走，而挪不走的，就尽量优化性能。</li>
+<li>ASDK 把大量常用控件都封装成了 ASNode 的子类，比如 Button、Control、Cell、Image、ImageView、Text、TableView、CollectionView 等</li>
+</ul>
+<h1>参考文档</h1>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/inventory/6249/article/1427933">Matrix-iOS 卡顿监控</a><br>
+<a target="_blank" rel="noopener" href="https://github.com/Tencent/matrix">matrix项目</a><br>
+<a target="_blank" rel="noopener" href="https://github.com/ibireme/YYKit">YYKit项目</a><br>
+<a target="_blank" rel="noopener" href="https://github.com/UIControl/LXDAppFluecyMonitor">LXDAppFluecyMonitor项目</a><br>
+<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903944867545096">iOS卡顿监测方案总结</a><br>
+<a target="_blank" rel="noopener" href="https://blog.ibireme.com/2015/11/12/smooth_user_interfaces_for_ios/">iOS 保持界面流畅的技巧</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(1)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E7%AF%87/" title="iOS性能---滑动卡顿优化(1)汇总篇" target="_blank" rel="external">http://wangliwen.top/iOS-性能与架构/003_(1)滑动卡顿优化汇总篇/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0010_autoreleasepool%E5%8E%9F%E7%90%86/" title="autoreleasepool原理"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-OC/0009_runloop/" title="runloop"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>atomic 线程安全吗？ | wangliwen</title>
+  <meta name="description" content="自旋锁 ⚛维基百科上对自旋锁的解释:  自旋锁 是计算机科学用于多线程同步的一种锁，线程反复检查锁变量是否可用。由于线程在这一过程中保持执行，因此是一种 忙等 （忙碌等待）。一旦获取了自旋锁，线程会一直持有该锁，直至显式释放自旋锁。 获取、释放自旋锁，实际上是读写自旋锁的存储内存或寄存器。因此这种读写操作必须是原子的（atomic）。通常用 text-and-set 原子操作来实现。  自旋锁的核">
+<meta property="og:type" content="article">
+<meta property="og:title" content="atomic 线程安全吗？">
+<meta property="og:url" content="http://wangliwen.top/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="自旋锁 ⚛维基百科上对自旋锁的解释:  自旋锁 是计算机科学用于多线程同步的一种锁，线程反复检查锁变量是否可用。由于线程在这一过程中保持执行，因此是一种 忙等 （忙碌等待）。一旦获取了自旋锁，线程会一直持有该锁，直至显式释放自旋锁。 获取、释放自旋锁，实际上是读写自旋锁的存储内存或寄存器。因此这种读写操作必须是原子的（atomic）。通常用 text-and-set 原子操作来实现。  自旋锁的核">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/1.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/2.jpg">
+<meta property="article:published_time" content="2018-07-29T10:50:36.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.072Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/1.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-OC/0023_atomic安全吗" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      atomic 线程安全吗？
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/" class="article-date">
+	  <time datetime="2018-07-29T10:50:36.000Z" itemprop="datePublished">2018-07-29</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-OC/">iOS-OC</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.6k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="自旋锁">自旋锁</h2>
+<p>⚛维基百科上对自旋锁的解释:</p>
+<blockquote>
+<p><strong>自旋锁</strong> 是计算机科学用于多线程同步的一种锁，线程反复检查锁变量是否可用。由于线程在这一过程中保持执行，因此是一种 <code>忙等</code> （忙碌等待）。一旦获取了自旋锁，线程会一直持有该锁，直至显式释放自旋锁。</p>
+<p>获取、释放自旋锁，实际上是读写自旋锁的存储内存或寄存器。因此这种读写操作必须是原子的<code>（atomic）</code>。通常用 <code>text-and-set</code> 原子操作来实现。</p>
+</blockquote>
+<p><code>自旋锁</code>的核心就是忙等,尝试自定义一个自旋锁如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> spinlock &#123;</span><br><span class="line">    <span class="keyword">int</span> flag;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">TPSpinLock</span> </span>&#123;</span><br><span class="line">    spinlock _lock;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)init &#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        _lock = spinlock&#123;<span class="number">0</span>&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)lock &#123;</span><br><span class="line">    <span class="keyword">while</span> (test_and_set(&amp;_lock.flag, <span class="number">1</span>)) &#123;</span><br><span class="line">        <span class="comment">// wait</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)unlock &#123;</span><br><span class="line">    _lock.flag = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> test_and_set(<span class="keyword">int</span> *old_ptr, <span class="keyword">int</span> _new) &#123;</span><br><span class="line">    <span class="keyword">int</span> old = *old_ptr;</span><br><span class="line">    *old_ptr = _new;</span><br><span class="line">    <span class="keyword">return</span> old;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>如上述代码，我们自定义了<code>test_and_set</code>方法，当<code>线程1</code>进行<code>lock</code>操作的时候会传入<code>flag = 0</code>，<code>test_and_set</code>方法返回<code>0</code>的同时并将<code>flag = 1</code>，这个时候<code>线程2</code> 执行<code>lock</code>的时候一直返回<code>1</code>，那么就一直执行<code>while(1)</code>处于等待状态，直到<code>线程1</code>执行<code>unlock</code>将<code>flag = 0</code> 这个时候就打破<code>while</code>循环，<code>线程2</code>就能继续执行并加锁。</p>
+<h2 id="atomic">atomic</h2>
+<p>说起自旋锁，无不联想到属性的原子操作，即 <code>atomic</code></p>
+<ul>
+<li><code>atomic</code> 底层是如何实现的？</li>
+<li><code>atomic</code> 绝对安全吗?</li>
+</ul>
+<p>带着这些问题我们对 <code>atomic</code> 进行探讨，我们来到 <a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2FSanLiangSan%2FObjc-CodeSource">objc源码</a> 处进行查看，<code>atomic</code> 既然是修饰<code>property</code>的，那么必然会跟<code>property</code>的<code>set</code>和<code>get</code>方法相关，我们找到了相关方法的实现：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> reallySetProperty(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd, <span class="keyword">id</span> newValue, ptrdiff_t offset, <span class="keyword">bool</span> atomic, <span class="keyword">bool</span> <span class="keyword">copy</span>, <span class="keyword">bool</span> mutableCopy)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (offset == <span class="number">0</span>) &#123;</span><br><span class="line">        object_setClass(<span class="keyword">self</span>, newValue);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">id</span> oldValue;</span><br><span class="line">    <span class="keyword">id</span> *slot = (<span class="keyword">id</span>*) ((<span class="keyword">char</span>*)<span class="keyword">self</span> + offset);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">copy</span>) &#123;</span><br><span class="line">        newValue = [newValue copyWithZone:<span class="literal">nil</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mutableCopy) &#123;</span><br><span class="line">        newValue = [newValue mutableCopyWithZone:<span class="literal">nil</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (*slot == newValue) <span class="keyword">return</span>;</span><br><span class="line">        newValue = objc_retain(newValue);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 原子操作判断</span></span><br><span class="line">    <span class="keyword">if</span> (!atomic) &#123;</span><br><span class="line">        oldValue = *slot;</span><br><span class="line">        *slot = newValue;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        spinlock_t&amp; slotlock = PropertyLocks[slot];</span><br><span class="line">        slotlock.lock();</span><br><span class="line">        oldValue = *slot;</span><br><span class="line">        *slot = newValue;        </span><br><span class="line">        slotlock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    objc_release(oldValue);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>set</code> 方法<code>atomic</code>那块加了判断，如果是原子性就会进行加锁和解锁操作。</p>
+<p>再看 <code>get</code> 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> objc_getProperty(<span class="keyword">id</span> <span class="keyword">self</span>, SEL _cmd, ptrdiff_t offset, <span class="built_in">BOOL</span> atomic) &#123;</span><br><span class="line">    <span class="keyword">if</span> (offset == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> object_getClass(<span class="keyword">self</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Retain release world</span></span><br><span class="line">    <span class="keyword">id</span> *slot = (<span class="keyword">id</span>*) ((<span class="keyword">char</span>*)<span class="keyword">self</span> + offset);</span><br><span class="line">    <span class="keyword">if</span> (!atomic) <span class="keyword">return</span> *slot;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Atomic retain release world</span></span><br><span class="line">    spinlock_t&amp; slotlock = PropertyLocks[slot];</span><br><span class="line">    slotlock.lock();</span><br><span class="line">    <span class="keyword">id</span> value = objc_retain(*slot);</span><br><span class="line">    slotlock.unlock();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// for performance, we (safely) issue the autorelease OUTSIDE of the spinlock.</span></span><br><span class="line">    <span class="keyword">return</span> objc_autoreleaseReturnValue(value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>很明显，也是对原子操作进行加锁处理。</p>
+<p>我们注意到所有的源码中针对加锁的地方都是定义为<code>spinlock</code>,也就是自旋锁,所以通常被人问到我们<code>atomic</code>底层是什么的时候，我们都回答 <code>自旋锁</code> ，结合YY大神的<a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https%3A%2F%2Fblog.ibireme.com%2F2016%2F01%2F16%2Fspinlock_is_unsafe_in_ios%2F">不再安全的OSSpinLock</a> 一文，可以看出<code>Apple</code>已经弃用<code>OSSpinLock</code>了，内部确如下述代码那样是用<code>os_unfair_lock</code> 来实现的，探其底层执行<code>lock</code>和<code>unlock</code>的其实是<code>mutex_t</code>,也就是<code>互斥锁</code>。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// property的set方法</span></span><br><span class="line">    <span class="keyword">if</span> (!atomic) &#123;</span><br><span class="line">        oldValue = *slot;</span><br><span class="line">        *slot = newValue;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        spinlock_t&amp; slotlock = PropertyLocks[slot];</span><br><span class="line">        slotlock.lock();</span><br><span class="line">        oldValue = *slot;</span><br><span class="line">        *slot = newValue;        </span><br><span class="line">        slotlock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// atomic中用到的锁</span></span><br><span class="line">using spinlock_t = mutex_tt&lt;LOCKDEBUG&gt;;</span><br><span class="line"><span class="comment">// mutex_tt 的结构</span></span><br><span class="line"><span class="keyword">class</span> mutex_tt : nocopy_t &#123;</span><br><span class="line">    os_unfair_lock mLock;</span><br><span class="line"> public:</span><br><span class="line">    constexpr mutex_tt() : mLock(OS_UNFAIR_LOCK_INIT) &#123;</span><br><span class="line">        lockdebug_remember_mutex(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    constexpr mutex_tt(<span class="keyword">const</span> fork_unsafe_lock_t unsafe) : mLock(OS_UNFAIR_LOCK_INIT) &#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> lock() &#123;</span><br><span class="line">        lockdebug_mutex_lock(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">        os_unfair_lock_lock_with_options_inline</span><br><span class="line">            (&amp;mLock, OS_UNFAIR_LOCK_DATA_SYNCHRONIZATION);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> unlock() &#123;</span><br><span class="line">        lockdebug_mutex_unlock(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">        os_unfair_lock_unlock_inline(&amp;mLock);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 上述lock方法的实现</span></span><br><span class="line"><span class="keyword">void</span> </span><br><span class="line">lockdebug_mutex_lock(mutex_t *lock)</span><br><span class="line">&#123;</span><br><span class="line">    auto&amp; locks = ownedLocks();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (hasLock(locks, lock, MUTEX)) &#123;</span><br><span class="line">        _objc_fatal(<span class="string">&quot;deadlock: relocking mutex&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    setLock(locks, lock, MUTEX);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>所以说 <code>atomic</code> 的本质并不是自旋锁，至少当前不是，我查询了 <code>objc</code> 之前的源码发现老版本的 <code>atomic</code> 的实现，确实不一样:</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> uintptr_t spin_lock_t;</span><br><span class="line">OBJC_EXTERN <span class="keyword">void</span> _spin_lock(spin_lock_t *lockp);</span><br><span class="line">OBJC_EXTERN <span class="keyword">int</span>  _spin_lock_try(spin_lock_t *lockp);</span><br><span class="line">OBJC_EXTERN <span class="keyword">void</span> _spin_unlock(spin_lock_t *lockp);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>由此可知：</p>
+<blockquote>
+<p><code>atomic</code> 原子操作只是对<code>setter</code> 和 <code>getter</code> 方法进行加锁</p>
+</blockquote>
+<p>那么第二个问题来了：<code>atomic</code>绝对安全吗？我们接着分析，首先看下面的代码，最终的 <code>number</code> 会是多少？<code>20000</code>?</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (atomic, <span class="keyword">assign</span>) <span class="built_in">NSInteger</span> number;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)atomicTest &#123;</span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>), ^&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i ++) &#123;</span><br><span class="line">            <span class="keyword">self</span>.number = <span class="keyword">self</span>.number + <span class="number">1</span>;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;A-self.number is %ld&quot;</span>,<span class="keyword">self</span>.number);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>), ^&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10000</span>; i ++) &#123;</span><br><span class="line">            <span class="keyword">self</span>.number = <span class="keyword">self</span>.number + <span class="number">1</span>;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;B-self.number is %ld&quot;</span>,<span class="keyword">self</span>.number);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>打印结果：</p>
+ <div style="width:100%;margin-bottom:15px;"><img src="/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/1.jpg" class=""></div>
+<p><code>NO</code> 并不是 <code>20000</code>，这是为啥呢？我们的 <code>number</code> 是 <code>atomic</code> 进行加锁了啊，为什么还会出现线程安全问题。其实答案上文已经有了，只是需要我们仔细去品，<code>atomic</code> 只是针对 <code>setter</code> 和 <code>getter</code> 方法进行加锁，上述代码有两个异步线程同时执行，如果某个时间 <code>A线程</code> 执行到<code>getter</code>方法，之后 <code>cpu</code> 立即切换到 <code>线程B</code> 去执行他的get方法那么这个时候他们进行 <code>+1</code> 的处理并执行<code>setter</code>方法，那么两个线程的 <code>number</code> 就会是一样的结果，这样我们的 <code>+1</code>就会出现线程安全问题，就会导致我们的数字出现偏差，那么我们找一找打印数字里是否有重复的：</p>
+ <div style="width:100%;margin-bottom:15px;"><img src="/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/2.jpg" class=""></div>
+<p>功夫不负有心人，我们果然找到了重复的，那么基于我们 <code>20000</code> 的循环次数少个百八十的太正常不过了。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li><code>自旋锁</code> 不同于<code>互斥锁</code> 如果访问的资源被占用，它会处于 <code>忙等</code> 状态。自旋锁由于一直处于忙等状态所以他在线程锁被释放的时候会立即获取而不用唤醒，所以其执行效率是很高的，尤其是在多核的cpu上运行效率很高，但是其忙等的状态会消耗<code>cpu</code>的性能，所以其性能比互斥锁要低很多。</li>
+<li><code>atomic</code> 的底层实现，老版本是<code>自旋锁</code>，新版本是<code>互斥锁</code>。</li>
+<li><code>atomic</code> 并不是绝对线程安全，它能保证代码进入 <code>getter</code> 和 <code>setter</code> 方法的时候是安全的，但是并不能保证多线程的访问情况下是安全的，一旦出了 <code>getter</code> 和 <code>setter</code> 方法，其线程安全就要由程序员自己来把握，所以 <code>atomic</code> 属性和线程安全并没有必然联系。</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-OC/0023_atomic%E5%AE%89%E5%85%A8%E5%90%97/" title="atomic 线程安全吗？" target="_blank" rel="external">http://wangliwen.top/iOS-OC/0023_atomic安全吗/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0000_iOS%E4%BC%98%E7%A7%80%E7%BD%91%E5%9D%80%E6%95%B4%E7%90%86/" title="iOS优秀网址整理"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/%E5%B7%A5%E5%85%B7/M1%E8%8A%AF%E7%89%87%E5%AE%89%E8%A3%85Homebrew/" title="M1芯片安装Homebrew"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

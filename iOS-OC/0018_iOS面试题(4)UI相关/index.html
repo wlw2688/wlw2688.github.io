@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ios面试题（4）UI相关 | wangliwen</title>
+  <meta name="description" content="1.ViewController 生命周期 单个viewController的生命周期 1234567891011- initWithCoder:(NSCoder *)aDecoder：（如果使用storyboard或者xib）- loadView：加载view- viewDidLoad：view加载完毕- viewWillAppear：控制器的view将要显示- viewWillLayoutSu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ios面试题（4）UI相关">
+<meta property="og:url" content="http://wangliwen.top/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="1.ViewController 生命周期 单个viewController的生命周期 1234567891011- initWithCoder:(NSCoder *)aDecoder：（如果使用storyboard或者xib）- loadView：加载view- viewDidLoad：view加载完毕- viewWillAppear：控制器的view将要显示- viewWillLayoutSu">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-29T10:47:36.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.068Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-OC/0018_iOS面试题(4)UI相关" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ios面试题（4）UI相关
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/" class="article-date">
+	  <time datetime="2018-10-29T10:47:36.000Z" itemprop="datePublished">2018-10-29</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-OC/">iOS-OC</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 5.8k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 21(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h4 id="1-ViewController-生命周期">1.ViewController 生命周期</h4>
+<p><strong>单个viewController的生命周期</strong></p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- initWithCoder:(<span class="built_in">NSCoder</span> *)aDecoder：（如果使用storyboard或者xib）</span><br><span class="line">- loadView：加载view</span><br><span class="line">- viewDidLoad：view加载完毕</span><br><span class="line">- viewWillAppear：控制器的view将要显示</span><br><span class="line">- viewWillLayoutSubviews：控制器的view将要布局子控件</span><br><span class="line">- viewDidLayoutSubviews：控制器的view布局子控件完成  </span><br><span class="line">- viewDidAppear:控制器的view完全显示</span><br><span class="line">- viewWillDisappear：控制器的view即将消失的时候</span><br><span class="line">- viewDidDisappear：控制器的view完全消失的时候</span><br><span class="line">- dealloc 控制器销毁</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>两个控制器AB进行跳转调用顺序:</strong></p>
+<p>A控制器先展示调用</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- [ViewControllerA loadView]</span><br><span class="line">- [ViewControllerA viewWillAppear:]</span><br><span class="line">- [ViewControllerA viewWillLayoutSubviews]</span><br><span class="line">- [ViewControllerA viewDidLayoutSubviews]</span><br><span class="line">- [ViewControllerA viewDidAppear:]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>B控制器跳转调用顺序</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">- [ViewControllerB loadView]</span><br><span class="line">- [ViewControllerB viewDidLoad]</span><br><span class="line">- [ViewControllerA viewWillDisappear:]</span><br><span class="line">- [ViewControllerB viewWillAppear:]</span><br><span class="line">- [ViewControllerB viewWillLayoutSubviews]</span><br><span class="line">- [ViewControllerB viewDidLayoutSubviews]</span><br><span class="line">- [ViewControllerA viewDidDisappear:]</span><br><span class="line">- [ViewControllerB viewDidAppear:]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>B控制器返回A顺序</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- [ViewControllerB viewWillDisappear:]</span><br><span class="line">- [ViewControllerA viewWillAppear:]</span><br><span class="line">- [ViewControllerB viewDidDisappear:]</span><br><span class="line">- [ViewControllerA viewDidAppear:]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="2-CALayer-和-UIView">2. CALayer 和 UIView</h4>
+<ul>
+<li>
+<p>UIView 和 CALayer都是 UI 操作的对象</p>
+</li>
+<li>
+<p>UIView是 CALayer用于交互的对象,UIView是CALayer的delegate ,UIView是UIResponder的子类,其中提供了很多CALayer所没有的交互接口,主要负责处理用户触发的各种操作;</p>
+</li>
+<li>
+<p>CALayer主要负责绘制,在图像和动画上渲染性能更好;</p>
+</li>
+</ul>
+<h4 id="3-UIView-的frame，bounds，center">3.UIView 的frame，bounds，center</h4>
+<ul>
+<li>frame: 描述当前界面元素在其父界面元素中的位置和大小。</li>
+<li>bounds: 描述当前界面元素在其自身坐标系统中的位置和大小。</li>
+<li>center: 描述当前界面元素的中心点在其父界面元素中的位置.</li>
+</ul>
+<h4 id="4-CALayer的frame，bounds，anchorPoint-position">4.CALayer的frame，bounds，anchorPoint,position</h4>
+<ul>
+<li>frame：与view中的frame概念相同，（x,y）subLayer左上角相对于supLayer坐标系的位置关系；width, height表示subLayer的宽度和高度。</li>
+<li>bounds：与view中的bounds概念相同，（x,y）subLayer左上角相对于自身坐标系的关系；width, height表示subLayer的宽度和高度。</li>
+<li>anchorPoint(锚点)：锚点在自身坐标系中的相对位置，默认值为（0.5，0.5），左上角为（0，0），右下角为（1，1），其他位置以此类推；锚点都是对于自身来讲的. 确定自身的锚点,通常用于做相对的tranform变换.当然也可以用来确定位置；</li>
+<li>position：锚点在supLayer坐标系中的位置；</li>
+</ul>
+<h4 id="5-iOS-为什么必须在主线程中操作UI">5.iOS 为什么必须在主线程中操作UI</h4>
+<ul>
+<li>UIKit不是线程安全的(多个线程访问修改,可能一个线程已经释放了,另一个线程会访问,以及资源抢夺问题等)</li>
+<li>主线程上默认是开始 runloop 的,子线程没有 runloop 也无法监听一些事件,手势刷新UI等操作</li>
+<li>在子线程更新UI可能会无效,也可能会崩溃</li>
+</ul>
+<h4 id="6-如何处理UITableVier-中Cell-动态计算高度的问题，都有哪些方案">6. 如何处理UITableVier 中Cell 动态计算高度的问题，都有哪些方案</h4>
+<ul>
+<li>你的Cell要使用AutoLayout来布局约束这是必须的；设置tableview的estimatedRowHeight为一个非零值，这个属性是设置一个预估的高度值，不用太精确。 设置tableview的rowHeight属性为UITableViewAutomaticDimension</li>
+<li>第三方 UITableView+FDTemplateLayoutCell(计算布局高度缓存的)</li>
+<li>手动计算每个控件的 高度并相加,最后缓存高度</li>
+</ul>
+<h4 id="7-AutoLayout-中的优先级是什么">7. AutoLayout 中的优先级是什么?</h4>
+<p>AutoLayout中添加的约束也有优先级,优先级的数值是1~1000</p>
+<ul>
+<li>一种情况是我们经常添加的各种约束,默认的优先级是1000，也就是最高级别，条件允许的话系统会满足我们所有的约束需求。</li>
+<li>另外一种情况就是固有约束(intinsic content size)</li>
+<li>Content Hugging Priority 抗拉伸优先级值越小，越容易被拉伸</li>
+<li>Content Compression Resistance 抗压缩优先级 优先级越小，越先被压缩</li>
+</ul>
+<h4 id="8-怎么高效的实现控件的圆角效果">8. 怎么高效的实现控件的圆角效果?</h4>
+<p>//直接对图片进行重绘 (使用Core Graphics),实际开发加异步处理,也可以给 SDWebImage 也做扩展;</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">UIImage</span> *)imageWithCornerRadius:(<span class="built_in">CGFloat</span>)radius &#123;</span><br><span class="line">       <span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="number">0.</span>f, <span class="number">0.</span>f, <span class="keyword">self</span>.size&#125;;</span><br><span class="line">       <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(<span class="keyword">self</span>.size, <span class="literal">NO</span>, <span class="built_in">UIScreen</span>.mainScreen.scale);</span><br><span class="line">       <span class="built_in">CGContextAddPath</span>(<span class="built_in">UIGraphicsGetCurrentContext</span>(), [<span class="built_in">UIBezierPath</span> bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);</span><br><span class="line">       <span class="built_in">CGContextClip</span>(<span class="built_in">UIGraphicsGetCurrentContext</span>());</span><br><span class="line">       [<span class="keyword">self</span> drawInRect:rect];</span><br><span class="line">       <span class="built_in">UIImage</span> *image = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">       <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">       <span class="keyword">return</span> image;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>// 利用CAShapeLayer圆角,替换原本的layer,达到圆角效果</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIBezierPath</span> *maskPath = [<span class="built_in">UIBezierPath</span> bezierPathWithRoundedRect:<span class="keyword">self</span>.bounds byRoundingCorners:<span class="built_in">UIRectCornerAllCorners</span> cornerRadii:<span class="keyword">self</span>.bounds.size];</span><br><span class="line">   <span class="built_in">CAShapeLayer</span> *maskLayer = [[<span class="built_in">CAShapeLayer</span> alloc]init];</span><br><span class="line">   maskLayer.frame = <span class="keyword">self</span>.bounds;</span><br><span class="line">   maskLayer.path = maskPath.CGPath;</span><br><span class="line">   <span class="keyword">self</span>.layer.mask = maskLayer;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="9-CALayer如何添加点击事件">9.CALayer如何添加点击事件</h4>
+<ol>
+<li>通过 touchesBegan: withEvent 方法,监听屏幕点击事件,在这个方法中通过 convertPoint 找到点击位置,进行判断,如果点击了 layer 视图内坐标,就触发点击事件</li>
+<li>通过 hitTest方法找到包含坐标系的 layer 视图</li>
+</ol>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event&#123;</span><br><span class="line"><span class="comment">//  方法一,通过 convertPoint 转为为 layer 坐标系进行判断</span></span><br><span class="line">    <span class="built_in">CGPoint</span> point = [[touches anyObject]   locationInView:<span class="keyword">self</span>.view];</span><br><span class="line">    <span class="built_in">CGPoint</span> redPoint = [<span class="keyword">self</span>.redLayer  convertPoint:point fromLayer:<span class="keyword">self</span>.view.layer];</span><br><span class="line">    <span class="keyword">if</span> ([<span class="keyword">self</span>.redLayer containsPoint:redPoint]) &#123;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;点击了calayer&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//  方法二 通过 hitTest 返回包含坐标系的 layer 视图</span></span><br><span class="line">    <span class="built_in">CGPoint</span> point1 = [[touches anyObject] locationInView:<span class="keyword">self</span>.view];</span><br><span class="line">    <span class="built_in">CALayer</span> *layer = [<span class="keyword">self</span>.view.layer hitTest:point1];</span><br><span class="line">    <span class="keyword">if</span> (layer == <span class="keyword">self</span>.redLayer) &#123;</span><br><span class="line">       <span class="built_in">NSLog</span>(<span class="string">@&quot;点击了calayer&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="10-介绍下layoutSubview和drawRect">10.介绍下layoutSubview和drawRect</h4>
+<ul>
+<li>
+<p>layoutSubviews调用情况:</p>
+<ul>
+<li>init初始化UIView不会触发调用</li>
+<li>addSubview会触发调用</li>
+<li>改变view的width和height的时候回触发调用</li>
+<li>一个UIScrollView滚动会触发调用</li>
+<li>旋转screen会触发调用</li>
+<li>改变一个UIView大小的时候会触发superView的layoutSubviews事件</li>
+<li>直接调用setLayoutSubviews会触发调用</li>
+<li>-(void)viewWillAppear:(BOOL)animated会触发一次调用</li>
+<li>-(void)viewDidAppear:(BOOL)animated 看情况，可能有调用</li>
+</ul>
+</li>
+<li>
+<p>drawRect调用情况</p>
+<ul>
+<li>如果UIView没有设置frame大小，直接导致drawRect不能被自动调用。</li>
+<li>drawRect在loadView和viewDidLoad这两个方法之后调用</li>
+<li>调用sizeToFit后自动调用drawRect</li>
+<li>通过设置contentMode值为UIViewContentModeRedraw。那么每次设置或者更改frame自动调用drawRect。</li>
+<li>直接调用setNeedsDisplay或者setNeedsDisplayInRect会触发调用</li>
+</ul>
+</li>
+</ul>
+<h4 id="11-layoutIfNeeded-layoutSubViews和-setNeedsLayout区别">11. layoutIfNeeded , layoutSubViews和 setNeedsLayout区别?</h4>
+<ul>
+<li>layoutIfNeeded 方法一点被调用,主线程会立即强制重新布局,它会从当前视图开始,一直到完成所有子视图的布局</li>
+<li>layoutSubViews 用来自定义视图尺寸,他是系统自动调用的,开发者不能手动调用,可以重写改方法,让系统在调整布局时候按照我们希望的方式进行布局.这个方法在旋转屏幕,滑动或者触摸屏幕,修改子视图时候被触发.</li>
+<li>setNeedsLayout 和 layoutIfNeeded相似,唯一不同的是他不会立即强制视图重新布局,而是在下一个布局周期才会触发更新.他主要用于多个视图布局先后更新的场景;</li>
+</ul>
+<h4 id="12-假如Controller太臃肿，如何优化">12.假如Controller太臃肿，如何优化?</h4>
+<ol>
+<li>将网络请求抽象到单独的类中,方便在基类中处理公共逻辑；方便在基类中处理缓存逻辑，以及其它一些公共逻辑；方便做对象的持久化。</li>
+<li>将界面的封装抽象到专门的类中, 构造专门的 UIView 的子类，来负责这些控件的拼装。这是最彻底和优雅的方式，不过稍微麻烦一些的是，你需要把这些控件的事件回调先接管，再都一一暴露回 Controller。</li>
+<li>构造 ViewModel, 借鉴MVVM。具体做法就是将 ViewController 给 View 传递数据这个过程，抽象成构造 ViewModel 的过程。</li>
+<li>专门构造存储类,专门来处理本地数据的存取。</li>
+<li>整合常量</li>
+</ol>
+<h4 id="13-程序启动过程">13.程序启动过程</h4>
+<p><strong>main 函数执行前:</strong></p>
+<ol>
+<li>首先当程序启动时，系统会读取程序的可执行文件（mach-o）, 从里面获取动态加载器(dylb)的路径;</li>
+<li>加载dylb, dylb会初始化运行环境，配合ImageLoader将二进制文件加载到内存中去;</li>
+<li>动态链接依赖库, 初始化依赖库，初始化 runtime;</li>
+<li>runtime 会对项目中的所有类进行类结构初始化，调用所有的 load 方法;</li>
+<li>最后 dylb 会返回 main 函数地址，main 函数被调用，进入程序入口</li>
+</ol>
+<p><strong>main 函数执行后:</strong></p>
+<ol>
+<li>内部会调用 UIApplicationMain 函数，创建一个UIApplication对象和它的代理，就是我们项目中的 Appdelegate 类</li>
+<li>开启一个事件循环(main runloop), 监听系统事件</li>
+<li>程序启动完毕时，通知代理Appdelegate, 调用 didFinishLaunching 代理方法，在这里会创建 UIWindow,设置它的rootViewController,</li>
+<li>最后调用 self.window makeKeyAndVisable显示窗口</li>
+</ol>
+<h4 id="14-渲染以及图像显示原理过程">14.渲染以及图像显示原理过程?</h4>
+<ul>
+<li>每一个UIView都有一个layer，每一个layer都有个content，这个content指向的是一块缓存，叫做backing store。</li>
+<li>UIView的绘制和渲染是两个过程，当UIView被绘制时，CPU执行drawRect，通过context将数据写入backing store。</li>
+<li>当backing store写完后，通过render server交给GPU去渲染，将backing store中的bitmap数据显示在屏幕上。</li>
+<li>说到底CPU就是做绘制的操作把内容放到缓存里，GPU负责从缓存里读取数据然后渲染到屏幕上。</li>
+</ul>
+<h4 id="15-离屏渲染是什么">15.离屏渲染是什么</h4>
+<ul>
+<li>离屏渲染，指的是 GPU （图形处理器）在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作。为什么离屏这么耗时？原因主要有创建缓冲区和上下文切换。创建新的缓冲区代价都不算大，付出最大代价的是上下文切换。</li>
+<li>GPU屏幕渲染有两种方式:
+<ul>
+<li>On-Screen Rendering (当前屏幕渲染) 指的是GPU的渲染操作是在当前用于显示的屏幕缓冲区进行。</li>
+<li>Off-Screen Rendering (离屏渲染) 指的是在GPU在当前屏幕缓冲区以外开辟一个缓冲区进行渲染操作。</li>
+</ul>
+</li>
+</ul>
+<h4 id="16-那些情况会造成离屏渲染">16. 那些情况会造成离屏渲染?</h4>
+<ol>
+<li>为图层设置遮罩（layer.mask）</li>
+<li>将图层的layer.masksToBounds / view.clipsToBounds属性设置为true</li>
+<li>将图层layer.allowsGroupOpacity属性设置为YES和layer.opacity小于1.0</li>
+<li>为图层设置阴影（layer.shadow *）。</li>
+<li>为图层设置layer.shouldRasterize=true</li>
+<li>具有layer.cornerRadius，layer.edgeAntialiasingMask，layer.allowsEdgeAntialiasing的图层</li>
+<li>文本（任何种类，包括UILabel，CATextLayer，Core Text等）。</li>
+</ol>
+<h4 id="17-手机适配方案">17.手机适配方案</h4>
+<ol>
+<li>使用宏,针对不同的设备抽取导航,状态栏,以及 tabbar 高度信息</li>
+<li>宽高等比适配(X 的特殊处理)</li>
+<li>图片美工需要提供@2x,@3x进行适配</li>
+<li>字体根据屏幕大小适配</li>
+<li>权限针对不同系统进行适配</li>
+<li>api 适配</li>
+</ol>
+<h4 id="18-什么是懒加载">18. 什么是懒加载?</h4>
+<p>懒加载 也叫做 <code>延迟加载</code>,他的核心思想就是把对象的实例化尽量延迟,在需要使用的时候才会初始化,这样做的好处可以减轻大量对象实例化对资源的消耗.<br>
+另外懒加载把对象的实例化代码抽取出来独立出来,提高代码的可读性,以便代码更好的被组织</p>
+<h4 id="19-什么是响应者链">19.什么是响应者链?</h4>
+<p>响应者链是用于确定<code>事件响应</code>的一种机制, 事件主要是指触摸事件(touch Event),该机制与UIKIT中的UIResponder类密切相关,响应触摸事件的必须是继承自UIResponder的类,比如UIView 和UIViewController</p>
+<p>一个事件响应者的完成主要分为2个过程: hitTest方法命中视图和响应者链确定响应者; hitTest的调用顺序是从UIWindow开始，对视图的每个子视图依次调用，也可以说是从显示最上面到最下面,直到找命中者; 然后命中者视图沿着响应者链往上传递寻找真正的响应者.</p>
+<p><strong>事件传递过程</strong></p>
+<ul>
+<li>当我们触控手机屏幕时系统便会将这一操作封装成一个UIEvent放到事件队列里面，然后Application从事件队列取出这个事件，接着需要找到命中者, 所以开始的第一步应该是找到命中者, 那么又是如何找到的呢？那就不得不引出UIView的2个方法：</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回能够相应该事件的视图</span></span><br><span class="line">-(<span class="built_in">UIView</span> *)hitTest:(<span class="built_in">CGPoint</span>)point withEvent:(<span class="built_in">UIEvent</span> *)event  </span><br><span class="line"><span class="comment">// 查看点击的位置是否在这个视图上</span></span><br><span class="line">-(<span class="built_in">BOOL</span>)pointInside:(<span class="built_in">CGPoint</span>)point withEvent:(<span class="built_in">UIEvent</span> *)event </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>寻找事件的命中视图是通过对视图调用hitTest和pointInside完成的 hitTest的调用顺序是从UIWindow开始，对视图的每个子视图依次调用，也可以说是从显示最上面到最下面 遍历直到找到命中视图;</li>
+</ul>
+<p><strong>响应链传递</strong></p>
+<ul>
+<li>找到命中者,任务并未完成,因为命中者不一定是事件的响应者,所谓响应就是开发中为事件绑定一个触发函数,事件发生后,执行响应函数里的代码</li>
+<li>找到命中视图后事件会从此视图开始沿着响应链nextResponder传递，直到找到处理事件的响应视图,如果没有处理的事件会被丢弃。</li>
+<li>如果视图有父视图则nextResponder指向父视图，如果是根视图则指向控制器，最终指向AppDelegate, 他们都是通过重写nextResponder来实现。</li>
+<li>自下往上查找</li>
+</ul>
+<p><strong>无法响应的事件情况</strong></p>
+<ul>
+<li>Alpha=0、</li>
+<li>子视图超出父视图的情况、</li>
+<li>userInteractionEnabled=NO、</li>
+<li>hidden=YES</li>
+</ul>
+<hr>
+<h3 id="精选全网-·-iOS面试题答案PDF文集">精选全网 · iOS面试题答案PDF文集</h3>
+<p>[图片上传中…(image-a252c6-1636337703090-1)]</p>
+<ul>
+<li>获取加小编的iOS技术交流圈：<strong><a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https%3A%2F%2Fjq.qq.com%2F%3F_wv%3D1027%26k%3D5PARXCI">937 194 184</a></strong>，直接获取</li>
+</ul>
+<hr>
+<h4 id="20-动画相关有哪几种方式">20.动画相关有哪几种方式?</h4>
+<ul>
+<li>UIView animation — 可以实现基于 UIView 的简单动画,他是CALayer Animation封装,可以实现移动,旋转,变色,缩放等基本操作,他实现的动画无法回撤,暂停,与手势交互,常用方法如下</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[<span class="built_in">UIView</span> animateWithDuration: <span class="number">10</span> animations:^&#123;</span><br><span class="line">    <span class="comment">// 动画操作</span></span><br><span class="line">&#125;];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>UIViewPropertyAnimator — 是 iOS10 中引入的处理交互式动画接口,他是基于 UIView 实现的, 用法同 UIView animation比较类似,增加了一些新的属性以及方法;</p>
+</li>
+<li>
+<p>CALayer Animation — 是在更底层CALayer 上的动画接口, 他可以实现各种复杂的动画效果, 实现的动画可以回撤,暂停与手势交互等,常用的类有以下几个:</p>
+</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> <span class="built_in">CABasicAnimation</span>——基本动画</span><br><span class="line"><span class="number">2.</span> <span class="built_in">CAKeyframeAnimation</span>——关键帧动画</span><br><span class="line">     与<span class="built_in">CABasicAnimation</span>的区别是：<span class="built_in">CABasicAnimation</span>：只能从一个数值（fromValue）变到另一个数值（toValue）<span class="built_in">CAKeyframeAnimation</span>：会使用一个<span class="built_in">NSArray</span>保存这些数值</span><br><span class="line"><span class="number">3.</span> <span class="built_in">CAAnimationGroup</span>——动画组</span><br><span class="line">    动画组，是<span class="built_in">CAAnimation</span>的子类，可以保存一组动画对象，将<span class="built_in">CAAnimationGroup</span>对象加入层后，组中所有动画对象可以同时并发运行</span><br><span class="line"><span class="number">4.</span> 转场动画——<span class="built_in">CATransition</span></span><br><span class="line">    <span class="built_in">CATransition</span>是<span class="built_in">CAAnimation</span>的子类，用于做转场动画，能够为层提供移出屏幕和移入屏幕的动画效果。iOS比Mac OS X的转场动画效果少一点。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="21-UIScrollView-原理">21. UIScrollView 原理</h4>
+<ul>
+<li>UIScrollView继承自UIView，内部有一个 UIPanGestureRecongnizer手势。 frame 是相对父视图坐标系来决定自己的位置和大小，而bounds是相对于自身坐标系的位置和尺寸的。改视图 bounds 的 origin 视图本身没有发生变化，但是它的子视图的位置却发生了变化，因为 bounds 的 origin 值是基于自身的坐标系，当自身坐标系的位置被改变了，里面的子视图肯定得变化， bounds 和 panGestureRecognize 是实现 UIScrollView 滑动效果的关键技术点。</li>
+</ul>
+<h4 id="22-loadView-的作用">22. loadView 的作用?</h4>
+<ul>
+<li>loadView 用来自定义 view，只要实现了这个方法，其他通过 xib 或 storyboard 创 建的 view 都不会被加载</li>
+</ul>
+<h4 id="23-IBOutlet-连出来的视图属性为什么可以被设-置成-weak">23. IBOutlet 连出来的视图属性为什么可以被设 置成 weak?</h4>
+<ul>
+<li>因为父控件的 subViews 数组已经对它有一个强引用</li>
+</ul>
+<h4 id="24-请简述-UITableViewCell的复用机制">24. 请简述 UITableViewCell的复用机制</h4>
+<ul>
+<li>每次创建 cell 的时候通过 dequeueReusableCellWithIdentifier:方法创建 cell，它先到 缓存池中找指定标识的 cell，如果没有就直接返回 nil</li>
+<li>如果没有找到指定标识的 cell，那么会通过 initWithStyle:reuseIdentifier:创建一个 cell</li>
+<li>当 cell 离开界面就会被放到缓存池中，以供下次复用</li>
+</ul>
+<h4 id="25-使用-drawRect-有什么影响">25. 使用 drawRect 有什么影响?</h4>
+<ul>
+<li>drawRect 方法依赖 Core Graphics 框架来进行自定义的绘制</li>
+<li>缺点:它处理 touch 事件时每次按钮被点击后，都会用 setNeddsDisplay 进行强制</li>
+<li>重绘;而且不止一次，每次单点事件触发两次执行。这样的话从性能的角度来 说，对 CPU 和内存来说都是欠佳的。特别是如果在我们的界面上有多个这样的 UIButton 实例，那就会很糟糕了</li>
+<li>这个方法的调用机制也是非常特别. 当你调用 setNeedsDisplay 方法时, UIKit 将会 把当前图层标记为 dirty,但还是会显示原来的内容,直到下一次的视图渲染周期,才会 将标记为 dirty 的图层重新建立 Core Graphics 上下文,然后将内存中的数据恢复出 来, 再使用 CGContextRef 进行绘制</li>
+</ul>
+<h4 id="26-能否在一个控制器-嵌入2个-TableViewController-控制器">26. 能否在一个控制器 嵌入2个 TableViewController 控制器</h4>
+<ul>
+<li>可以, 控制器可以添加子控制器</li>
+</ul>
+<h4 id="27-一个-TableView-是否可以关联2个不同的dataSource">27. 一个 TableView 是否可以关联2个不同的dataSource?</h4>
+<ul>
+<li>可以关联多个数据源,重点只要处理好数据源和 tableView 的对接工作即可</li>
+</ul>
+<h4 id="28-masksToBounds-和clipsToBounds">28. masksToBounds 和clipsToBounds</h4>
+<ul>
+<li>masksToBounds 是指子 layer 在超出父 layer时是否被裁剪,YES表示参见,NO 表示不裁剪, 默认是NO<br>
+clipsToBounds 是指子 View 在超出父 View时是否被裁剪</li>
+</ul>
+<h4 id="29-tintColor-是什么">29. tintColor 是什么?</h4>
+<ul>
+<li>tintColor 是 ios7以后 UIView类添加的一个新属性,用于改变应用的主色调,默认是 nil</li>
+</ul>
+<h4 id="30-imageNamed-和-imageWithContentsOfFile区别">30. imageNamed 和 imageWithContentsOfFile区别</h4>
+<ul>
+<li>imageNamed 会自动缓存新加载的图片,并切重复利用缓存图片,一般用于App 内经常使用的尺寸不大的图片</li>
+<li>imageWithContentsOfFile 根据路径加载没有 取缓存和缓存的过程,用于一些大图,使用完毕会释放内存</li>
+</ul>
+<h4 id="31-View-和-View-传值方式有哪些">31. View 和 View 传值方式有哪些</h4>
+<ol>
+<li>通过视图类对外提供的属性直接传值</li>
+<li>通过代理传值</li>
+<li>通过通知传值</li>
+<li>通过 Block 传值</li>
+<li>通过NSUserDefault, 不建议</li>
+</ol>
+<h4 id="32-为什么iOS提供-UIView-和CAlayer-两个个平行的层级结构">32. 为什么iOS提供 UIView 和CAlayer 两个个平行的层级结构</h4>
+<ul>
+<li>UIView 和CAlayer2个平行的层级结构主要是用于职责分离,实现视图的绘制,显示,布局解耦,避免重复代码</li>
+<li>在iOS 和 Mac OS两个平台上,事件和用户交互有很多不同的地方,创建2个层级结构,可以在2个平台上共享代码,从而使得开发快捷.</li>
+</ul>
+<h4 id="33-UIWindow是什么-有什么特点">33. UIWindow是什么,有什么特点?</h4>
+<ul>
+<li>UIWindow 继承自 UIView, 作为根视图来装置 View元素, UIWindow提供一个区域用于显示UIView,并且将事件分发给 UIView,一般一个应用只有一个 UIWindow;</li>
+</ul>
+<hr>
+<h3 id="精选全网-·-iOS面试题答案PDF文集-2">精选全网 · iOS面试题答案PDF文集</h3>
+<p>[图片上传中…(image-90ca84-1636337703090-0)]</p>
+<ul>
+<li>获取加小编的iOS技术交流圈：<strong><a target="_blank" rel="noopener" href="https://links.jianshu.com/go?to=https%3A%2F%2Fjq.qq.com%2F%3F_wv%3D1027%26k%3D5PARXCI">937 194 184</a></strong>，直接获取</li>
+</ul>
+<hr>
+<h4 id="34-什么是隐式动画和显示动画">34. 什么是隐式动画和显示动画</h4>
+<ul>
+<li>隐式动画是系统框架自动完成的。Core Animation在每个runloop周期中自动开始一次新的事务，即使你不显式的用[CATransaction begin]开始一次事务，任何在一次runloop循环中属性的改变都会被集中起来，然后做一次0.25秒的动画。在iOS4中，苹果对UIView添加了一种基于block的动画方法：+animateWithDuration:animations:。这样写对做一堆的属性动画在语法上会更加简单，但实质上它们都是在做同样的事情。CATransaction的+begin和+commit方法在+animateWithDuration:animations:内部自动调用，这样block中所有属性的改变都会被事务所包含,多用于简单动画效果</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[<span class="built_in">UIView</span> animateWithDuration:<span class="number">1</span> animations:^&#123;</span><br><span class="line">    view.center = <span class="keyword">self</span>.view.center;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>显式动画，Core Animation提供的显式动画类型，既可以直接对layer层属性做动画，也可以覆盖默认的图层行为。我们经常使用的CABasicAnimation，CAKeyframeAnimation，CATransitionAnimation，CAAnimationGroup等都是显式动画类型，这些CAAnimation类型可以直接提交到CALayer上。显式动画可用于实现更为复杂的动画效果.</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CABasicAnimation</span> *positionAnima = [<span class="built_in">CABasicAnimation</span> animationWithKeyPath:<span class="string">@&quot;position.y&quot;</span>];</span><br><span class="line">positionAnima.duration = <span class="number">0.8</span>;</span><br><span class="line">positionAnima.fromValue = @(<span class="keyword">self</span>.imageView.center.y);</span><br><span class="line">positionAnima.toValue = @(<span class="keyword">self</span>.imageView.center.y<span class="number">-30</span>);</span><br><span class="line">positionAnima.timingFunction = [<span class="built_in">CAMediaTimingFunction</span> functionWithName:kCAMediaTimingFunctionEaseIn];</span><br><span class="line">positionAnima.repeatCount = HUGE_VALF;</span><br><span class="line">positionAnima.repeatDuration = <span class="number">2</span>;</span><br><span class="line">positionAnima.removedOnCompletion = <span class="literal">NO</span>;</span><br><span class="line">positionAnima.fillMode = kCAFillModeForwards;</span><br><span class="line">[<span class="keyword">self</span>.imageView.layer addAnimation:positionAnima forKey:<span class="string">@&quot;AnimationMoveY&quot;</span>];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="35-UIButton-和UITableView的层级结构">35. UIButton 和UITableView的层级结构</h4>
+<ul>
+<li>
+<p>继承结构</p>
+<ul>
+<li>UIButton -&gt; UIControl -&gt; UIView -&gt; UIResponder -&gt; NSObject</li>
+<li>UITableView -&gt; UIScrollView -&gt; UIView -&gt; UIResponder -&gt; NSObject</li>
+</ul>
+</li>
+<li>
+<p>内部子控件结构</p>
+<ul>
+<li>UIButton内部子控件结构: 默认有两个, 一个UIImageView, 一个UILable, 分别可以设置图片和文字, button设置属性基本都是set方法</li>
+<li>UITableView内部子控件结构: UITableView中每一行数据都是UITableViewCell, UITableViewCell内部有一个UIView控件 (contentView, 作为其它元素的父控件) , 两个UILable 控件 (textLable, detailTextLable) , 一个UIImageView控件 (imageView) , 分别用于容器, 显示内容, 详情和图片</li>
+</ul>
+</li>
+</ul>
+<h4 id="36-Storyboard-xib-和-纯代码UI相比-有哪些优缺点">36. Storyboard/xib 和 纯代码UI相比,有哪些优缺点</h4>
+<p>优点:</p>
+<ul>
+<li>简单直接快速, 通过拖拽和点选即可配置UI,界面所见即所得</li>
+<li>在 Storybord可以清楚的区分ViewController 界面之间的跳转关系</li>
+</ul>
+<p>缺点:</p>
+<ul>
+<li>协作冲突,多人编辑时,容易发生冲突,很难解决冲突</li>
+<li>很难做到界面继承和重用</li>
+<li>不便于进行模块化管理</li>
+<li>影响性能</li>
+</ul>
+<h4 id="37-AutoLayout-和-Frame在UI布局和渲染上有什么区别">37. AutoLayout 和 Frame在UI布局和渲染上有什么区别?</h4>
+<ul>
+<li>AutoLayout是针对多尺寸屏幕的设计,其本质是通过线性不等式设置UI控件的相对位置,从而适配多种屏幕设备</li>
+<li>Frame 是基于XY坐标轴系统布局机制,它从数学上限定了UI 控件的具体位置,是 iOS’开发中最低层,最基本的界面布局方式</li>
+<li>AutoLayout性能比 Frame 差很多,AutoLayout布局过程是首先求解线性不等式,然后在转化为Frame进行布局,其中求解计算量非常大,很损耗性能;</li>
+</ul>
+<h4 id="38-SafeArea-SafeAreaLayoutGuide-SafeAreaInsets-关键词的比较说明">38. SafeArea, SafeAreaLayoutGuide, SafeAreaInsets 关键词的比较说明?</h4>
+<p>由于 iphoneX 采用了<code>刘海</code>设计,iOS11引入了安全区域<code>(SafeArea)</code>概念</p>
+<ul>
+<li>SafeArea是指App 显示内容的区域,不包括StatusBar,Navigationbar,tabbar,和 toolbar, 在 iPhoneX 中一般是指扣除了statusBar(44像素),和底部home indicator(高度为34像素)的区域.这样操作不会被刘海或者底部手势影响了.</li>
+<li>SafeAreaLayoutGuide 是指 Safe Area 的区域范围和限制, 在布局设置中,可以取得他的上下左右4个边界位置进行相应的布局</li>
+<li>SafeAreaInsets限定了Safe Area区域与整个屏幕之间的布局关系,一般用上下左右4个值来获取 SafeArea 与屏幕边缘之间的距离;</li>
+</ul>
+<h4 id="39-UIScrollView-的-contentView-contentInset-contentSize-contentOffset-关键字比较">39. UIScrollView 的 contentView, contentInset, contentSize, contentOffset 关键字比较?</h4>
+<ul>
+<li>contentView 是指 UIScrollView上显示内容的区域,用户 addSubView 都是在 contentView上进行的;</li>
+<li>contentInset 是指 contentView与 UIScrollView的边界;</li>
+<li>contentSize 是指 contentView 的大小,表示可以滑动范围;</li>
+<li>contentOffset 是当前 contentView 浏览位置左上角点的坐标;</li>
+</ul>
+<h4 id="40-图片png与jpg的区别是什么">40. 图片png与jpg的区别是什么?</h4>
+<ul>
+<li>
+<p>png:<br>
+优点：无损格式，不论保存多少次，理论上图片质量都不会受任何影响；支持透明<br>
+缺点：尺寸过大；打开速度与保存速度和jpg没法比</p>
+</li>
+<li>
+<p>jpg:<br>
+优点：尺寸较小，节省空间；打开速度快<br>
+缺点：有损格式，在修图时不断保存会导致图片质量不断降低；不支持透明</p>
+<p>在开发中，尺寸比较大的图片（例如背景图片）一般适用jpg格式，减小对内存的占用！</p>
+</li>
+</ul>
+<p>收录 | <a target="_blank" rel="noopener" href="https://www.jianshu.com/p/51c9eb362b71">原文地址</a></p>
+<hr>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-OC/0018_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(4)UI%E7%9B%B8%E5%85%B3/" title="ios面试题（4）UI相关" target="_blank" rel="external">http://wangliwen.top/iOS-OC/0018_iOS面试题(4)UI相关/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0020_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(6)%E5%A4%9A%E7%BA%BF%E7%A8%8B/" title="ios面试题（6）多线程"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-OC/0017_iOS%E9%9D%A2%E8%AF%95%E9%A2%98(3)/" title="ios面试题（3）"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

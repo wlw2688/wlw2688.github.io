@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>iOS性能---启动优化(2)二进制重排 | wangliwen</title>
+  <meta name="description" content="启动优化(1)汇总篇 启动优化(2)二进制重排 背景 抖音团队发现修改代码在二进制文件的布局可以提高启动性能，方案落地后在抖音上启动速度提高了约15%。抖音团队分享的一个 Page Fault，开销在 0.6 ~ 0.8ms，实际测试发现不同页会有所不同 , 也跟 cpu 负荷状态有关 , 在 0.1 ~ 1.0 ms 之间)。 内存分页、虚拟内存、物理内存    iOS一页为16KB，linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS性能---启动优化(2)二进制重排">
+<meta property="og:url" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="启动优化(1)汇总篇 启动优化(2)二进制重排 背景 抖音团队发现修改代码在二进制文件的布局可以提高启动性能，方案落地后在抖音上启动速度提高了约15%。抖音团队分享的一个 Page Fault，开销在 0.6 ~ 0.8ms，实际测试发现不同页会有所不同 , 也跟 cpu 负荷状态有关 , 在 0.1 ~ 1.0 ms 之间)。 内存分页、虚拟内存、物理内存    iOS一页为16KB，linux">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/pageM.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/system_trace.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/orderFile.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/linkMap.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/mathoPath.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/orderText.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/clangSet.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/swiftSet.jpg">
+<meta property="article:published_time" content="2018-10-20T07:22:43.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.077Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/pageM.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-性能与架构/002_(2)启动优化二进制重排" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS性能---启动优化(2)二进制重排
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/" class="article-date">
+	  <time datetime="2018-10-20T07:22:43.000Z" itemprop="datePublished">2018-10-20</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.8k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p><a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(1)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E7%AF%87/">启动优化(1)汇总篇</a><br>
+<a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/">启动优化(2)二进制重排</a></p>
+<h1>背景</h1>
+<p>抖音团队发现修改代码在二进制文件的布局可以提高启动性能，方案落地后在抖音上启动速度提高了约15%。抖音团队分享的一个 <code>Page Fault</code>，开销在 0.6 ~ 0.8ms，实际测试发现不同页会有所不同 , 也跟 cpu 负荷状态有关 , 在 0.1 ~ 1.0 ms 之间)。</p>
+<h1>内存分页、虚拟内存、物理内存</h1>
+ <div style="width:80%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/pageM.jpg" class=""></div>
+<ul>
+<li><code>iOS</code>一页为<code>16KB</code>，<code>linux</code>一页为<code>4KB</code>, <code>Mac OS</code>一页为<code>4KB</code>.</li>
+<li>当应用被加载到内存中时,并不会将整个应用加载到内存中,只会放用到的那一部分,也就是懒加载的概念,换句话说就是<code>应用使用多少,实际物理内存就实际存储多少</code> .</li>
+<li>当应用访问到某个地址,映射表中为<code>0</code>,也就是说并没有被加载到物理内存中时,系统就会立刻阻塞整个进程,触发一个我们所熟知的 <code>缺页中断 - Page Fault</code> .</li>
+<li>当一个缺页中断被触发 , 操作系统会从磁盘中重新读取这页数据到物理内存上 , 然后将映射表中虚拟内存指向对应 ( 如果当前内存已满 , 操作系统会通过置换页算法 找一页数据进行覆盖 , 这也是为什么开再多的应用也不会崩掉 , 但是之前开的应用再打开时 , 就重新启动了的根本原因 ).</li>
+<li>虚拟地址从 <code>0x000000 ~ 0xffffff</code> , 基于这个 , 那么这个函数我无论如何只需要通过 <code>0x00a000</code> 这个虚拟地址就可以拿到其真实实现地址，给了很多黑客可操作性的空间，<code>ASLR</code> 应运而生 . 其原理就是每次 虚拟地址在映射真实地址之前, 增加一个随机偏移值 , 以此来解决这个问题.</li>
+</ul>
+<h1>二进制重排优化原理</h1>
+<ul>
+<li><code>page fault</code>会将没有加载到物理内存的数据加载到物理内存，这是一个耗时操作</li>
+<li>实际项目中，<code>mach-o</code>中的方法是按照编译顺序（<code>Build Phases</code>-&gt; <code>Compile Sources</code>）排列，我们做法是将启动时需要调用的函数放到一起以尽可能减少<code>page fault</code>, 达到优化目的 . 而这个做法就叫做 : 二进制重排。</li>
+</ul>
+<h1>如何查看 page fault</h1>
+<ol>
+<li>打开 <code>Instruments</code> , 选择 <code>System Trace</code>.</li>
+<li>选择真机 , 选择工程 , 点击启动 , 当首个页面加载出来点击停止 . 这里注意 , 最好是将应用杀掉重新安装 , 因为冷热启动的界定其实由于进程的原因并不一定后台杀掉应用重新打开就是冷启动 .</li>
+<li>等待分析完成 , 查看缺页次数</li>
+</ol>
+   <div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/system_trace.jpg" class=""></div>
+<h1>二进制重排实现</h1>
+<ul>
+<li>生成一个<code>.order</code>文件，放在工程中，在xcode的<code>build settings</code>里搜<code>order file</code>配置好</li>
+<li>在这个 order 文件中 , 将你需要的符号按顺序写在里面 .</li>
+<li>当工程 build 的时候 , Xcode 会读取这个文件 , 打的二进制包就会按照这个文件中的符号顺序进行生成对应的 mach-O <div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/orderFile.jpg" class=""></div>
+</li>
+</ul>
+<blockquote>
+<p>order 文件里 符号写错了或者这个符号不存在会不会有问题 ?</p>
+<ul>
+<li>答 : ld 会忽略这些符号 , 实际上如果提供了 link 选项 <code>-order_file_statistics</code>，会以 warning 的形式把这些没找到的符号打印在日志里。<br>
+有部分同学可能会考虑这种方式会不会影响上架 ?</li>
+<li>答 : 首先 , objc 源码自己也在用这种方式，二进制重排只是重新排列了所生成的 macho 中函数表与符号表的顺序 .</li>
+</ul>
+</blockquote>
+<h1>如何查看自己工程的符号顺序</h1>
+<ul>
+<li>在xcode的<code>build settings</code>里搜<code>Link Map</code>配置好，设置<code>Write Link Map File</code>为YES<div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/linkMap.jpg" class=""></div>
+</li>
+<li>修改完毕后 clean 一下 , 运行工程 , Products - show in finder, 找到 <code>mach-o</code>的上上层目录,按下图依次找到最新的一个 .txt 文件并打开<div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/mathoPath.jpg" class=""></div>
+<div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/orderText.jpg" class=""></div>
+</li>
+</ul>
+<h1>clang插桩生成.order文件</h1>
+<ul>
+<li>在xcode的<code>build settings</code>里分别搜<code>Other C Flags</code>和<code>Other Swift Flags</code>配置好，设置<code>-fsanitize-coverage=func,trace-pc-guard</code><div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/clangSet.jpg" class=""></div>
+<div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/swiftSet.jpg" class=""></div>
+</li>
+<li>代码实现<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;ViewController.h&quot;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;dlfcn.h&gt;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;libkern/OSAtomic.h&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()</span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ViewController</span></span></span><br><span class="line"><span class="comment">//可以得到函数个数</span></span><br><span class="line"><span class="keyword">void</span> __sanitizer_cov_trace_pc_guard_init(uint32_t *start,</span><br><span class="line">                                         uint32_t *stop) &#123;</span><br><span class="line">    <span class="keyword">static</span> uint64_t N;  <span class="comment">// Counter for the guards.</span></span><br><span class="line">    <span class="keyword">if</span> (start == stop || *start) <span class="keyword">return</span>;  <span class="comment">// Initialize only once.</span></span><br><span class="line">    printf(<span class="string">&quot;INIT: %p %p\n&quot;</span>, start, stop);</span><br><span class="line">    <span class="keyword">for</span> (uint32_t *x = start; x &lt; stop; x++)</span><br><span class="line">        *x = ++N;  <span class="comment">// Guards should start from 1.</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//原子队列</span></span><br><span class="line"><span class="keyword">static</span> OSQueueHead symboList = OS_ATOMIC_QUEUE_INIT;</span><br><span class="line"><span class="comment">//定义符号结构体，链表的节点</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span>&#123;</span><br><span class="line">    <span class="keyword">void</span> * pc;</span><br><span class="line">    <span class="keyword">void</span> * next;</span><br><span class="line">&#125;SymbolNode;</span><br><span class="line"></span><br><span class="line"><span class="comment">//所有函数调用会走此方法，获得函数名</span></span><br><span class="line"><span class="keyword">void</span> __sanitizer_cov_trace_pc_guard(uint32_t *guard) &#123;</span><br><span class="line">    <span class="comment">//if (!*guard) return;  这个方法会屏蔽系统load方法所以注掉</span></span><br><span class="line">    <span class="comment">//获取插桩函数的返回地址</span></span><br><span class="line">    <span class="keyword">void</span> *PC = __builtin_return_address(<span class="number">0</span>);</span><br><span class="line">    <span class="comment">//根据PC可以获得函数的具体信息</span></span><br><span class="line">    SymbolNode * node = malloc(<span class="keyword">sizeof</span>(SymbolNode));</span><br><span class="line">    *node = (SymbolNode)&#123;PC,<span class="literal">NULL</span>&#125;;</span><br><span class="line">    <span class="comment">//入队</span></span><br><span class="line">    <span class="comment">// offsetof 用在这里是为了入队添加下一个节点找到 前一个节点next指针的位置</span></span><br><span class="line">    OSAtomicEnqueue(&amp;symboList, node, offsetof(SymbolNode, next));</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//点击生成文件</span></span><br><span class="line">- (<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span>&lt;<span class="built_in">UITouch</span> *&gt; *)touches withEvent:(<span class="built_in">UIEvent</span> *)event&#123;</span><br><span class="line">    <span class="built_in">NSMutableArray</span>&lt;<span class="built_in">NSString</span> *&gt; * symbolNames = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="comment">//offsetof 就是针对某个结构体找到某个属性相对这个结构体的偏移量</span></span><br><span class="line">        SymbolNode * node = OSAtomicDequeue(&amp;symboList, offsetof(SymbolNode, next));</span><br><span class="line">        <span class="keyword">if</span> (node == <span class="literal">NULL</span>) <span class="keyword">break</span>;</span><br><span class="line">        Dl_info info;</span><br><span class="line">        dladdr(node-&gt;pc, &amp;info);</span><br><span class="line">        <span class="built_in">NSString</span> * name = @(info.dli_sname);</span><br><span class="line">        <span class="comment">// 添加 _</span></span><br><span class="line">        <span class="built_in">BOOL</span> isObjc = [name hasPrefix:<span class="string">@&quot;+[&quot;</span>] || [name hasPrefix:<span class="string">@&quot;-[&quot;</span>];</span><br><span class="line">        <span class="built_in">NSString</span> * symbolName = isObjc ? name : [<span class="string">@&quot;_&quot;</span> stringByAppendingString:name];</span><br><span class="line">        <span class="comment">//去重</span></span><br><span class="line">        <span class="keyword">if</span> (![symbolNames containsObject:symbolName]) &#123;</span><br><span class="line">            [symbolNames addObject:symbolName];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//取反</span></span><br><span class="line">    <span class="built_in">NSArray</span> * symbolAry = [[symbolNames reverseObjectEnumerator] allObjects];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>,symbolAry);</span><br><span class="line">    <span class="comment">//将结果写入到文件</span></span><br><span class="line">    <span class="built_in">NSString</span> * funcString = [symbolAry componentsJoinedByString:<span class="string">@&quot;\n&quot;</span>];</span><br><span class="line">    <span class="built_in">NSString</span> * filePath = [<span class="built_in">NSTemporaryDirectory</span>() stringByAppendingPathComponent:<span class="string">@&quot;lb.order&quot;</span>];</span><br><span class="line">    <span class="built_in">NSData</span> * fileContents = [funcString dataUsingEncoding:<span class="built_in">NSUTF8StringEncoding</span>];</span><br><span class="line">    <span class="built_in">BOOL</span> result = [[<span class="built_in">NSFileManager</span> defaultManager] createFileAtPath:filePath contents:fileContents attributes:<span class="literal">nil</span>];</span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;%@&quot;</span>,filePath);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;文件写入出错&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>注意点
+<ol>
+<li>通过汇编会查看到 一个带有 while 循环的方法 , 会被静态加入多次 <code>__sanitizer_cov_trace_pc_guard</code>调用 , 导致死循环.
+<blockquote>
+<p>解决: 将<code>Other C Flags</code> -&gt;<code>-fsanitize-coverage=trace-pc-guard</code>改为<code>-fsanitize-coverage=func,trace-pc-guard</code></p>
+</blockquote>
+</li>
+<li>多线程问题，项目各个方法肯定有可能会在不同的函数执行 , 因此 <code>__sanitizer_cov_trace_pc_guard</code> 这个函数也有可能受多线程影响 , 所以你当然不可能简简单单用一个数组来接收所有的符号就搞定了 .
+<blockquote>
+<p>解决: 这里使用苹果底层的原子队列：<code>static OSQueueHead symboList = OS_ATOMIC_QUEUE_INIT;</code></p>
+</blockquote>
+</li>
+<li>load方法时 , <code>__sanitizer_cov_trace_pc_guard</code> 函数的参数 <code>guard</code> 是 0.
+<blockquote>
+<p>解决： 注销 // if (!*guard) return;</p>
+</blockquote>
+</li>
+<li></li>
+</ol>
+</li>
+<li>插桩原理<br>
+通过汇编可知，在clang编译过程，所以方法内插入一个<code>__sanitizer_cov_trace_pc_guard</code>方法，每次执行方法前，先执行<code>__sanitizer_cov_trace_pc_guard</code>方法</li>
+</ul>
+<h1>其他hook方法不能用的原因</h1>
+<ol>
+<li>Instruments(Time Profiler/System Trace) trace文件方案，因为他们都是基于特定场景采样的，大多数符号获取不到。</li>
+</ol>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904130406793224">iOS 优化篇 - 启动优化之Clang插桩实现二进制重排</a><br>
+<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Drmmx5JtjG3UtTFksL6Q8Q">抖音研发实践：基于二进制文件重排的解决方案 APP启动速度提升超15%</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/" title="iOS性能---启动优化(2)二进制重排" target="_blank" rel="external">http://wangliwen.top/iOS-性能与架构/002_(2)启动优化二进制重排/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0009_runloop/" title="runloop"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-OC/0008_%E5%A4%9A%E7%BA%BF%E7%A8%8B(2)%E7%BA%BF%E7%A8%8B%E9%94%81/" title="多线程(2)线程锁"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

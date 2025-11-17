@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>runtime(1)初识 | wangliwen</title>
+  <meta name="description" content="声明：本文仅供记忆使用，并不适合新手小白观看  OC的本质   我们平时编写的Objective-C代码，底层实现其实都是C\C++代码   Objective-C的面向对象都是基于C\C++的数据结构实现的   将Objective-C代码转换为C\C++代码  xcrun  -sdk  iphoneos  clang  -arch  arm64  -rewrite-objc  OC源文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="runtime(1)初识">
+<meta property="og:url" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="声明：本文仅供记忆使用，并不适合新手小白观看  OC的本质   我们平时编写的Objective-C代码，底层实现其实都是C\C++代码   Objective-C的面向对象都是基于C\C++的数据结构实现的   将Objective-C代码转换为C\C++代码  xcrun  -sdk  iphoneos  clang  -arch  arm64  -rewrite-objc  OC源文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/class_meta.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/isa_superclass.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/class.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/method_list.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/cache_list.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/objc_send.jpg">
+<meta property="article:published_time" content="2018-10-12T00:23:02.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.054Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/class_meta.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-OC/0001_runtime初识" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      runtime(1)初识
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/" class="article-date">
+	  <time datetime="2018-10-12T00:23:02.000Z" itemprop="datePublished">2018-10-12</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-OC/">iOS-OC</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <blockquote>
+<p>声明：本文仅供记忆使用，并不适合新手小白观看</p>
+</blockquote>
+<h1>OC的本质</h1>
+<ul>
+<li>
+<p>我们平时编写的Objective-C代码，底层实现其实都是C\C++代码</p>
+</li>
+<li>
+<p>Objective-C的面向对象都是基于C\C++的数据结构实现的</p>
+</li>
+<li>
+<p>将Objective-C代码转换为C\C++代码</p>
+<blockquote>
+<p>xcrun  -sdk  iphoneos  clang  -arch  arm64  -rewrite-objc  OC源文件  -o  输出的CPP文件<br>
+如果需要链接其他框架，使用-framework参数。比如-framework UIKit</p>
+</blockquote>
+</li>
+</ul>
+<h1>对象的内存大小</h1>
+<p>系统分配了16个字节给<code>NSObject</code>对象（通过<code>malloc_size</code>函数获得）<br>
+但<code>NSObject</code>对象内部只使用了8个字节的空间（64bit环境下，可以通过<code>class_getInstanceSize</code>函数获得）</p>
+  <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建一个实例对象，至少需要多少内存？</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></span><br><span class="line">class_getInstanceSize([<span class="built_in">NSObject</span> <span class="keyword">class</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">//创建一个实例对象，实际上分配了多少内存？</span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;malloc/malloc.h&gt;</span></span></span><br><span class="line">malloc_size((__bridge <span class="keyword">const</span> <span class="keyword">void</span> *)obj);</span><br></pre></td></tr></table></figure>
+<h1>类class和元类meta-class</h1>
+  <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取实例</span></span><br><span class="line"><span class="built_in">NSObject</span> *obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line"><span class="comment">//获取类对象方法</span></span><br><span class="line">Class objClass1 = [obj <span class="keyword">class</span>];</span><br><span class="line">Class objClass2 = [<span class="built_in">NSObject</span> <span class="keyword">class</span>];</span><br><span class="line">Class objClass3 = object_getClass(obj);</span><br><span class="line">Class objClass4 = objc_getClass(<span class="string">&quot;NSObject&quot;</span>);</span><br><span class="line">Class objClass5 = [[<span class="built_in">NSObject</span> <span class="keyword">class</span>] <span class="keyword">class</span>];<span class="comment">//注意：这个还是类对象</span></span><br><span class="line"><span class="comment">//获取元类对象 只有一种方法object_getClass(类对象)</span></span><br><span class="line">object_getClass([<span class="built_in">NSObject</span> <span class="keyword">class</span>]);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>实例对象、类对象、元类对象</p>
+<div style="width:50%;margin-bottom:15px;"><img src="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/class_meta.jpg" class=""></div>
+</li>
+<li>
+<p>isa 和 superclass</p>
+<div style="width:40%;margin-bottom:15px;"><img src="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/isa_superclass.jpg" class=""></div>
+</li>
+<li>
+<p>类对象和元类对象内部结构</p>
+<div style="width:90%;margin-bottom:15px;"><img src="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/class.jpg" class=""></div>
+</li>
+</ul>
+<h1>isa</h1>
+<p>从<code>arm64</code>架构开始，对isa进行了优化，变成了一个<code>共用体</code>（<code>union</code>）结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** isa_t 结构体 */</span></span><br><span class="line"><span class="class"><span class="keyword">union</span> <span class="title">isa_t</span> &#123;</span></span><br><span class="line">    Class cls;</span><br><span class="line">    <span class="keyword">uintptr_t</span> bits;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> nonpointer        : <span class="number">1</span>; <span class="comment">//是否优化</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> has_assoc         : <span class="number">1</span>; <span class="comment">//是否有设置过关联对象</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> has_cxx_dtor      : <span class="number">1</span>; <span class="comment">//是否有C++的析构函数</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> shiftcls          : <span class="number">33</span>;<span class="comment">//Class、Meta-Class对象的内存地址</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> magic             : <span class="number">6</span>; <span class="comment">//用于在调试时分辨对象是否未完成初始化</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> weakly_referenced : <span class="number">1</span>; <span class="comment">//是否有被弱引用指向过</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> deallocating      : <span class="number">1</span>; <span class="comment">//对象是否正在释放</span></span><br><span class="line">        <span class="keyword">uintptr_t</span> has_sidetable_rc  : <span class="number">1</span>;<span class="comment">//has_sidetable_rc </span></span><br><span class="line">        <span class="keyword">uintptr_t</span> extra_rc          : <span class="number">19</span>;<span class="comment">//里面存储的值是引用计数器减1</span></span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1>methods 方法列表</h1>
+<ul>
+<li>
+<p>方法列表<br>
+class_ro_t里面的baseMethodList、baseProtocols、ivars、baseProperties是一维数组，是只读的，包含了类的初始内容<br>
+class_rw_t里面的methods、properties、protocols是二维数组，是可读可写的，包含了类的初始内容、分类的内容</p>
+<div style="width:90%;margin-bottom:10px;"><img src="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/method_list.jpg" class=""></div>
+</li>
+<li>
+<p>方法缓存<br>
+Class内部结构中有个方法缓存（<code>cache_t</code>），用<code>散列表（哈希表）</code>来缓存曾经调用过的方法，可以提高方法的查找速度</p>
+<div style="width:90%;margin-bottom:10px;"><img src="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/cache_list.jpg" class=""></div>
+</li>
+</ul>
+<h1>method</h1>
+<ul>
+<li>
+<p>method_t</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//方法</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">objc_method</span> &#123;</span></span><br><span class="line">  SEL method_name;    <span class="comment">//函数名</span></span><br><span class="line">  <span class="keyword">char</span> *method_types; <span class="comment">//返回类型、参数类型</span></span><br><span class="line">  IMP method_imp;     <span class="comment">//指向函数指针（函数地址）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>SEL<br>
+可以通过<code>@selector()</code>和<code>sel_registerName()</code>获得<br>
+可以通过<code>sel_getName()</code>和<code>NSStringFromSelector()</code>转成字符串<br>
+不同类中相同名字的方法，所对应的方法选择器是相同的</p>
+</li>
+<li>
+<p>method_types</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** types为（i24@0:8i16f20）</span></span><br><span class="line"><span class="comment">   i    返回值 </span></span><br><span class="line"><span class="comment">   24   所有参数的字节数</span></span><br><span class="line"><span class="comment">   @0   参数self，从第0个字节开始</span></span><br><span class="line"><span class="comment">   :8   参数SEL，从第8个字节开始</span></span><br><span class="line"><span class="comment">   i16  参数int，从第16个字节开始</span></span><br><span class="line"><span class="comment">   f20  参数float，从第20个字节开始</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line">- (<span class="keyword">int</span>)addA:(<span class="keyword">int</span> )a andB:(<span class="keyword">float</span>)b</span><br><span class="line">  </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>IMP<br>
+IMP代表函数的具体实现</p>
+</li>
+</ul>
+<h1>OC的消息机制</h1>
+<p>当OC对象调用方法时，大致3个阶段：<code>objc_msgSend</code>、<code>动态方法解析</code>、<code>消息转发</code></p>
+<ul>
+<li>
+<p>objc_msgSend</p>
+ <div style="width:90%;margin-bottom:15px;margin-top:15px;"><img src="/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/objc_send.jpg" class=""></div>
+</li>
+<li>
+<p>动态方法解析</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)other &#123;</span><br><span class="line">  <span class="built_in">NSLog</span>(<span class="string">@&quot;%s&quot;</span>, __func__);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> 类方法解析    + (BOOL)resolveClassMethod:(SEL)sel </span></span><br><span class="line"><span class="comment"> 对象方法解析  + (BOOL)resolveInstanceMethod:(SEL)sel</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">  <span class="keyword">if</span> (sel == <span class="keyword">@selector</span>(test)) &#123;</span><br><span class="line">      <span class="comment">// 获取其他方法</span></span><br><span class="line">      Method method = class_getInstanceMethod(<span class="keyword">self</span>, <span class="keyword">@selector</span>(other));</span><br><span class="line">      <span class="comment">// 动态添加test方法的实现</span></span><br><span class="line">      class_addMethod(<span class="keyword">self</span>, sel,</span><br><span class="line">                      method_getImplementation(method),</span><br><span class="line">                      method_getTypeEncoding(method));</span><br><span class="line">      <span class="comment">// 返回YES代表有动态添加方法</span></span><br><span class="line">      <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> [<span class="keyword">super</span> resolveInstanceMethod:sel];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>消息转发</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  调用别的对象去执行</span></span><br><span class="line"><span class="comment"> </span></span><br><span class="line"><span class="comment">  对象方法    - (id)forwardingTargetForSelector:(SEL)aSelector</span></span><br><span class="line"><span class="comment">  类对象方法  + (id)forwardingTargetForSelector:(SEL)aSelector</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line">- (<span class="keyword">id</span>)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">   <span class="keyword">if</span> (aSelector == <span class="keyword">@selector</span>(test)) &#123;</span><br><span class="line">      <span class="keyword">return</span> [[MJCat alloc] init];</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> [<span class="keyword">super</span>  forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  实现方法签名后，在forwardInvocation里做任何处理</span></span><br><span class="line"><span class="comment">  对象方法     - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector</span></span><br><span class="line"><span class="comment">              - (void)forwardInvocation:(NSInvocation *)anInvocation</span></span><br><span class="line"><span class="comment"> </span></span><br><span class="line"><span class="comment">  类对象方法   + (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector</span></span><br><span class="line"><span class="comment">             + (void)forwardInvocation:(NSInvocation *)anInvocation</span></span><br><span class="line"><span class="comment">**/</span></span><br><span class="line">  - (<span class="built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)aSelector &#123;</span><br><span class="line">      <span class="keyword">if</span> (aSelector == <span class="keyword">@selector</span>(test:)) &#123;</span><br><span class="line">          <span class="comment">//return [NSMethodSignature signatureWithObjCTypes:&quot;v20@0:8i16&quot;];</span></span><br><span class="line">          <span class="keyword">return</span> [<span class="built_in">NSMethodSignature</span> signatureWithObjCTypes:<span class="string">&quot;i@:i&quot;</span>];</span><br><span class="line">         <span class="comment">//return [[[MJCat alloc] init] methodSignatureForSelector:aSelector];</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> [<span class="keyword">super</span> methodSignatureForSelector:aSelector];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  - (<span class="keyword">void</span>)forwardInvocation:(<span class="built_in">NSInvocation</span> *)anInvocation &#123;</span><br><span class="line">      <span class="comment">// 参数顺序：receiver、selector、other arguments</span></span><br><span class="line">      <span class="comment">//int age;</span></span><br><span class="line">      <span class="comment">//[anInvocation getArgument:&amp;age atIndex:2];</span></span><br><span class="line">      <span class="comment">//NSLog(@&quot;%d&quot;, age + 10);</span></span><br><span class="line">      <span class="comment">// anInvocation.target == [[MJCat alloc] init]</span></span><br><span class="line">      <span class="comment">// anInvocation.selector == test:</span></span><br><span class="line">      <span class="comment">// anInvocation的参数：15</span></span><br><span class="line">      <span class="comment">// [[[MJCat alloc] init] test:15]</span></span><br><span class="line">      </span><br><span class="line">      [anInvocation invokeWithTarget:[[MJCat alloc] init]];</span><br><span class="line">      <span class="keyword">int</span> ret;</span><br><span class="line">      [anInvocation getReturnValue:&amp;ret];</span><br><span class="line">       <span class="built_in">NSLog</span>(<span class="string">@&quot;%d&quot;</span>, ret);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>具体应用</h1>
+<ul>
+<li>利用关联对象（AssociatedObject）给分类添加属性</li>
+<li>遍历类的所有成员变量（修改textfield的占位文字颜色、字典转模型、自动归档解档）</li>
+<li>交换方法实现（交换系统的方法）</li>
+<li>利用消息转发机制解决方法找不到的异常问题</li>
+</ul>
+<h1>runtime常用API</h1>
+<ul>
+<li>
+<p>类</p>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//动态创建一个类（参数：父类，类名，额外的内存空间）</span></span><br><span class="line"><span class="function">Class <span class="title">objc_allocateClassPair</span><span class="params">(Class superclass, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">size_t</span> extraBytes)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//注册一个类（要在类注册之前添加成员变量）</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">objc_registerClassPair</span><span class="params">(Class cls)</span> </span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//销毁一个类</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">objc_disposeClassPair</span><span class="params">(Class cls)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//获取isa指向的Class</span></span></span><br><span class="line"><span class="function">Class <span class="title">object_getClass</span><span class="params">(id obj)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//设置isa指向的Class</span></span></span><br><span class="line"><span class="function">Class <span class="title">object_setClass</span><span class="params">(id obj, Class cls)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//判断一个OC对象是否为Class</span></span></span><br><span class="line"><span class="function">BOOL <span class="title">object_isClass</span><span class="params">(id obj)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//判断一个Class是否为元类</span></span></span><br><span class="line"><span class="function">BOOL <span class="title">class_isMetaClass</span><span class="params">(Class cls)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//获取父类</span></span></span><br><span class="line"><span class="function">Class <span class="title">class_getSuperclass</span><span class="params">(Class cls)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>成员变量</p>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取一个实例变量信息</span></span><br><span class="line"><span class="function">Ivar <span class="title">class_getInstanceVariable</span><span class="params">(Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//拷贝实例变量列表（最后需要调用free释放）</span></span></span><br><span class="line"><span class="function">Ivar *<span class="title">class_copyIvarList</span><span class="params">(Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//设置和获取成员变量的值</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">object_setIvar</span><span class="params">(id obj, Ivar ivar, id value)</span></span></span><br><span class="line"><span class="function">id <span class="title">object_getIvar</span><span class="params">(id obj, Ivar ivar)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//动态添加成员变量（已经注册的类是不能动态添加成员变量的）</span></span></span><br><span class="line"><span class="function">BOOL <span class="title">class_addIvar</span><span class="params">(Class cls, <span class="keyword">const</span> <span class="keyword">char</span> * name, <span class="keyword">size_t</span> size, <span class="keyword">uint8_t</span> alignment, <span class="keyword">const</span> <span class="keyword">char</span> * types)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//获取成员变量的相关信息</span></span></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">ivar_getName</span><span class="params">(Ivar v)</span></span></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">ivar_getTypeEncoding</span><span class="params">(Ivar v)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>属性</p>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取一个属性</span></span><br><span class="line"><span class="function"><span class="keyword">objc_property_t</span> <span class="title">class_getProperty</span><span class="params">(Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//拷贝属性列表（最后需要调用free释放）</span></span></span><br><span class="line"><span class="function"><span class="keyword">objc_property_t</span> *<span class="title">class_copyPropertyList</span><span class="params">(Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//动态添加属性</span></span></span><br><span class="line"><span class="function">BOOL <span class="title">class_addProperty</span><span class="params">(Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">const</span> <span class="keyword">objc_property_attribute_t</span> *attributes, <span class="keyword">unsigned</span> <span class="keyword">int</span> attributeCount)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//动态替换属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">class_replaceProperty</span><span class="params">(Class cls, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">const</span> <span class="keyword">objc_property_attribute_t</span> *attributes, <span class="keyword">unsigned</span> <span class="keyword">int</span> attributeCount)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//获取属性的一些信息</span></span></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">property_getName</span><span class="params">(<span class="keyword">objc_property_t</span> property)</span></span></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">property_getAttributes</span><span class="params">(<span class="keyword">objc_property_t</span> property)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>方法</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获得一个实例方法、类方法</span></span><br><span class="line"><span class="function">Method <span class="title">class_getInstanceMethod</span><span class="params">(Class cls, SEL name)</span></span></span><br><span class="line"><span class="function">Method <span class="title">class_getClassMethod</span><span class="params">(Class cls, SEL name)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//方法实现相关操作</span></span></span><br><span class="line"><span class="function">IMP <span class="title">class_getMethodImplementation</span><span class="params">(Class cls, SEL name)</span> </span></span><br><span class="line"><span class="function">IMP <span class="title">method_setImplementation</span><span class="params">(Method m, IMP imp)</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">method_exchangeImplementations</span><span class="params">(Method m1, Method m2)</span> </span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//拷贝方法列表（最后需要调用free释放）</span></span></span><br><span class="line"><span class="function">Method *<span class="title">class_copyMethodList</span><span class="params">(Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//动态添加方法</span></span></span><br><span class="line"><span class="function">BOOL <span class="title">class_addMethod</span><span class="params">(Class cls, SEL name, IMP imp, <span class="keyword">const</span> <span class="keyword">char</span> *types)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//动态替换方法</span></span></span><br><span class="line"><span class="function">IMP <span class="title">class_replaceMethod</span><span class="params">(Class cls, SEL name, IMP imp, <span class="keyword">const</span> <span class="keyword">char</span> *types)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//获取方法的相关信息（带有copy的需要调用free去释放）</span></span></span><br><span class="line"><span class="function">SEL <span class="title">method_getName</span><span class="params">(Method m)</span></span></span><br><span class="line"><span class="function">IMP <span class="title">method_getImplementation</span><span class="params">(Method m)</span></span></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">method_getTypeEncoding</span><span class="params">(Method m)</span></span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">method_getNumberOfArguments</span><span class="params">(Method m)</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">method_copyReturnType</span><span class="params">(Method m)</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">method_copyArgumentType</span><span class="params">(Method m, <span class="keyword">unsigned</span> <span class="keyword">int</span> index)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//选择器相关</span></span></span><br><span class="line"><span class="function"><span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">sel_getName</span><span class="params">(SEL sel)</span></span></span><br><span class="line"><span class="function">SEL <span class="title">sel_registerName</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *str)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//用block作为方法实现</span></span></span><br><span class="line"><span class="function">IMP <span class="title">imp_implementationWithBlock</span><span class="params">(id block)</span></span></span><br><span class="line"><span class="function">id <span class="title">imp_getBlock</span><span class="params">(IMP anImp)</span></span></span><br><span class="line"><span class="function">BOOL <span class="title">imp_removeBlock</span><span class="params">(IMP anImp)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>参考资料</h1>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/objc4/">runtime源码</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-OC/0001_runtime%E5%88%9D%E8%AF%86/" title="runtime(1)初识" target="_blank" rel="external">http://wangliwen.top/iOS-OC/0001_runtime初识/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0002_runtime%E4%B9%8BCategory/" title="runtime(2)Category"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-OC/0000_iOS%E4%BC%98%E7%A7%80%E7%BD%91%E5%9D%80%E6%95%B4%E7%90%86/" title="iOS优秀网址整理"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

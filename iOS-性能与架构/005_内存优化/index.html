@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>iOS性能---内存优化 | wangliwen</title>
+  <meta name="description" content="为什么要优化内存?   Jetsam 机制下，系统从内核中开启了最高优先级的线程，来监控整个系统的内存情况。当系统内存不足时，会自动发出内存警告或触发 OOM 杀死低优先级的进程，腾出内存供其他高优先级进程使用。   MacOS &#x2F; iOS是一个从 BSD 衍生而来的系统，内核是 XNU，XNU 的微内核是 Mach，其处理内存警告和异常使用的是 Jetsam 机制。   内存警告三种方式  UI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS性能---内存优化">
+<meta property="og:url" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/005_%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="为什么要优化内存?   Jetsam 机制下，系统从内核中开启了最高优先级的线程，来监控整个系统的内存情况。当系统内存不足时，会自动发出内存警告或触发 OOM 杀死低优先级的进程，腾出内存供其他高优先级进程使用。   MacOS &#x2F; iOS是一个从 BSD 衍生而来的系统，内核是 XNU，XNU 的微内核是 Mach，其处理内存警告和异常使用的是 Jetsam 机制。   内存警告三种方式  UI">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-23T07:22:43.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.083Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/005_%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-性能与架构/005_内存优化" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS性能---内存优化
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/005_%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" class="article-date">
+	  <time datetime="2018-10-23T07:22:43.000Z" itemprop="datePublished">2018-10-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/005_%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.2k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>为什么要优化内存?</h1>
+<ul>
+<li>
+<p><code>Jetsam</code> 机制下，系统从内核中开启了最高优先级的线程，来监控整个系统的内存情况。当系统内存不足时，会自动发出内存警告或触发 <code>OOM</code> 杀死低优先级的进程，腾出内存供其他高优先级进程使用。</p>
+</li>
+<li>
+<p>MacOS / iOS是一个从 BSD 衍生而来的系统，内核是 XNU，XNU 的微内核是 <code>Mach</code>，其处理内存警告和异常使用的是 <code>Jetsam</code> 机制。</p>
+</li>
+<li>
+<p>内存警告三种方式</p>
+<ul>
+<li><code>UIApplicationDelegate</code>的 applicationDidReceiveMemoryWarning:</li>
+<li><code>UIViewController</code>的 didReceiveMemoryWarning</li>
+<li><code>NSNotificationCenter</code>的 UIApplicationDidReceiveMemoryWarningNotification</li>
+</ul>
+</li>
+<li>
+<p>三种内存类型</p>
+<ul>
+<li>
+<p><code>Clean Memory</code> 是指那些可以用以 Page Out（当内存不足的时候，系统会按照一定策略来腾出更多空间供使用，比较常见的做法是将一部分低优先级的数据挪到磁盘上） 的内存。</p>
+</li>
+<li>
+<p><code>Dirty Memory</code> 是指那些被 App 写入过数据的内存。</p>
+</li>
+<li>
+<p><code>Compressed Memory</code> 当内存吃紧的时候，系统会将不使用的内存进行压缩，直到下一次访问的时候进行解压。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1>OOM 监控</h1>
+<ul>
+<li>
+<p>指 App 在前台因消耗内存过大导致被系统杀死，针对这类问题，我们需要记录发生 FOOM 时的调用栈、内存占用等信息，从而具体分析解决内存占用大的问题。</p>
+</li>
+<li>
+<p>流程是监控 App 生命周期内的内存增减，在收到内存警告时，记录内存信息，获取当前所有对象信息和内存占用值，并在合适的时机上传到服务器。目前比较出名的 OOM 监控框架有 Facebook 的 FBAllocationTracker ，国内的有腾讯开源的** OOMDetector**。</p>
+<ul>
+<li>
+<p>FBAllocationTracker<br>
+原理是 <code>hook</code> 了 <code>malloc/free</code> 等方法，以此在运行时记录所有实例的分配信息，从而发现一些实例的内存异常情况，有点类似于在 app 内运行、性能更好的 Allocation。但是这个库只能监控 <code>Objective-C</code> 对象，所以局限性非常大，同时因为没办法拿到对象的堆栈信息，所以更难定位 <code>OOM</code> 的具体原因。</p>
+</li>
+<li>
+<p>OOMDetector<br>
+通过  <code>malloc/free</code> 的更底层接口 <code>malloc_logger_t</code> 记录当前存活对象的内存分配信息，同时也根据系统的 <code>backtrace_symbols</code> 回溯了堆栈信息。之后再根据伸展树（Splay Tree）等做数据存储分析，具体方式参看这篇文章：<a target="_blank" rel="noopener" href="https://wetest.qq.com/lab/view/367.html">iOS微信内存监控</a>。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h1>iOS常见内存问题及优化</h1>
+<ol>
+<li>
+<p>内存泄漏</p>
+<ul>
+<li>检测<br>
+Analyze静态分析   <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">内存泄露检查 Memory Error</span><br><span class="line">逻辑错误检查 Logic Error</span><br><span class="line">声明错误检查 Dead Store</span><br><span class="line">API调用错误检查 API Misuse</span><br></pre></td></tr></table></figure>
+<a href="">MLeaksFinder</a>  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原理：在NSObject分类中添加willDealloc方法，2秒钟后执行assertNotDealloc，如果对象已经释放不会再执行</span></span><br><span class="line"><span class="comment">// pop  在UINavigationController+MemoryLeak交换pop和push方法，用关联对象记录是不是执行willDealloc，然后在 UIViewController+MemoryLeak 交换viewDidDisappear，判断关联对象记录然后执行willDealloc</span></span><br><span class="line"><span class="comment">// dismiss 在 UIViewController+MemoryLeak 交换dismissViewController 然后直接执行 willDealloc</span></span><br></pre></td></tr></table></figure>
+Instruments中的Leak动态分析内存泄漏</li>
+<li>一般原因<br>
+Block循环引用<br>
+NSTimer循环引用<br>
+CoreFoundation方式申请的内存，忘记释放</li>
+</ul>
+</li>
+<li>
+<p>WKWebView 白屏问题</p>
+<ul>
+<li>
+<p>UIWebView 会因为内存使用过大而崩溃，WKWebView 苹果进行了优化，不会 Crash 但会导致白屏，不显示内容。</p>
+</li>
+<li>
+<p>解决方法是监听到 URL 为 nil  或者接收到 WKNavigationDelegate 的 webViewWebContentProcessDidTerminate 时，reload 页面。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>野指针</p>
+<ul>
+<li>
+<p>目前最为常见的野指针是 objc_msgSend 和 unrecognized selector sent to，只要能记录崩溃时的调用栈，一般都较容易解决。</p>
+</li>
+<li>
+<p>开发阶段可以通过开启编译里的 Zombie Objects 复现问题，原理是 Hook 系统的 dealloc 方法，执行 __dealloc_zombie 将对象进行僵尸化，如果当前对象再次收到消息，则终止程序并打印出调用信息。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>图片内存</p>
+<ul>
+<li>图片读取<br>
+imageNamed 会被缓存到内存中，适用于频繁使用的小图片；imageWithContentOfFile 适用于大图片，持有者生命周期结束后既被释放。</li>
+<li>图像压缩<br>
+将大图片加载到小空间时， UIImage （UIImage.contentsOfFile）需要先解压整个图像再渲染，会产生内存峰值，用 ImageIO框架 替代 UIImage 可避免图像峰值，ImageIO框架（CGImageSourceCreateWithURL）可以直接指定加载到内存的图像尺寸和信息，省去了解压缩的过程</li>
+</ul>
+</li>
+<li>
+<p>autoreleasepool降低内存峰值</p>
+<ul>
+<li>通常autoreleased对象是在runloop结束时才释放。如果在循环里产生autoreleased对象，内存峰值会猛涨，甚至出现OOM。适当的添加autoreleasepool能及时释放内存，降低峰值。</li>
+</ul>
+</li>
+</ol>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://wetest.qq.com/lab/view/367.html">iOS微信内存监控</a><br>
+<a target="_blank" rel="noopener" href="https://juejin.cn/post/6864492188404088846">深入探索 iOS 内存优化</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/005_%E5%86%85%E5%AD%98%E4%BC%98%E5%8C%96/" title="iOS性能---内存优化" target="_blank" rel="external">http://wangliwen.top/iOS-性能与架构/005_内存优化/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0012_%E5%93%8D%E5%BA%94%E8%80%85%E9%93%BE/" title="响应者链"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-OC/0011_%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9B%B8%E5%85%B3(NStimer%E3%80%81CADisplayLink%E3%80%81dispatch_source_t)/" title="定时器相关(NStimer、CADisplayLink、dispatch_source_t)"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

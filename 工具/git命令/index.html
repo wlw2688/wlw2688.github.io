@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>git命令 | wangliwen</title>
+  <meta name="description" content="git下载与安装 下载地址： https:&#x2F;&#x2F;git-scm.com&#x2F;download  git代码托管服务   gitHub是一个面向开源及私有软件项目的托管平台，因为只支持Git 作为唯一的版本库格式进行托管，故名gitHub   码云是国内的一个代码托管平台，由于服务器在国内，所以相比于GitHub，码云速度会更快   GitLab是一个用于仓库管理系统的开源项目，使用Git作为代码管理工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git命令">
+<meta property="og:url" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="git下载与安装 下载地址： https:&#x2F;&#x2F;git-scm.com&#x2F;download  git代码托管服务   gitHub是一个面向开源及私有软件项目的托管平台，因为只支持Git 作为唯一的版本库格式进行托管，故名gitHub   码云是国内的一个代码托管平台，由于服务器在国内，所以相比于GitHub，码云速度会更快   GitLab是一个用于仓库管理系统的开源项目，使用Git作为代码管理工具">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/05.png">
+<meta property="og:image" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/06.png">
+<meta property="og:image" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/03.png">
+<meta property="og:image" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/01.png">
+<meta property="og:image" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/02.png">
+<meta property="og:image" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/04.png">
+<meta property="article:published_time" content="2017-10-21T07:22:43.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.095Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/05.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-工具/git命令" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      git命令
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/" class="article-date">
+	  <time datetime="2017-10-21T07:22:43.000Z" itemprop="datePublished">2017-10-21</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>git下载与安装</h1>
+<pre><code>下载地址： https://git-scm.com/download
+</code></pre>
+<h1>git代码托管服务</h1>
+<ul>
+<li>
+<p><a target="_blank" rel="noopener" href="https://github.com/">gitHub</a>是一个面向开源及私有软件项目的托管平台，因为只支持Git 作为唯一的版本库格式进行托管，故名gitHub</p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://gitee.com/">码云</a>是国内的一个代码托管平台，由于服务器在国内，所以相比于GitHub，码云速度会更快</p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://about.gitlab.com/">GitLab</a>是一个用于仓库管理系统的开源项目，使用Git作为代码管理工具，并在此基础上搭建起来的web服务</p>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://account.aliyun.com">阿里code</a>是阿里出的代码托管平台</p>
+</li>
+</ul>
+<h1>git结构</h1>
+<ul>
+<li>
+<p><code>工作区域</code>平时存放项目代码的地方</p>
+</li>
+<li>
+<p><code>暂存区域</code>用于临时存放你的改动，事实上它只是一个文件，保存即将提交的文件列表信息。</p>
+</li>
+<li>
+<p><code>Git仓库</code>就是安全存放数据的位置，这里边有你提交的所有版本的数据。其中，HEAD 指向最新放入仓库的版本</p>
+</li>
+<li>
+<p>三种状态 已修改（modified）、已暂存（staged）和已提交（committed），依次对应上边的每一个流程。</p>
+</li>
+</ul>
+<h1>环境配置设置签名</h1>
+<ul>
+<li>设置全局用户信息<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name “wlw”</span><br><span class="line">git config --global user.email “wlw@163.com”</span><br></pre></td></tr></table></figure>
+</li>
+<li>设置项目级别用户信息<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config user.name “wlw”</span><br><span class="line">git config user.email “wlw@163.com”</span><br></pre></td></tr></table></figure>
+</li>
+<li>查看配置信息<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --list</span><br><span class="line">git config user.name</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>常用命令</h1>
+<ul>
+<li>在本地初始化一个Git仓库<code>init</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+</li>
+<li>从远程仓库指定克隆<code>clone</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone -b dev [远程Git仓库地址] --branch</span><br></pre></td></tr></table></figure>
+</li>
+<li>将文件加入暂存区<code>add</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add README.md   # 添加单个文件到缓存区</span><br><span class="line">git add .           # 添加修改的所有文件到缓存区</span><br></pre></td></tr></table></figure>
+</li>
+<li>删除文件<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rm a.a          # 移除文件(从暂存区和工作区中删除)</span><br><span class="line">git rm --cached a.a # 移除文件(只从暂存区中删除)</span><br></pre></td></tr></table></figure>
+</li>
+<li>将文件提交到git仓库<code>commit</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git commit -m &quot;add a readme file&quot;</span><br><span class="line">git commit -m &quot;commit message&quot; [file name]</span><br></pre></td></tr></table></figure>
+</li>
+<li>查看状态<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git status  # 查看当前状态 </span><br></pre></td></tr></table></figure>
+</li>
+<li>查看历史记录<code>log</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git reflog                                # 常用，HEAD@&#123;移动到当前版本需要多少步&#125;</span><br><span class="line">git log                                   # 详细信息，“空格”向下翻页，“b”向上翻页</span><br><span class="line">git log --pretty=oneline                  # 单行展示</span><br><span class="line">git log --oneline                         # 同上效果</span><br><span class="line">git log --graph --pretty=format:&quot;%h %s&quot;   # 简化打印日志并带有分支图形</span><br></pre></td></tr></table></figure>
+</li>
+<li>更改HEAD前进后退<code>reset</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 【--hard】 硬更改：1.在本地库移动 HEAD 指针 2.重置暂存区 3.重置工作区</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 【--mixed】混合更改：1.在本地库移动 HEAD 指针 2.重置暂存区</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 【--soft】 软更改：1.仅仅在本地库移动 HEAD 指针</span></span><br><span class="line"></span><br><span class="line">git reset --hard [局部索引值]  # 推荐，根据地址</span><br><span class="line">git reset --hard HEAD^^      # 后退2步，^^代表2</span><br><span class="line">git reset --hard HEAD~n      # 后退n步</span><br></pre></td></tr></table></figure>
+</li>
+<li>比较文件差异<code>diff</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git diff [文件名]                   # 将工作区和暂存区进行比较</span><br><span class="line">git diff [本地库中历史版本] [文件名]   # 将工作区和本地库历史记录比较</span><br><span class="line">git diff                           # 不带文件名比较多个文件</span><br></pre></td></tr></table></figure>
+</li>
+<li>分支操作<code>branch</code> <code>checkout</code> <code>merge</code><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">git branch [分支名]             # 创建分支</span><br><span class="line">git branch -v                  # 查看所有分支</span><br><span class="line">git checkout [分支名]           # 切换分支</span><br><span class="line">git checkout -b [分支名]        # 切换并创建分支</span><br><span class="line">git checkout [HEAD]            # 切换到当前分支的某一条记录，这时已经不在当前分支了</span><br><span class="line">git branch -d dev1             # 删除分支</span><br><span class="line">git branch -D dev1             # 强制删除分支</span><br><span class="line">git push origin --delete dev   # 删除远程分支(慎用)</span><br><span class="line">git merge [有新内容分支名]       # 合并分支，首先切换到被合并分支，然后把新内容分支合并到当前分支</span><br><span class="line">                               # 解决冲突，把冲突文件更改，然后add和commit                           </span><br></pre></td></tr></table></figure>
+</li>
+<li>远程库操作<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git remote -v                         # 查看当前所有远程地址别名</span><br><span class="line">git remote add [别名] [远程地址]        # 为远程库添加别名</span><br><span class="line">git push [别名] [分支名]                # 推送到远程库</span><br><span class="line">git origin [远程地址]                   # 等同于：克隆 + 创建origin远程地址别名 + 初始化本地库</span><br><span class="line">  </span><br><span class="line">git fetch [远程库地址别名] [远程分支名]   # 拉取操作</span><br><span class="line">git merge [远程库地址别名/远程分支名]     # 合并操作</span><br><span class="line">git pull [远程库地址别名] [远程分支名]    # 拉取+合并，pull=fetch+merge  </span><br></pre></td></tr></table></figure>
+</li>
+<li><code>tag</code>操作<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git tag                               # 查询本地所有tag</span><br><span class="line">git tag [标签名]                       # 当前分支最后一个commit上添加tag</span><br><span class="line">git tag -a [标签名] -m &quot;备注内容&quot;       # 本地新增有备注的tag</span><br><span class="line">git tag [标签名] [版本记录]             # 在指定commit上新增tag</span><br><span class="line">git push origin [标签名]               # 将tag推送到远程</span><br><span class="line">git push origin --tags                # 将所有标签推送到远程</span><br><span class="line">git tag -d [标签名]                    # 删除本地标签</span><br><span class="line">git push origin :refs/tags/标签名      # 删除远程分支标签</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1><code>git rebase</code>的使用</h1>
+<ul>
+<li>
+<p><strong>合并提交记录</strong></p>
+<ol>
+<li>先进行rebase <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">  -i的意思是--interactive，即弹出交互式的界面让用户编辑完成合并操</span></span><br><span class="line">git rebase -i  [startpoint]  [endpoint]  # 指定区间</span><br><span class="line">git rebase -i  [startpoint]              # 默认到最后</span><br><span class="line">git rebase -i  HEAD~3                    # 近三次提交记录    </span><br></pre></td></tr></table></figure>
+</li>
+<li>然后进入编辑 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">pick ebd942f v2  # 保留</span><br><span class="line">s a6356a8 v3     # 将该commit和前一个commit合并</span><br><span class="line">s 64hd845 v4     # 将该commit和前一个commit合并</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> pick（缩写:p）：保留该commit</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> reword（缩写:r）：保留该commit，但我需要修改该commit的注释</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> edit（缩写:e）：保留该commit, 但我要停下来修改该提交(不仅仅修改注释)</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> squash（缩写:s）：将该commit和前一个commit合并</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> fixup：将该commit和前一个commit合并，但我不要保留该提交的注释信息（缩写:f）</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">exec</span>（缩写:x）：执行shell命令</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> drop（缩写:d）：我要丢弃该commit</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>最后修改合并后的注释<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> This is a combination of 3 commits.</span></span><br><span class="line">  这是v2、v3、v4合并后的message</span><br><span class="line">    </span><br><span class="line"><span class="meta">#</span><span class="bash"> Please enter the commit message <span class="keyword">for</span> your changes. Lines starting</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> with <span class="string">&#x27;#&#x27;</span> will be ignored, and an empty message aborts the commit.</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>注意：
+<blockquote>
+<p>最好不要将已经推送到远程的记录进行合并，避免麻烦</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>将某一段commit粘贴到另一个分支上</strong></p>
+<ol>
+<li>将dev分支的区间粘贴到master分支<div style="width:70%;margin-bottom:15px;"><img src="/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/05.png" class=""></div>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git rebase [startpoint] [endpoint]  --onto [branchName]   # 将某段区间粘贴到另一个分支上</span><br><span class="line">git rebase 90bc0045b^   5de0da9f2   --onto master         # 前开后闭的区间</span><br></pre></td></tr></table></figure>
+</li>
+<li>虽然此时HEAD所指向的内容正是我们所需要的，但是master分支是没有任何变化的，git只是将C~E部分的提交内容复制一份粘贴到了master所指向的提交后面，我们需要做的就是将master所指向的提交id设置为当前HEAD所指向的提交id就可以了 <div style="width:70%;margin-bottom:15px;"><img src="/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/06.png" class=""></div>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">git reset --hard  0c72e64</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li>
+<p><strong>将分支显示美化</strong><br>
+将dev分支合并到master</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash">(master) git checkout dev                      <span class="comment"># 切到dev</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash">(dev)    git rebase master                     <span class="comment"># 相当于把dev分支的变基到master的最后</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash">(dev)    git checkout master                   <span class="comment"># 切到master分支</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash">(master) git merge dev                         <span class="comment"># 将dev代码合并到master</span></span>     </span><br><span class="line">git log --graph --pretty=format:&quot;%h %s&quot;         # 简化打印日志并带有分支图形</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><strong>用<code>git pull --rebase</code>解决远端和本地分叉问题</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git pull               # 相当于git fetch + git merge</span><br><span class="line">git pull --rebase      # 相当于git fetch + git rebase</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>GitFlow 工作流举例</h1>
+<p><img src="03.png" alt=""></p>
+<h1>团队内协作</h1>
+<p><img src="01.png" alt=""></p>
+<h1>团队外协作</h1>
+<p><img src="02.png" alt=""></p>
+<h1>命令图解</h1>
+<p><img src="04.png" alt=""></p>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://git-scm.com/docs/git-rebase">git rebase</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/%E5%B7%A5%E5%85%B7/git%E5%91%BD%E4%BB%A4/" title="git命令" target="_blank" rel="external">http://wangliwen.top/工具/git命令/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/%E5%B7%A5%E5%85%B7/Mac%E5%AE%89%E8%A3%85Homebrew/" title="Mac安装Homebrew"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/%E5%B7%A5%E5%85%B7/AndriodStudio%E7%9A%84%E6%8A%80%E5%B7%A7/" title="AndriodStudio的技巧"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

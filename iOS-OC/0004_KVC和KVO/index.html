@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>KVC和KVO | wangliwen</title>
+  <meta name="description" content="声明：本文仅供记忆使用，并不适合新手小白观看  KVC  KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性 常见的API有    1234- (void)setValue:(id)value forKeyPath:(NSString *)keyPath;- (void)setValue:(id)value forKey:(NSString *)k">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVC和KVO">
+<meta property="og:url" content="http://wangliwen.top/iOS-OC/0004_KVC%E5%92%8CKVO/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="声明：本文仅供记忆使用，并不适合新手小白观看  KVC  KVC的全称是Key-Value Coding，俗称“键值编码”，可以通过一个key来访问某个属性 常见的API有    1234- (void)setValue:(id)value forKeyPath:(NSString *)keyPath;- (void)setValue:(id)value forKey:(NSString *)k">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0004_KVC%E5%92%8CKVO/kvc_set.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0004_KVC%E5%92%8CKVO/kvc_get.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0004_KVC%E5%92%8CKVO/kvo.jpg">
+<meta property="article:published_time" content="2018-10-15T06:10:23.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.057Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/iOS-OC/0004_KVC%E5%92%8CKVO/kvc_set.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-OC/0004_KVC%E5%92%8CKVO/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-OC/0004_KVC和KVO" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      KVC和KVO
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-OC/0004_KVC%E5%92%8CKVO/" class="article-date">
+	  <time datetime="2018-10-15T06:10:23.000Z" itemprop="datePublished">2018-10-15</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-OC/">iOS-OC</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-OC/0004_KVC%E5%92%8CKVO/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 603(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <blockquote>
+<p>声明：本文仅供记忆使用，并不适合新手小白观看</p>
+</blockquote>
+<h1>KVC</h1>
+<ul>
+<li>KVC的全称是Key-Value Coding，俗称“<code>键值编码</code>”，可以通过一个key来访问某个属性</li>
+<li>常见的API有</li>
+</ul>
+  <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span>)value forKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br><span class="line">- (<span class="keyword">void</span>)setValue:(<span class="keyword">id</span>)value forKey:(<span class="built_in">NSString</span> *)key;</span><br><span class="line">- (<span class="keyword">id</span>)valueForKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br><span class="line">- (<span class="keyword">id</span>)valueForKey:(<span class="built_in">NSString</span> *)key; </span><br></pre></td></tr></table></figure>
+<ul>
+<li>setValue:forKey:原理<div style="width:100%;margin-bottom:15px;"><img src="/iOS-OC/0004_KVC%E5%92%8CKVO/kvc_set.jpg" class=""></div>
+</li>
+<li>valueForKey:原理<div style="width:100%;margin-bottom:15px;"><img src="/iOS-OC/0004_KVC%E5%92%8CKVO/kvc_get.jpg" class=""></div>
+</li>
+</ul>
+<h1>KVO</h1>
+<ul>
+<li>
+<p>KVO的全称是Key-Value Observing，俗称“<code>键值监听</code>”，可以用于监听某个对象属性值的改变，主要通过<code>isa-swizzling</code>技术实现的</p>
+</li>
+<li>
+<p>使用API</p>
+ <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注册观察者</span></span><br><span class="line"><span class="built_in">NSKeyValueObservingOptions</span> options = <span class="built_in">NSKeyValueObservingOptionNew</span> | <span class="built_in">NSKeyValueObservingOptionOld</span>;</span><br><span class="line">[<span class="keyword">self</span>.person addObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@&quot;name&quot;</span> options:options context:<span class="string">@&quot;1111&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当监听对象的属性值发生改变时，就会调用</span></span><br><span class="line">- (<span class="keyword">void</span>)observeValueForKeyPath:(<span class="built_in">NSString</span> *)keyPath ofObject:(<span class="keyword">id</span>)object change:(<span class="built_in">NSDictionary</span> *)change context:(<span class="keyword">void</span> *)context &#123;</span><br><span class="line">   <span class="built_in">NSLog</span>(<span class="string">@&quot;监听到%@的%@属性值改变了 - %@ - %@&quot;</span>, object, keyPath, change, context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">  <span class="comment">// 移除监听</span></span><br><span class="line">  [<span class="keyword">self</span>.person removeObserver:<span class="keyword">self</span> forKeyPath:<span class="string">@&quot;name&quot;</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>实现原理</p>
+  <div style="width:100%;margin-bottom:15px;"><img src="/iOS-OC/0004_KVC%E5%92%8CKVO/kvo.jpg" class=""></div>
+<ol>
+<li>runtime新生成一个<code>NSKVONotifying_xxx</code>类对象继承原来的类对象，对象的<code>isa</code>指针指向它；</li>
+<li>重写<code>NSKVONotifying_xxx</code>set和class方法；</li>
+<li><code>NSKVONotifying_xxx</code>的set方法<code>IMP</code>指向<code>Foundation</code>框架<code>_NSSetxxxValueAndNotify</code>的实现；</li>
+<li><code>_NSSetxxxValueAndNotify</code>的内部实现为： <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">self</span> willChangeValueForKey:<span class="string">@&quot;age&quot;</span>];</span><br><span class="line">[<span class="keyword">super</span> setAge:age];</span><br><span class="line">[<span class="keyword">self</span> didChangeValueForKey:<span class="string">@&quot;age&quot;</span>];</span><br></pre></td></tr></table></figure>
+</li>
+<li><code>didChangeValueForKey:</code>内部会调用<code>observer</code>的<code>observeValueForKeyPath:ofObject:change:context:</code>方法</li>
+</ol>
+</li>
+<li>
+<p>手动触发kvo</p>
+  <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="keyword">self</span>.person willChangeValueForKey:<span class="string">@&quot;age&quot;</span>];</span><br><span class="line">[<span class="keyword">self</span>.person didChangeValueForKey:<span class="string">@&quot;age&quot;</span>];</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>使用<code>KVC</code>会触发<code>KVO</code>，因为<code>KVC</code>内部会主动调用<code>willChangeValueForKey:</code>和<code>didChangeValueForKey:</code></p>
+</li>
+</ul>
+<h1>KVO注意事项</h1>
+<ul>
+<li>崩溃原因总结
+<ol>
+<li>添加监听后没有清除会导致闪退</li>
+<li>清除不存在的key也会闪退</li>
+<li>添加重复的key导致闪退</li>
+<li>observe忘记写监听回调方法 observeValueForKeyPath</li>
+<li>监听者和被监听者的生命周期不同</li>
+</ol>
+</li>
+<li>自己解决,利用 <code>@try</code> <code>@catch</code><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;NSObject+MKVO.h&quot;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;objc/runtime.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NSObject</span> (<span class="title">MKVO</span>)</span></span><br><span class="line"></span><br><span class="line">+ (<span class="keyword">void</span>)load&#123;</span><br><span class="line">    [<span class="keyword">self</span> switchMethod];</span><br><span class="line">&#125;</span><br><span class="line">+ (<span class="keyword">void</span>)switchMethod&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//移除kvo的方法</span></span><br><span class="line">    SEL removeSel = <span class="keyword">@selector</span>(removeObserver:forKeyPath:);</span><br><span class="line">    SEL myRemoveSel = <span class="keyword">@selector</span>(removeDasen:forKeyPath:);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//监听的方法</span></span><br><span class="line">    SEL addSel = <span class="keyword">@selector</span>(addObserver:forKeyPath:options:context:);</span><br><span class="line">    SEL myaddSel = <span class="keyword">@selector</span>(addDasen:forKeyPath:options:context:);</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    Method systemRemoveMethod = class_getClassMethod([<span class="keyword">self</span> <span class="keyword">class</span>],removeSel);</span><br><span class="line">    Method DasenRemoveMethod = class_getClassMethod([<span class="keyword">self</span> <span class="keyword">class</span>], myRemoveSel);</span><br><span class="line">    </span><br><span class="line">    Method systemAddMethod = class_getClassMethod([<span class="keyword">self</span> <span class="keyword">class</span>],addSel);</span><br><span class="line">    Method DasenAddMethod = class_getClassMethod([<span class="keyword">self</span> <span class="keyword">class</span>], myaddSel);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//交换方法的实现</span></span><br><span class="line">    method_exchangeImplementations(systemRemoveMethod, DasenRemoveMethod);</span><br><span class="line">    method_exchangeImplementations(systemAddMethod, DasenAddMethod);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//利用@try @catch</span></span><br><span class="line"><span class="comment">// 交换后的方法</span></span><br><span class="line">- (<span class="keyword">void</span>)removeDasen:(<span class="built_in">NSObject</span> *)observer forKeyPath:(<span class="built_in">NSString</span> *)keyPath&#123;</span><br><span class="line">    <span class="keyword">@try</span> &#123;<span class="comment">//相对应解决方法1而已，只是把@try @catch 写在这里而已</span></span><br><span class="line">        [<span class="keyword">self</span> removeDasen:observer forKeyPath:keyPath];</span><br><span class="line">    &#125; <span class="keyword">@catch</span> (<span class="built_in">NSException</span> *exception) &#123;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 交换后的方法</span></span><br><span class="line">- (<span class="keyword">void</span>)addDasen:(<span class="built_in">NSObject</span> *)observer forKeyPath:(<span class="built_in">NSString</span> *)keyPath options:</span><br><span class="line">(<span class="built_in">NSKeyValueObservingOptions</span>)options context:(<span class="keyword">void</span> *)context&#123;</span><br><span class="line">    [<span class="keyword">self</span> addDasen:observer forKeyPath:keyPath options:options context:context];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>使用<a target="_blank" rel="noopener" href="https://github.com/jezzmemo/JJException">JJException</a>解决</li>
+</ul>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://github.com/jezzmemo/JJException/blob/master/JJExceptionPrinciple.md"></a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-OC/0004_KVC%E5%92%8CKVO/" title="KVC和KVO" target="_blank" rel="external">http://wangliwen.top/iOS-OC/0004_KVC和KVO/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-OC/0005_load%E5%92%8Cinitialize/" title="+load和+initialize"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-OC/0003_runtime%E4%B9%8B%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1/" title="runtime(3)关联对象"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

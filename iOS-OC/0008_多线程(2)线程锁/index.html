@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>多线程(2)线程锁 | wangliwen</title>
+  <meta name="description" content="按照性能依次排序  OSSpinLock自旋锁 os_unfair_lock互斥锁 pthread_mutex递归锁 pthread_mutex条件锁 dispatch_semaphore信号量 NSLock NSRecursiveLock NSCondition NSConditionLock @synchronized   两种读写锁 pthread_rwlock读写锁 dispatch_ba">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程(2)线程锁">
+<meta property="og:url" content="http://wangliwen.top/iOS-OC/0008_%E5%A4%9A%E7%BA%BF%E7%A8%8B(2)%E7%BA%BF%E7%A8%8B%E9%94%81/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="按照性能依次排序  OSSpinLock自旋锁 os_unfair_lock互斥锁 pthread_mutex递归锁 pthread_mutex条件锁 dispatch_semaphore信号量 NSLock NSRecursiveLock NSCondition NSConditionLock @synchronized   两种读写锁 pthread_rwlock读写锁 dispatch_ba">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-19T10:44:36.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.063Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-OC/0008_%E5%A4%9A%E7%BA%BF%E7%A8%8B(2)%E7%BA%BF%E7%A8%8B%E9%94%81/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-OC/0008_多线程(2)线程锁" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      多线程(2)线程锁
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-OC/0008_%E5%A4%9A%E7%BA%BF%E7%A8%8B(2)%E7%BA%BF%E7%A8%8B%E9%94%81/" class="article-date">
+	  <time datetime="2018-10-19T10:44:36.000Z" itemprop="datePublished">2018-10-19</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-OC/">iOS-OC</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-OC/0008_%E5%A4%9A%E7%BA%BF%E7%A8%8B(2)%E7%BA%BF%E7%A8%8B%E9%94%81/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.8k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>按照性能依次排序</h1>
+<ul>
+<li>OSSpinLock自旋锁</li>
+<li>os_unfair_lock互斥锁</li>
+<li>pthread_mutex递归锁</li>
+<li>pthread_mutex条件锁</li>
+<li>dispatch_semaphore信号量</li>
+<li>NSLock</li>
+<li>NSRecursiveLock</li>
+<li>NSCondition</li>
+<li>NSConditionLock</li>
+<li>@synchronized</li>
+</ul>
+<blockquote>
+<p>两种读写锁<br>
+pthread_rwlock读写锁<br>
+dispatch_barrier_async异步栅栏</p>
+</blockquote>
+<h1>OSSpinLock</h1>
+<ul>
+<li>OSSpinLock叫做<code>自旋锁</code>，等待锁的线程会处于<code>忙等</code>（busy-wait）状态，一直占用着CPU资源</li>
+<li>目前已经不再安全，可能会出现优先级反转问题</li>
+<li>如果等待锁的线程优先级较高，它会一直占用着CPU资源，优先级低的线程就无法释放锁  <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;libkern/OSAtomic.h&gt;</span></span></span><br><span class="line"><span class="comment">//新建锁</span></span><br><span class="line">OSSpinLock lock = OS_SPINLOCK_INIT;</span><br><span class="line"><span class="comment">//加锁</span></span><br><span class="line">OSSpinLockLock(&amp;lock);</span><br><span class="line"><span class="comment">//处理任务...</span></span><br><span class="line"><span class="comment">//解锁</span></span><br><span class="line">OSSpinLockUnlock(&amp;lock);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>os_unfair_lock</h1>
+<ul>
+<li>os_unfair_lock用于取代不安全的OSSpinLock ，从iOS10开始才支持</li>
+<li>从底层调用看，等待os_unfair_lock锁的线程会处于休眠状态，并非忙等<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;libkern/OSAtomic.h&gt;</span></span></span><br><span class="line"><span class="comment">//新建锁</span></span><br><span class="line">os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;</span><br><span class="line"> <span class="comment">//尝试加锁</span></span><br><span class="line">os_unfair_lock_trylock(&amp;lock)</span><br><span class="line"><span class="comment">//加锁</span></span><br><span class="line">os_unfair_lock_lock(&amp;lock);</span><br><span class="line"><span class="comment">//处理任务...</span></span><br><span class="line"><span class="comment">//解锁</span></span><br><span class="line">os_unfair_lock_unlock(&amp;lock);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>pthread_mutex</h1>
+<ul>
+<li>
+<p><code>mutex</code>叫做<code>互斥锁</code>，等待锁的线程会处于休眠状态</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//其中锁的类型有四种</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTHREAD_MUTEX_NORMAL		0   <span class="comment">//一般的锁</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTHREAD_MUTEX_ERRORCHECK	1	<span class="comment">// 错误检查</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTHREAD_MUTEX_RECURSIVE		2  <span class="comment">//递归锁</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTHREAD_MUTEX_DEFAULT		PTHREAD_MUTEX_NORMAL  <span class="comment">//默认</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex;</span><br><span class="line"><span class="comment">//初始化属性</span></span><br><span class="line"><span class="keyword">pthread_mutexattr_t</span> attr;</span><br><span class="line">pthread_mutexattr_init(&amp;attr);</span><br><span class="line">pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_DEFAULT);</span><br><span class="line"><span class="comment">//初始化锁</span></span><br><span class="line">pthread_mutex_init(&amp;mutex, &amp;attr);</span><br><span class="line"><span class="comment">//尝试加锁</span></span><br><span class="line">pthread_mutex_trylock(&amp;mutex);</span><br><span class="line"><span class="comment">//加锁</span></span><br><span class="line">pthread_mutex_lock(&amp;mutex);</span><br><span class="line"><span class="comment">//解锁</span></span><br><span class="line">pthread_mutex_unlock(&amp;mutex);</span><br><span class="line"><span class="comment">// 销毁属性</span></span><br><span class="line">pthread_mutexattr_destroy(&amp;attr);</span><br><span class="line">pthread_mutex_destroy(&amp;mutex);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>pthread_mutex – 递归锁</h1>
+<ul>
+<li>允许同一个线程对一把锁进行重复加锁，防止死锁<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="keyword">pthread_mutex_t</span> mutex;</span><br><span class="line"><span class="comment">//初始化属性</span></span><br><span class="line"><span class="keyword">pthread_mutexattr_t</span> attr;</span><br><span class="line">pthread_mutexattr_init(&amp;attr);</span><br><span class="line">pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE);</span><br><span class="line"><span class="comment">//初始化锁</span></span><br><span class="line">pthread_mutex_init(&amp;mutex, &amp;attr);</span><br><span class="line"><span class="comment">//尝试加锁</span></span><br><span class="line">pthread_mutex_trylock(&amp;mutex);</span><br><span class="line"><span class="comment">//加锁</span></span><br><span class="line">pthread_mutex_lock(&amp;mutex);</span><br><span class="line"><span class="comment">//解锁</span></span><br><span class="line">pthread_mutex_unlock(&amp;mutex);</span><br><span class="line"><span class="comment">// 销毁属性</span></span><br><span class="line">pthread_mutexattr_destroy(&amp;attr);</span><br><span class="line">pthread_mutex_destroy(&amp;mutex);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>pthread_mutex - 条件锁</h1>
+<ul>
+<li><code>pthread_cond_wait(&amp;_cond, &amp;_mutex)</code>进入休眠，放开mutex锁，被唤醒后，会再次对mutex加锁</li>
+<li><code>pthread_cond_signal(&amp;_cond)</code>激活一个等待该条件的线程<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;YZMutexCondLock.h&quot;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">@<span class="function">interface <span class="title">YZMutexCondLock</span><span class="params">()</span></span></span><br><span class="line"><span class="function">@<span class="title">property</span> <span class="params">(assign, nonatomic)</span> <span class="keyword">pthread_mutex_t</span> mutex</span>; <span class="comment">// 锁</span></span><br><span class="line">@property (assign, nonatomic) <span class="keyword">pthread_cond_t</span> cond; <span class="comment">//条件</span></span><br><span class="line">@property (strong, nonatomic) NSMutableArray *data; <span class="comment">//数据源</span></span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation YZMutexCondLock</span><br><span class="line">- (instancetype)init &#123;</span><br><span class="line">    <span class="keyword">if</span> (self = [super init]) &#123;</span><br><span class="line">        <span class="comment">// 初始化属性</span></span><br><span class="line">        <span class="keyword">pthread_mutexattr_t</span> attr;</span><br><span class="line">        pthread_mutexattr_init(&amp;attr);</span><br><span class="line">        pthread_mutexattr_settype(&amp;attr, PTHREAD_MUTEX_RECURSIVE);</span><br><span class="line">        <span class="comment">// 初始化锁</span></span><br><span class="line">        pthread_mutex_init(&amp;_mutex, &amp;attr);</span><br><span class="line">        <span class="comment">// 销毁属性</span></span><br><span class="line">        pthread_mutexattr_destroy(&amp;attr);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 初始化条件</span></span><br><span class="line">        pthread_cond_init(&amp;_cond, <span class="literal">NULL</span>);</span><br><span class="line">        </span><br><span class="line">        self.data = [NSMutableArray <span class="built_in">array</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> self;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)otherTest &#123;</span><br><span class="line">    [[[NSThread alloc] initWithTarget:self selector:@selector(__remove) object:nil] start]; </span><br><span class="line">    [[[NSThread alloc] initWithTarget:self selector:@selector(__add) object:nil] start];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//线程1 删除数组中的元素</span></span><br><span class="line">- (<span class="keyword">void</span>)__remove &#123;</span><br><span class="line">    pthread_mutex_lock(&amp;_mutex);</span><br><span class="line">    <span class="keyword">if</span> (self.data.count == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 数据为空就等待（进入休眠，放开mutex锁，被唤醒后，会再次对mutex加锁）</span></span><br><span class="line">        NSLog(@<span class="string">&quot;__remove - 等待&quot;</span>);</span><br><span class="line">        pthread_cond_wait(&amp;_cond, &amp;_mutex);</span><br><span class="line">    &#125;</span><br><span class="line">    [self.data removeLastObject];</span><br><span class="line">    NSLog(@<span class="string">&quot;删除了元素&quot;</span>);</span><br><span class="line">    pthread_mutex_unlock(&amp;_mutex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//线程2 往数组中添加元素</span></span><br><span class="line">- (<span class="keyword">void</span>)__add  &#123;</span><br><span class="line">    pthread_mutex_lock(&amp;_mutex);</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    [self.data addObject:@<span class="string">&quot;Test&quot;</span>];</span><br><span class="line">    NSLog(@<span class="string">&quot;添加了元素&quot;</span>);</span><br><span class="line">    <span class="comment">// 激活一个等待该条件的线程</span></span><br><span class="line">    pthread_cond_signal(&amp;_cond);</span><br><span class="line">    <span class="comment">// 激活所有等待该条件的线程</span></span><br><span class="line">    <span class="comment">//    pthread_cond_broadcast(&amp;_cond);</span></span><br><span class="line">    pthread_mutex_unlock(&amp;_mutex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">    pthread_mutex_destroy(&amp;_mutex);</span><br><span class="line">    pthread_cond_destroy(&amp;_cond);</span><br><span class="line">&#125;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>NSLock锁</h1>
+<ul>
+<li><code>NSLock</code>是对<code>mutex</code>普通锁的封装<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;YZNSLock.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">YZNSLock</span>()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">NSLock</span> *lock;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">YZNSLock</span></span></span><br><span class="line">- (<span class="keyword">instancetype</span>)init &#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.lock =[[<span class="built_in">NSLock</span> alloc] init];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)__saveMoney &#123;</span><br><span class="line">    [<span class="keyword">self</span>.lock lock];</span><br><span class="line">    [<span class="keyword">super</span> __saveMoney];</span><br><span class="line">    [<span class="keyword">self</span>.lock unlock];</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)__drawMoney &#123;</span><br><span class="line">    [<span class="keyword">self</span>.lock lock];</span><br><span class="line">    [<span class="keyword">super</span> __drawMoney];</span><br><span class="line">    [<span class="keyword">self</span>.lock unlock];</span><br><span class="line">&#125;  </span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>NSRecursiveLock锁</h1>
+<ul>
+<li><code>NSRecursiveLock</code>也是对<code>mutex</code>递归锁的封装，API跟<code>NSLock</code>基本一致<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;YZNSRecursiveLock.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">YZNSRecursiveLock</span>()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>,<span class="keyword">strong</span>) <span class="built_in">NSRecursiveLock</span> *lock;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">YZNSRecursiveLock</span></span></span><br><span class="line">- (<span class="keyword">instancetype</span>)init &#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.lock =[[<span class="built_in">NSRecursiveLock</span> alloc] init];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line">- (<span class="keyword">void</span>)__saveMoney &#123;</span><br><span class="line">    [<span class="keyword">self</span>.lock lock];</span><br><span class="line">    [<span class="keyword">super</span> __saveMoney];</span><br><span class="line">    [<span class="keyword">self</span>.lock unlock];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)__drawMoney &#123;</span><br><span class="line">    [<span class="keyword">self</span>.lock lock]; </span><br><span class="line">    [<span class="keyword">super</span> __drawMoney];</span><br><span class="line">    [<span class="keyword">self</span>.lock unlock];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>NSCondition条件锁</h1>
+<ul>
+<li><code>NSCondition</code>是对<code>mutex</code>和<code>cond</code>的封装<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;YZNSCondition.h&quot;</span></span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">YZNSCondition</span>()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">NSCondition</span> *condition;</span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">NSMutableArray</span> *data;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">YZNSCondition</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">instancetype</span>)init &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</span><br><span class="line">        <span class="keyword">self</span>.condition = [[<span class="built_in">NSCondition</span> alloc] init];</span><br><span class="line">        <span class="keyword">self</span>.data = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)otherTest &#123;</span><br><span class="line">    [[[<span class="built_in">NSThread</span> alloc] initWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(__remove) object:<span class="literal">nil</span>] start];</span><br><span class="line">    </span><br><span class="line">    [[[<span class="built_in">NSThread</span> alloc] initWithTarget:<span class="keyword">self</span> selector:<span class="keyword">@selector</span>(__add) object:<span class="literal">nil</span>] start];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 生产者-消费者模式</span></span><br><span class="line"><span class="comment">// 线程1</span></span><br><span class="line"><span class="comment">// 删除数组中的元素</span></span><br><span class="line">- (<span class="keyword">void</span>)__remove &#123;</span><br><span class="line">    [<span class="keyword">self</span>.condition lock];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.data.count == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 数据为空就等待（进入休眠，放开锁，被唤醒后，会再次对mutex加锁）</span></span><br><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@&quot;__remove - 等待&quot;</span>);</span><br><span class="line">        [<span class="keyword">self</span>.condition wait];</span><br><span class="line">    &#125;</span><br><span class="line">    [<span class="keyword">self</span>.data removeLastObject];</span><br><span class="line">     <span class="built_in">NSLog</span>(<span class="string">@&quot;删除了元素&quot;</span>);</span><br><span class="line">    [<span class="keyword">self</span>.condition unlock];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 线程2</span></span><br><span class="line"><span class="comment">// 往数组中添加元素</span></span><br><span class="line">- (<span class="keyword">void</span>)__add &#123;</span><br><span class="line">    [<span class="keyword">self</span>.condition lock];</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    [<span class="keyword">self</span>.data addObject:<span class="string">@&quot;Test&quot;</span>];</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;添加了元素&quot;</span>);</span><br><span class="line">    <span class="comment">// 激活一个等待该条件的线程</span></span><br><span class="line">    [<span class="keyword">self</span>.condition signal];</span><br><span class="line">    <span class="comment">// 激活所有等待该条件的线程</span></span><br><span class="line">    <span class="comment">//     [self.condition broadcast];</span></span><br><span class="line">    [<span class="keyword">self</span>.condition unlock];</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>NSConditionLock</h1>
+<ul>
+<li><code>NSConditionLock</code>是对<code>NSCondition</code>的进一步封装，可以设置具体的条件值<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">#import <span class="meta-string">&quot;YZNSConditionLock.h&quot;</span></span></span><br><span class="line">    <span class="class"><span class="keyword">@interface</span> <span class="title">YZNSConditionLock</span>()</span></span><br><span class="line">    <span class="keyword">@end</span></span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">@implementation</span> <span class="title">YZNSConditionLock</span></span></span><br><span class="line">    </span><br><span class="line">    - (<span class="keyword">void</span>)otherTest &#123;</span><br><span class="line">        <span class="comment">//主线程中</span></span><br><span class="line">        <span class="built_in">NSConditionLock</span> *lock = [[<span class="built_in">NSConditionLock</span> alloc] initWithCondition:<span class="number">0</span>]; </span><br><span class="line">        <span class="comment">//线程1</span></span><br><span class="line">       <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">            [lock lockWhenCondition:<span class="number">2</span>];</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程1&quot;</span>);</span><br><span class="line">            sleep(<span class="number">2</span>);</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程1解锁成功&quot;</span>);</span><br><span class="line">            [lock unlockWithCondition:<span class="number">3</span>];</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//线程2</span></span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">            [lock lockWhenCondition:<span class="number">0</span>];</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程2&quot;</span>);</span><br><span class="line">            sleep(<span class="number">3</span>);</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程2解锁成功&quot;</span>);</span><br><span class="line">            [lock unlockWithCondition:<span class="number">1</span>];</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//线程3</span></span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">            [lock lockWhenCondition:<span class="number">3</span>];</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程3&quot;</span>);</span><br><span class="line">            sleep(<span class="number">3</span>);</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程3解锁成功&quot;</span>);</span><br><span class="line">            [lock unlockWithCondition:<span class="number">4</span>];</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//线程4</span></span><br><span class="line">        <span class="built_in">dispatch_async</span>(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, <span class="number">0</span>), ^&#123;</span><br><span class="line">            [lock lockWhenCondition:<span class="number">1</span>];</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程4&quot;</span>);</span><br><span class="line">            sleep(<span class="number">2</span>);</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@&quot;线程4解锁成功&quot;</span>);</span><br><span class="line">            [lock unlockWithCondition:<span class="number">2</span>];</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">@end</span></span><br><span class="line">    ```   </span><br><span class="line"># dispatch_semaphore信号量   </span><br><span class="line">- 信号量的初始值，可以用来控制线程并发访问的最大数量，信号量的初始值为<span class="number">1</span>，代表同时只允许<span class="number">1</span>条线程访问资源，保证线程同步</span><br><span class="line">   ``` objectivec</span><br><span class="line">   <span class="meta">#import <span class="meta-string">&quot;YZSemaphore.h&quot;</span></span></span><br><span class="line">    <span class="class"><span class="keyword">@interface</span> <span class="title">YZSemaphore</span>()</span></span><br><span class="line">    <span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) dispatch_semaphore_t moneySemaphore;</span><br><span class="line">    <span class="keyword">@end</span></span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">@implementation</span> <span class="title">YZSemaphore</span></span></span><br><span class="line">    - (<span class="keyword">instancetype</span>)init &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">self</span> = [<span class="keyword">super</span> init]) &#123;</span><br><span class="line">            <span class="keyword">self</span>.moneySemaphore = dispatch_semaphore_create(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    - (<span class="keyword">void</span>)__drawMoney &#123;</span><br><span class="line">        dispatch_semaphore_wait(<span class="keyword">self</span>.moneySemaphore, DISPATCH_TIME_FOREVER);</span><br><span class="line">        [<span class="keyword">super</span> __drawMoney];</span><br><span class="line">        dispatch_semaphore_signal(<span class="keyword">self</span>.moneySemaphore);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    - (<span class="keyword">void</span>)__saveMoney &#123;</span><br><span class="line">        dispatch_semaphore_wait(<span class="keyword">self</span>.moneySemaphore, DISPATCH_TIME_FOREVER);</span><br><span class="line">        [<span class="keyword">super</span> __saveMoney];</span><br><span class="line">        dispatch_semaphore_signal(<span class="keyword">self</span>.moneySemaphore);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>synchronized</h1>
+<ul>
+<li><code>@synchronized</code>是对<code>mutex递归锁</code>的封装<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;YZSynchronized.h&quot;</span></span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">YZSynchronized</span>()</span></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">YZSynchronized</span></span></span><br><span class="line">- (<span class="keyword">void</span>)__saveMoney &#123;</span><br><span class="line">    <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        [<span class="keyword">super</span> __saveMoney];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)__drawMoney &#123;</span><br><span class="line">   <span class="keyword">@synchronized</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">     [<span class="keyword">super</span> __drawMoney];</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>pthread_rwlock读写锁</h1>
+<ul>
+<li>读写锁是计算机程序的并发控制的一种同步机制，也称“共享-互斥锁”、多读者-单写者锁。多读者锁，“push lock”) 用于解决读写问题。读操作可并发重入，写操作是互斥的。<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;YZRwlock.h&quot;</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">YZRwlock</span>()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">assign</span>, <span class="keyword">nonatomic</span>) pthread_rwlock_t lock;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">YZRwlock</span></span></span><br><span class="line">- (<span class="keyword">instancetype</span>)init &#123;</span><br><span class="line">    <span class="keyword">self</span> = [<span class="keyword">super</span> init];</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="comment">// 初始化锁</span></span><br><span class="line">        pthread_rwlock_init(&amp;_lock, <span class="literal">NULL</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)otherTest&#123;</span><br><span class="line">    <span class="built_in">dispatch_queue_t</span> queue = dispatch_get_global_queue(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">            [<span class="keyword">self</span> write];</span><br><span class="line">            [<span class="keyword">self</span> read];</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        <span class="built_in">dispatch_async</span>(queue, ^&#123;</span><br><span class="line">            [<span class="keyword">self</span> write];</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)read &#123;</span><br><span class="line">    pthread_rwlock_rdlock(&amp;_lock);</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%s&quot;</span>, __func__);</span><br><span class="line">    pthread_rwlock_unlock(&amp;_lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)write &#123;</span><br><span class="line">    pthread_rwlock_wrlock(&amp;_lock);</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;%s&quot;</span>, __func__);</span><br><span class="line">    pthread_rwlock_unlock(&amp;_lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dealloc &#123;</span><br><span class="line">    pthread_rwlock_destroy(&amp;_lock);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1>dispatch_barrier_async异步栅栏实现读写锁</h1>
+<ul>
+<li>打印完write之后，方法每次都是一个一个执行的，而read是可以同时执行的，但是遇到写的操作，就会把其他读或者写都会暂停，也就是说起到了栅栏的作用。 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&quot;YZBarrier.h&quot;</span></span></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">YZBarrier</span> ()</span></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">strong</span>, <span class="keyword">nonatomic</span>) <span class="built_in">dispatch_queue_t</span> queue;</span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">YZBarrier</span></span></span><br><span class="line">- (<span class="keyword">void</span>)otherTest&#123;</span><br><span class="line">    <span class="comment">// 初始化队列</span></span><br><span class="line">    <span class="keyword">self</span>.queue = dispatch_queue_create(<span class="string">&quot;rw_queue&quot;</span>, DISPATCH_QUEUE_CONCURRENT);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        <span class="comment">// 读</span></span><br><span class="line">        <span class="built_in">dispatch_async</span>(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">            [<span class="keyword">self</span> read];</span><br><span class="line">        &#125;);</span><br><span class="line">         <span class="comment">// 写</span></span><br><span class="line">        dispatch_barrier_async(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">            [<span class="keyword">self</span> write];</span><br><span class="line">        &#125;);</span><br><span class="line">         <span class="comment">// 读</span></span><br><span class="line">        <span class="built_in">dispatch_async</span>(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">            [<span class="keyword">self</span> read];</span><br><span class="line">        &#125;);</span><br><span class="line">         <span class="comment">// 读</span></span><br><span class="line">        <span class="built_in">dispatch_async</span>(<span class="keyword">self</span>.queue, ^&#123;</span><br><span class="line">            [<span class="keyword">self</span> read];</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)read &#123;</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;read&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)write &#123;</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@&quot;write&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-OC/0008_%E5%A4%9A%E7%BA%BF%E7%A8%8B(2)%E7%BA%BF%E7%A8%8B%E9%94%81/" title="多线程(2)线程锁" target="_blank" rel="external">http://wangliwen.top/iOS-OC/0008_多线程(2)线程锁/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(2)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%87%8D%E6%8E%92/" title="iOS性能---启动优化(2)二进制重排"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/002_(1)%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96%E6%B1%87%E6%80%BB%E7%AF%87/" title="iOS性能---启动优化(1)汇总篇"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

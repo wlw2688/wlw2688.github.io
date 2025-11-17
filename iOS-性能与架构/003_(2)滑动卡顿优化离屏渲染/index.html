@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>iOS性能---滑动卡顿优化(2)离屏渲染 | wangliwen</title>
+  <meta name="description" content="离屏渲染产生的原因？  非离屏渲染流程：  离屏渲染流程：  如果触发了离屏渲染，那么在显示这个页面的每一帧都会去做离屏渲染的处理，比如切圆角，显示阴影等，如果每一帧都要重新去处理，那么对于CPU以及GPU都带来很大的负担。所以引入了离屏缓冲区，将处理好的图层直接丢到离屏缓冲区，下次渲染的时候直接拿出来显示到屏幕上 离屏缓存区也是有限制的，  时间限制：缓存的内容超过100ms没有被使用，内容将会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS性能---滑动卡顿优化(2)离屏渲染">
+<meta property="og:url" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="离屏渲染产生的原因？  非离屏渲染流程：  离屏渲染流程：  如果触发了离屏渲染，那么在显示这个页面的每一帧都会去做离屏渲染的处理，比如切圆角，显示阴影等，如果每一帧都要重新去处理，那么对于CPU以及GPU都带来很大的负担。所以引入了离屏缓冲区，将处理好的图层直接丢到离屏缓冲区，下次渲染的时候直接拿出来显示到屏幕上 离屏缓存区也是有限制的，  时间限制：缓存的内容超过100ms没有被使用，内容将会">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen1.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen2.jpg">
+<meta property="og:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen3.jpg">
+<meta property="article:published_time" content="2018-10-21T11:22:43.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.080Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen1.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-性能与架构/003_(2)滑动卡顿优化离屏渲染" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS性能---滑动卡顿优化(2)离屏渲染
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/" class="article-date">
+	  <time datetime="2018-10-21T11:22:43.000Z" itemprop="datePublished">2018-10-21</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>离屏渲染产生的原因？</h1>
+<ul>
+<li>非离屏渲染流程：<div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen1.jpg" class=""></div>
+</li>
+<li>离屏渲染流程：<div style="width:100%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen2.jpg" class=""></div>
+</li>
+<li>如果触发了离屏渲染，那么在显示这个页面的每一帧都会去做离屏渲染的处理，比如切圆角，显示阴影等，如果每一帧都要重新去处理，那么对于CPU以及GPU都带来很大的负担。所以引入了离屏缓冲区，将处理好的图层直接丢到离屏缓冲区，下次渲染的时候直接拿出来显示到屏幕上</li>
+<li>离屏缓存区也是有限制的，
+<ol>
+<li>时间限制：缓存的内容超过100ms没有被使用，内容将会被丢弃；</li>
+<li>空间限制：超过屏幕像素大小的2.5倍，将不能再存储新的数据，离屏渲染会失效</li>
+</ol>
+</li>
+</ul>
+<h1>离屏检测？</h1>
+<ul>
+<li>打开模拟器后，选择菜单栏<code>Debug</code>-&gt;<code>Color off-screen rendered</code>，开启后，如果有离屏渲染，则会显示成黄色<div style="width:70%;margin-bottom:15px;"><img src="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/screen3.jpg" class=""></div>
+</li>
+</ul>
+<h1>触发离屏渲染的场景</h1>
+<ol>
+<li><code>layer.cornerRadius</code> + <code>layer.masksToBounds</code>
+<ul>
+<li>如果只有一个图层，就算同时设置 cornerRadius + masksToBounds 也并不会触发离屏渲染，只有多个图层发生叠加的时候才会触发离屏渲染</li>
+<li>只设置cornerRadius不会触发离屏渲染，因为cornerRadius只会设置backgroundColor和border的圆角，并不会对content设置圆角，CALayer大致分为三层（backgroundColor层、content层、border层)，</li>
+<li>关于圆角，iOS 9及之后的系统版本，苹果进行了一些优化，只设置contents或者UIImageView的image，并加上圆角+裁剪，是不会产生离屏渲染的。但如果加上了背景色、边框或其他有图像内容的图层，还是会产生离屏渲染。</li>
+</ul>
+</li>
+<li>为图层设置遮罩<code>layer.mask</code></li>
+<li><code>layer.allowsGroupOpacity</code>属性设置为YES和<code>layer.opacity</code>小于1.0</li>
+<li>为图层设置阴影（<code>layer.shadow</code>）
+<ul>
+<li>使用阴影必须保证 layer 的masksToBounds = false，因此阴影与系统圆角不兼容</li>
+<li>给阴影指定了路径，就不会触发离屏渲染了，例如，这样设置阴影：</li>
+</ul>
+ <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self</span>.view1.layer.shadowColor = [<span class="built_in">UIColor</span> greenColor].CGColor;</span><br><span class="line"><span class="keyword">self</span>.view1.layer.shadowOffset = <span class="built_in">CGSizeMake</span>(<span class="number">5</span>, <span class="number">5</span>);</span><br><span class="line"><span class="keyword">self</span>.view1.layer.shadowOpacity = <span class="number">0.5</span>;</span><br><span class="line"><span class="keyword">self</span>.view1.layer.shadowRadius = <span class="number">3</span>;</span><br><span class="line"><span class="built_in">UIBezierPath</span> * path = [<span class="built_in">UIBezierPath</span> bezierPathWithRect:<span class="keyword">self</span>.view1.bounds];</span><br><span class="line"><span class="keyword">self</span>.view1.layer.shadowPath = path.CGPath;</span><br></pre></td></tr></table></figure>
+</li>
+<li>使用<code>CGContext</code>在<code>drawRect :</code>方法中绘制大部分情况下会导致离屏渲染，甚至仅仅是一个空的实现</li>
+</ol>
+<h1>离屏渲染优化</h1>
+<ol>
+<li>
+<p>关于圆角，iOS 9及之后的系统版本，苹果进行了一些优化，只设置contents或者UIImageView的image，并加上圆角+裁剪，是不会产生离屏渲染的。但如果加上了背景色、边框或其他有图像内容的图层，还是会产生离屏渲染。</p>
+</li>
+<li>
+<p>利用UIBezierPath（CoreGraphics框架）画出来圆角图片</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">UIImage</span> *)imageWithCornerRadius:(<span class="built_in">CGFloat</span>)radius ofSize:(<span class="built_in">CGSize</span>)size&#123;</span><br><span class="line">   <span class="comment">/* 当前UIImage的可见绘制区域 */</span></span><br><span class="line">   <span class="built_in">CGRect</span> rect = (<span class="built_in">CGRect</span>)&#123;<span class="number">0.</span>f,<span class="number">0.</span>f,size&#125;;</span><br><span class="line">   <span class="comment">/* 创建基于位图的上下文 */</span></span><br><span class="line">   <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(size, <span class="literal">NO</span>, <span class="built_in">UIScreen</span>.mainScreen.scale);</span><br><span class="line">   <span class="comment">/* 在当前位图上下文添加圆角绘制路径 */</span></span><br><span class="line">   <span class="built_in">CGContextAddPath</span>(<span class="built_in">UIGraphicsGetCurrentContext</span>(), [<span class="built_in">UIBezierPath</span> bezierPathWithRoundedRect:rect cornerRadius:radius].CGPath);</span><br><span class="line">   <span class="comment">/* 当前绘制路径和原绘制路径相交得到最终裁剪绘制路径 */</span></span><br><span class="line">   <span class="built_in">CGContextClip</span>(<span class="built_in">UIGraphicsGetCurrentContext</span>());</span><br><span class="line">   <span class="comment">/* 绘制 */</span></span><br><span class="line">   [<span class="keyword">self</span> drawInRect:rect];</span><br><span class="line">   <span class="comment">/* 取得裁剪后的image */</span></span><br><span class="line">   <span class="built_in">UIImage</span> *image = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">   <span class="comment">/* 关闭当前位图上下文 */</span></span><br><span class="line">   <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">   <span class="keyword">return</span> image;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><a target="_blank" rel="noopener" href="https://github.com/ibireme/YYImage">YYImage</a>对图片圆角的处理方法是值得推荐的，附上实现源码：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">    - (<span class="built_in">UIImage</span> *)imageByRoundCornerRadius:(<span class="built_in">CGFloat</span>)radius</span><br><span class="line">                             corners:(<span class="built_in">UIRectCorner</span>)corners</span><br><span class="line">                         borderWidth:(<span class="built_in">CGFloat</span>)borderWidth</span><br><span class="line">                         borderColor:(<span class="built_in">UIColor</span> *)borderColor</span><br><span class="line">                      borderLineJoin:(<span class="built_in">CGLineJoin</span>)borderLineJoin &#123;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">if</span> (corners != <span class="built_in">UIRectCornerAllCorners</span>) &#123;</span><br><span class="line">       <span class="built_in">UIRectCorner</span> tmp = <span class="number">0</span>;</span><br><span class="line">       <span class="keyword">if</span> (corners &amp; <span class="built_in">UIRectCornerTopLeft</span>) tmp |= <span class="built_in">UIRectCornerBottomLeft</span>;</span><br><span class="line">       <span class="keyword">if</span> (corners &amp; <span class="built_in">UIRectCornerTopRight</span>) tmp |= <span class="built_in">UIRectCornerBottomRight</span>;</span><br><span class="line">       <span class="keyword">if</span> (corners &amp; <span class="built_in">UIRectCornerBottomLeft</span>) tmp |= <span class="built_in">UIRectCornerTopLeft</span>;</span><br><span class="line">       <span class="keyword">if</span> (corners &amp; <span class="built_in">UIRectCornerBottomRight</span>) tmp |= <span class="built_in">UIRectCornerTopRight</span>;</span><br><span class="line">       corners = tmp;</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(<span class="keyword">self</span>.size, <span class="literal">NO</span>, <span class="keyword">self</span>.scale);</span><br><span class="line">   <span class="built_in">CGContextRef</span> context = <span class="built_in">UIGraphicsGetCurrentContext</span>();</span><br><span class="line">   <span class="built_in">CGRect</span> rect = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="keyword">self</span>.size.width, <span class="keyword">self</span>.size.height);</span><br><span class="line">   <span class="built_in">CGContextScaleCTM</span>(context, <span class="number">1</span>, <span class="number">-1</span>);</span><br><span class="line">   <span class="built_in">CGContextTranslateCTM</span>(context, <span class="number">0</span>, -rect.size.height);</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">CGFloat</span> minSize = MIN(<span class="keyword">self</span>.size.width, <span class="keyword">self</span>.size.height);</span><br><span class="line">   <span class="keyword">if</span> (borderWidth &lt; minSize / <span class="number">2</span>) &#123;</span><br><span class="line">       <span class="built_in">UIBezierPath</span> *path = [<span class="built_in">UIBezierPath</span> bezierPathWithRoundedRect:<span class="built_in">CGRectInset</span>(rect, borderWidth, borderWidth) byRoundingCorners:corners cornerRadii:<span class="built_in">CGSizeMake</span>(radius, borderWidth)];</span><br><span class="line">       [path closePath];</span><br><span class="line">       </span><br><span class="line">       <span class="built_in">CGContextSaveGState</span>(context);</span><br><span class="line">       [path addClip];</span><br><span class="line">       <span class="built_in">CGContextDrawImage</span>(context, rect, <span class="keyword">self</span>.CGImage);</span><br><span class="line">       <span class="built_in">CGContextRestoreGState</span>(context);</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">if</span> (borderColor &amp;&amp; borderWidth &lt; minSize / <span class="number">2</span> &amp;&amp; borderWidth &gt; <span class="number">0</span>) &#123;</span><br><span class="line">       <span class="built_in">CGFloat</span> strokeInset = (floor(borderWidth * <span class="keyword">self</span>.scale) + <span class="number">0.5</span>) / <span class="keyword">self</span>.scale;</span><br><span class="line">       <span class="built_in">CGRect</span> strokeRect = <span class="built_in">CGRectInset</span>(rect, strokeInset, strokeInset);</span><br><span class="line">       <span class="built_in">CGFloat</span> strokeRadius = radius &gt; <span class="keyword">self</span>.scale / <span class="number">2</span> ? radius - <span class="keyword">self</span>.scale / <span class="number">2</span> : <span class="number">0</span>;</span><br><span class="line">       <span class="built_in">UIBezierPath</span> *path = [<span class="built_in">UIBezierPath</span> bezierPathWithRoundedRect:strokeRect byRoundingCorners:corners cornerRadii:<span class="built_in">CGSizeMake</span>(strokeRadius, borderWidth)];</span><br><span class="line">       [path closePath];</span><br><span class="line">       </span><br><span class="line">       path.lineWidth = borderWidth;</span><br><span class="line">       path.lineJoinStyle = borderLineJoin;</span><br><span class="line">       [borderColor setStroke];</span><br><span class="line">       [path stroke];</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="built_in">UIImage</span> *image = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br><span class="line">   <span class="built_in">UIGraphicsEndImageContext</span>();</span><br><span class="line">   <span class="keyword">return</span> image;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><a href="">AsyncDisplayKit</a>指定layer阴影效果路径使用异步进行layer渲染</p>
+</li>
+</ol>
+<h1>参考文章</h1>
+<p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6846687603316490254">iOS圆角的离屏渲染，你真的弄明白了吗</a><br>
+<a target="_blank" rel="noopener" href="https://juejin.cn/post/6847902222567604231">iOS 离屏渲染探究</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/003_(2)%E6%BB%91%E5%8A%A8%E5%8D%A1%E9%A1%BF%E4%BC%98%E5%8C%96%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/" title="iOS性能---滑动卡顿优化(2)离屏渲染" target="_blank" rel="external">http://wangliwen.top/iOS-性能与架构/003_(2)滑动卡顿优化离屏渲染/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/004_%E8%A3%85%E5%8C%85%E7%98%A6%E8%BA%AB/" title="iOS性能---安装包瘦身"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-OC/0010_autoreleasepool%E5%8E%9F%E7%90%86/" title="autoreleasepool原理"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

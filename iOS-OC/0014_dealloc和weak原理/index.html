@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>dealloc和weak原理 | wangliwen</title>
+  <meta name="description" content="weak原理 runtime维护sidetables哈希表，sidetables里含有64个sidetable，每个sidetable管理若干个对象，通过对象地址找到对应的weak表，weak表中存储着若干个weak指针，若一个对象被weak，如果没有对应的表则创建，若有了则追加到后面 sidetable  sidetable主要管理weak指针和辅助引用计数，原理图   dealloc底层实现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dealloc和weak原理">
+<meta property="og:url" content="http://wangliwen.top/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="阿甘- 文">
+<meta property="og:description" content="weak原理 runtime维护sidetables哈希表，sidetables里含有64个sidetable，每个sidetable管理若干个对象，通过对象地址找到对应的weak表，weak表中存储着若干个weak指针，若一个对象被weak，如果没有对应的表则创建，若有了则追加到后面 sidetable  sidetable主要管理weak指针和辅助引用计数，原理图   dealloc底层实现">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wangliwen.top/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/sidetable.jpg">
+<meta property="article:published_time" content="2018-10-25T10:44:36.000Z">
+<meta property="article:modified_time" content="2025-11-17T08:17:12.065Z">
+<meta property="article:author" content="阿甘文">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wangliwen.top/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/sidetable.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://wangliwen.top/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="阿甘- 文" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://wangliwen.top" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">文</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">iOS工程师</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 北京</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/flutter/">flutter</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-OC/">iOS-OC</a><span class="category-list-count">24</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-Swift/">iOS-Swift</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/">iOS-性能与架构</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%B7%A5%E5%85%B7/">工具</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-iOS-OC/0014_dealloc和weak原理" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      dealloc和weak原理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/" class="article-date">
+	  <time datetime="2018-10-25T10:44:36.000Z" itemprop="datePublished">2018-10-25</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/iOS-OC/">iOS-OC</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 920(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1>weak原理</h1>
+<p><code>runtime</code>维护<code>sidetables</code>哈希表，<code>sidetables</code>里含有64个<code>sidetable</code>，每个<code>sidetable</code>管理若干个对象，通过对象地址找到对应的weak表，weak表中存储着若干个weak指针，若一个对象被weak，如果没有对应的表则创建，若有了则追加到后面</p>
+<h1>sidetable</h1>
+<ul>
+<li>sidetable主要管理weak指针和辅助引用计数，原理图<div style="width:100%;margin-bottom:15px;"><img src="/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/sidetable.jpg" class=""></div>
+</li>
+</ul>
+<h1>dealloc底层实现</h1>
+<p>根据 <a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/objc4/">runtime源码</a>可知，</p>
+<ol>
+<li>首先调用<code>_objc_rootDealloc()</code> -&gt; <code>rootDealloc()</code></li>
+<li>isTaggedPointer是否是<code>标记指针</code>是直接return</li>
+<li>若<code>是优化的isa</code>、<code>没有被弱引用</code>、<code>没有关联对象</code>、<code>没有自定义的C++析构函数</code>、<code>没有用到sideTable来做引用计数</code>,直接将对象释放<code>free</code></li>
+<li>第3部任何不满足则继续处理，<code>objc_destructInstance</code>内部函数会<code>销毁C++析构函数</code>以及<code>移除关联对象</code>的操作，SideTable中擦除该对象的引用计数，将指向该对象的弱引用指针置为nil</li>
+<li>第4部操作完，将对象释放<code>free</code></li>
+</ol>
+<h1>dealloc底层源码</h1>
+<ul>
+<li>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/tarballs/objc4/">runtime源码</a></p>
+</li>
+<li>
+<p>rootdealloc实现</p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span></span></span><br><span class="line"><span class="function"><span class="title">objc_object::rootDealloc</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//判断对象是否采用了Tagged Pointer技术</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">isTaggedPointer</span>()) <span class="keyword">return</span>;  <span class="comment">// fixme necessary?</span></span><br><span class="line">    <span class="comment">//判断是否能够进行快速释放</span></span><br><span class="line">    <span class="comment">//这里使用了isa指针里的属性来进行判断.</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">fastpath</span>(isa.nonpointer  &amp;&amp;  <span class="comment">//对象是否采用了优化的isa计数方式</span></span><br><span class="line">                 !isa.weakly_referenced  &amp;&amp;  <span class="comment">//对象没有被弱引用</span></span><br><span class="line">                 !isa.has_assoc  &amp;&amp;  <span class="comment">//对象没有关联对象</span></span><br><span class="line">                 !isa.has_cxx_dtor  &amp;&amp;  <span class="comment">//对象没有自定义的C++析构函数</span></span><br><span class="line">                 !isa.has_sidetable_rc  <span class="comment">//对象没有用到sideTable来做引用计数</span></span><br><span class="line">                 ))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//如果以上判断都符合条件，就会调用C函数 free 将对象释放</span></span><br><span class="line">        <span class="built_in">assert</span>(!<span class="built_in">sidetable_present</span>());</span><br><span class="line">        <span class="built_in">free</span>(<span class="keyword">this</span>);</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//如果以上判断没有通过，做下一步处理</span></span><br><span class="line">        <span class="built_in">object_dispose</span>((id)<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>objc_destructInstance</code>内部函数会<code>销毁C++析构函数</code>以及<code>移除关联对象</code>的操作.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">   <span class="function">id  <span class="title">object_dispose</span><span class="params">(id obj)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!obj) <span class="keyword">return</span> nil;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">objc_destructInstance</span>(obj);    </span><br><span class="line">    <span class="built_in">free</span>(obj);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> nil;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>如果该对象采用了优化过的isa引用计数，从SideTable引用计数表中<code>清除该对象的引用计数</code></p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">objc_object::<span class="built_in">clearDeallocating_slow</span>() &#123;</span><br><span class="line">   <span class="built_in">assert</span>(isa.nonpointer  &amp;&amp;  (isa.weakly_referenced || isa.has_sidetable_rc));</span><br><span class="line">   <span class="comment">// 在全局的SideTables中，以this指针(要释放的对象)为key，找到对应的SideTable</span></span><br><span class="line">   SideTable&amp; table = <span class="built_in">SideTables</span>()[<span class="keyword">this</span>];</span><br><span class="line">   table.<span class="built_in">lock</span>();</span><br><span class="line">   <span class="keyword">if</span> (isa.weakly_referenced) &#123;</span><br><span class="line">       <span class="comment">//要释放的对象被弱引用了，通过weak_clear_no_lock函数将指向该对象的弱引用指针置为nil</span></span><br><span class="line">       <span class="built_in">weak_clear_no_lock</span>(&amp;table.weak_table, (id)<span class="keyword">this</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">//使用了sideTable的辅助引用计数,直接在SideTable中擦除该对象的引用计数</span></span><br><span class="line">   <span class="keyword">if</span> (isa.has_sidetable_rc) &#123;</span><br><span class="line">       table.refcnts.<span class="built_in">erase</span>(<span class="keyword">this</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   table.<span class="built_in">unlock</span>();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>从SideTable,将被弱引用对象的<code>弱引用指针置为nil</code>.</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"> <span class="function"><span class="keyword">void</span>  <span class="title">weak_clear_no_lock</span><span class="params">(<span class="keyword">weak_table_t</span> *weak_table, id referent_id)</span>  </span>&#123;</span><br><span class="line">  <span class="comment">//获取被弱引用对象的地址</span></span><br><span class="line">  objc_object *referent = (objc_object *)referent_id;</span><br><span class="line">  <span class="comment">// 根据对象地址找到被弱引用对象referent在weak_table中对应的weak_entry_t</span></span><br><span class="line">  <span class="keyword">weak_entry_t</span> *entry = <span class="built_in">weak_entry_for_referent</span>(weak_table, referent); </span><br><span class="line">  <span class="keyword">if</span> (entry == nil) &#123;</span><br><span class="line">      <span class="comment">/// XXX shouldn&#x27;t happen, but does with mismatched CF/objc</span></span><br><span class="line">      <span class="comment">//printf(&quot;XXX no entry for clear deallocating %p\n&quot;, referent);</span></span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// zero out references</span></span><br><span class="line">  <span class="keyword">weak_referrer_t</span> *referrers;</span><br><span class="line">  <span class="keyword">size_t</span> count;</span><br><span class="line">  <span class="comment">// 找出弱引用该对象的所有weak指针地址数组</span></span><br><span class="line">  <span class="keyword">if</span> (entry-&gt;<span class="built_in">out_of_line</span>()) &#123;</span><br><span class="line">      referrers = entry-&gt;referrers;</span><br><span class="line">      count = <span class="built_in">TABLE_SIZE</span>(entry);</span><br><span class="line">  &#125; </span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">      referrers = entry-&gt;inline_referrers;</span><br><span class="line">      count = WEAK_INLINE_COUNT;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 遍历取出每个weak指针的地址</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; count; ++i) &#123;</span><br><span class="line">      objc_object **referrer = referrers[i]; </span><br><span class="line">      <span class="keyword">if</span> (referrer) &#123;</span><br><span class="line">          <span class="comment">// 如果weak指针确实弱引用了对象 referent，则将weak指针设置为nil</span></span><br><span class="line">          <span class="keyword">if</span> (*referrer == referent) &#123; </span><br><span class="line">              *referrer = nil;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// 如果所存储的weak指针没有弱引用对象 referent，这可能是由于runtime代码的逻辑错误引起的，报错</span></span><br><span class="line">          <span class="keyword">else</span> <span class="keyword">if</span> (*referrer) &#123; </span><br><span class="line">              _objc_inform(<span class="string">&quot;__weak variable at %p holds %p instead of %p. &quot;</span></span><br><span class="line">                           <span class="string">&quot;This is probably incorrect use of &quot;</span></span><br><span class="line">                           <span class="string">&quot;objc_storeWeak() and objc_loadWeak(). &quot;</span></span><br><span class="line">                           <span class="string">&quot;Break on objc_weak_error to debug.\n&quot;</span>, </span><br><span class="line">                           referrer, (<span class="keyword">void</span>*)*referrer, (<span class="keyword">void</span>*)referent);</span><br><span class="line">              <span class="built_in">objc_weak_error</span>();</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">weak_entry_remove</span>(weak_table, entry);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://wangliwen.top/iOS-OC/0014_dealloc%E5%92%8Cweak%E5%8E%9F%E7%90%86/" title="dealloc和weak原理" target="_blank" rel="external">http://wangliwen.top/iOS-OC/0014_dealloc和weak原理/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://wangliwen.top" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://wangliwen.top" target="_blank"><span class="text-dark">文</span><small class="ml-1x">iOS工程师</small></a></h3>
+        <div>本人从事iOS开发行业多年，精通OC和Swift，会使用Flutter框架。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/%E8%AE%A4%E8%AF%86Match-o/" title="认识Match-o"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/iOS-%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84/iOS%E6%9E%B6%E6%9E%84%E8%AE%A4%E7%9F%A5/" title="iOS架构认知"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wlw2688" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>
